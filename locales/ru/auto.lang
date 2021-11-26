@@ -1,0 +1,41 @@
+$pts_status_if:В Сети
+$pts_status_on:💚 PTS В Сети
+$pts_status_off:❤ PTS Не в Сети
+$pts_status_reply:Changed PTS Status.
+$auto_settings_embed_author_name:Настройки автоматизации
+$auto_settings_embed_dailies_field_title:🔁 **__Ежедневное__**
+$auto_settings_embed_dailies_field_text_title:Текст
+$auto_settings_embed_dailies_field_text_disabled:Выключен
+$auto_settings_embed_dailies_field_voice_title:Голосовой
+$auto_settings_embed_dailies_field_voice_disabled:Выключен
+$auto_settings_embed_dailies_field_role_title:Упоминание
+$auto_settings_embed_dailies_field_role_disabled:Не выбрано
+$auto_settings_embed_weeklies_field_title:🔁 **__Ежкнедельные__**
+$auto_settings_embed_weeklies_field_text_title:Текст
+$auto_settings_embed_weeklies_field_text_disabled:Выключен
+$auto_settings_embed_weeklies_field_voice_title:Голосовой
+$auto_settings_embed_weeklies_field_voice_disabled:Выключен
+$auto_settings_embed_weeklies_field_role_title:Упоминание
+$auto_settings_embed_weeklies_field_role_disabled:Не выбрано
+$auto_settings_embed_clock_field_title:🕐 **__Время__**
+$auto_settings_embed_clock_field_channel_title:Канал
+$auto_settings_embed_clock_field_channel_disabled:Выключено
+$auto_settings_embed_clock_field_format_title:Формат
+$auto_resets_daily_text_on:Дневные ресеты сейчам включены, они будут отображаться в {}
+$auto_resets_daily_text_off:Отображение дневных ресетов выключено
+$auto_resets_daily_voice_on:Ежедневные баффы будут расположены в {}
+$auto_resets_daily_voice_off:Ежедневные баффы теперь не отображаются
+$auto_resets_daily_mention_on:Ежедневные ресеты отправляются с упоминанием {}
+$auto_resets_daily_mention_off:Ежедневные ресеты не будут отсылать упоминания
+$auto_resets_weekly_mention_on:Еженедельные ресеты отправляются с упоминанием {}
+$auto_resets_weekly_mention_off:Еженедельные ресетв не будут отсылать упоминания
+$auto_resets_weekly_text_on:Пост еженедельных ресетов включен, оно будет отправляться в {}
+$auto_resets_weekly_text_off:Пост еженедельных ресетов был отключен
+$auto_resets_weekly_voice_on:Еженедельные баффы будут расположены в {}
+$auto_resets_weekly_voice_off:Отображение еженедельных бафов отключено
+$auto_dragon_merchant_voice_on:Уведомления о пятничных драконах будет расположено в {}
+$auto_dragon_merchant_voice_off:Пятничные драконы были отключены
+$auto_clock_channel_on:Внутриигровое время будет расположено в {} 
+$auto_clock_channel_off:Внутриигровое время было отключено
+$auto_clock_format_max_characters:Вы не можете иметь больше 100 символов в названии канала
+$auto_clock_format_success:Новый формат внутриигрового времени `{}`

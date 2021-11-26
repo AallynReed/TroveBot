@@ -1,0 +1,41 @@
+$pts_status_if:Online
+$pts_status_on:💚 PTS Online
+$pts_status_off:❤ PTS Offline
+$pts_status_reply:Changed PTS Status.
+$auto_settings_embed_author_name:Automation Settings
+$auto_settings_embed_dailies_field_title:🔁 **__Dailies__**
+$auto_settings_embed_dailies_field_text_title:Text
+$auto_settings_embed_dailies_field_text_disabled:Disabled
+$auto_settings_embed_dailies_field_voice_title:Voice
+$auto_settings_embed_dailies_field_voice_disabled:Disabled
+$auto_settings_embed_dailies_field_role_title:Mention
+$auto_settings_embed_dailies_field_role_disabled:Not Selected
+$auto_settings_embed_weeklies_field_title:🔁 **__Weeklies__**
+$auto_settings_embed_weeklies_field_text_title:Text
+$auto_settings_embed_weeklies_field_text_disabled:Disabled
+$auto_settings_embed_weeklies_field_voice_title:Voice
+$auto_settings_embed_weeklies_field_voice_disabled:Disabled
+$auto_settings_embed_weeklies_field_role_title:Mention
+$auto_settings_embed_weeklies_field_role_disabled:Not Selected
+$auto_settings_embed_clock_field_title:🕐 **__Clock__**
+$auto_settings_embed_clock_field_channel_title:Channel
+$auto_settings_embed_clock_field_channel_disabled:Disabled
+$auto_settings_embed_clock_field_format_title:Format
+$auto_resets_daily_text_on:Daily reset posts are now enabled and will be sent to {}
+$auto_resets_daily_text_off:Daily reset posts were disabled.
+$auto_resets_daily_voice_on:Daily buffs will be placed in {}
+$auto_resets_daily_voice_off:Daily buffs were disabled.
+$auto_resets_daily_mention_on:Daily reset posts will now mention {}
+$auto_resets_daily_mention_off:Daily reset posts will not mention anymore.
+$auto_resets_weekly_mention_on:Weekly reset posts will now mention {}
+$auto_resets_weekly_mention_off:Weekly reset posts will not mention anymore.
+$auto_resets_weekly_text_on:Weeklies reset posts are now enabled and will be sent to {}
+$auto_resets_weekly_text_off:Weeklies reset posts were disabled.
+$auto_resets_weekly_voice_on:Weeklies buffs will be placed in {}
+$auto_resets_weekly_voice_off:Weeklies buffs were disabled.
+$auto_dragon_merchant_voice_on:Dragon Merchants will be placed in {}
+$auto_dragon_merchant_voice_off:Dragon Merchants were disabled.
+$auto_clock_channel_on:Clock will now be placed in {}
+$auto_clock_channel_off:Clock is now disabled.
+$auto_clock_format_max_characters:You can't set more than 100 characters as a channel name.
+$auto_clock_format_success:New clock format is `{}`
