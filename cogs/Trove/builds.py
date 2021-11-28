@@ -21,12 +21,16 @@ class Builds(commands.Cog):
         self.last_updated = 1637821955
 
     @commands.command(slash_command=True, help="Show current Meta for different game situations.")
-    @commands.cooldown(1, 120, commands.BucketType.user)
     @commands.bot_has_permissions(embed_links=1)
     async def meta(self, ctx):
-        e = discord.Embed(timestamp=datetime.utcfromtimestamp(1637821955))
+        e = discord.Embed(color=0x0000ff, timestamp=datetime.utcfromtimestamp(1637821955))
+        e.set_author(name="Meta", icon_url=self.bot.user.avatar.url)
         e.description = "Here are the game's Meta classes for each activity."
-        e.add_field(name="Farming (Adventure/Topside)")
+        e.add_field(name="Farming (Adventure/Topside)", value="Physical: <:c_NN:876846928808259654> **Neon Ninja**\nMagic: <:c_DT:876846922135126036> **Dino Tamer** or <:c_BD:876846944604024842> **Bard**", inline=False)
+        e.add_field(name="DPS (Single Target)", value="Magic: <:c_CM:876846891747410001> **Chloromancer**", inline=False)
+        e.add_field(name="DPS (Multi Target)", value="Magic: <:c_IS:876846881311965224> **Ice Sage** or <:c_TR:876846901801123850> **Tomb Raiser**", inline=False)
+        e.set_footer(text="Last updated")
+        await ctx.send(embed=e)
 
     @commands.command(slash_command=True, help="Show gear for a class")
     @commands.cooldown(1, 120, commands.BucketType.user)

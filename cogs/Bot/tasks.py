@@ -2,8 +2,8 @@
 import asyncio
 import json
 import re
+import typing
 from datetime import datetime, timedelta
-from langdetect import detect
 
 import aiohttp
 import discord
@@ -154,7 +154,6 @@ class Tasks(commands.Cog):
                 g["forums_posts"]["reddit"]["posted"][str(forum_post["_id"])] = [forum_post["created_at"], msg.id]
             await self.bot.db.db_servers.update_one({"_id": guild.id}, {"$set": {f"forums_posts.reddit.posted": g["forums_posts"]["reddit"]["posted"]}})
 
-
     @tasks.loop(seconds=180)
     async def forum_retriever(self):
         await self.bot.wait_until_ready()
@@ -242,6 +241,88 @@ class Tasks(commands.Cog):
         text = re.sub(r'^\n+', '', text)
         return text
 
+    @commands.command(slash_command=True, slash_command_guilds=[834505270075457627], help="Import posts from forums onto bot")
+    async def import_posts(self, ctx,
+        url=commands.Option(description="URL of forum page"),
+        posttype: typing.Literal["PTS Patches", "PTS Posts", "Live Patches", "Console Patches"]=commands.Option(description="Select a type for the posts to be saved as."),
+        stickies: typing.Literal[1, 0]=commands.Option(description="Find in stickies?")):
+        if ctx.author.id != 565097923025567755:
+            return await ctx.send("Fuck off", ephemeral=True)
+        await ctx.defer(trigger_typing=True)
+        url_part = 'http://forums.trovegame.com/'
+        forum = [posttype, 0, 0]
+        if int(stickies):
+            forum.append("stickies")
+        else:
+            forum.append("threads")
+        htmlhandler = html2text.HTML2Text()
+        htmlhandler.ignore_images = True
+        htmlhandler.ignore_emphasis = True
+        htmlhandler.body_width = 0
+        response = await (await self.session.get(url)).text()
+        soup = BeautifulSoup(response, "html.parser")
+        # Check database entries
+        saved = await self.bot.db.db_forums.find({"type": forum[0]}).to_list(length=999999)
+        saved_post_ids = [p["_id"] for p in saved]
+        # Get all posts
+        ct = soup.findAll("ol", id=forum[3])[0]
+        ct = ct.find_all("li", id=lambda x: x and x.startswith('thread_'))
+        posts = []
+        i = 0
+        for cta in ct:
+            regex = r"([a-z0-9_]*) on ((?:[0-9]{2}-[0-9]{2}-[0-9]{4}|today|yesterday) [0-9]{2}:[0-9]{2} (?:am|pm))"
+            raw_author = cta.find_all("a", {"class": lambda x: x and x.startswith('username')})[0].get("title")
+            author_data = re.findall(regex, raw_author, re.IGNORECASE)[0]
+            time = self.convert_forum_time(author_data[1])
+            post_header = cta.find_all('a', {"class": "title"})[0]
+            created_at = (datetime.strptime(time, "%m-%d-%Y %I:%M %p").replace(tzinfo=pytz.timezone("gmt"))+timedelta(hours=7)).astimezone(pytz.utc).timestamp()
+            post = {
+                "_id": int(cta.get('id').replace("thread_", "")),
+                "author": author_data[0],
+                "type": forum[0],
+                "title": post_header.string,
+                "link": url_part + post_header.get("href").split("&")[0],
+                "created_at": created_at,
+                "edited_at": created_at
+            }
+            #if i == 0 and post["_id"] == 124849:
+            #    print("PTS forums were cleared!")
+            # Avoid default posts
+            if post["_id"] in [106819, 124849]:
+                continue
+            i += 1
+            # if datetime.utcnow().timestamp() - post["created_at"] > 86400*3:
+            #     print("lol")
+            #     continue
+            response2 = await (await self.session.get(post["link"])).text()
+            soup2 = BeautifulSoup(response2, "html.parser")
+            htmlpost = soup2.findAll("div", {"class" : "content"})[0]
+            post["html"] = str(htmlpost)
+            text = htmlhandler.handle(str(htmlpost)).replace(" * ", "► ")
+            regex = r"\[(.*)\]\((.*)\)"
+            results = re.findall(regex, text)
+            for result in results:
+                if not result[0]:
+                    text = text.replace(f"![]({result[1]})", "")
+                else:
+                    t = result[0].replace("\n", "") 
+                    l = result[1].replace("\n", "")
+                    text = text.replace(f"[{result[0]}]({result[1]})", f" [{t}]({l}) ")
+            text = self.fixup_markdown_formatting(text)
+            post["content"] = text
+            if post["_id"] in saved_post_ids:
+                continue
+                sp = list(filter(lambda x: x["_id"] == post["_id"], saved))[0]
+                if sp and sp == post:
+                    continue
+                post["edited_at"] = int(datetime.utcnow().timestamp())
+            posts.append(post)
+        if posts:
+            for post in posts:
+                await self.bot.db.db_forums.update_one({"_id": post["_id"]}, {"$set": post}, upsert=True)
+            return await ctx.send(f"Done, Imported {len(posts)}")
+        await ctx.send("Done, No imported posts")
+
     @tasks.loop(seconds=180)
     async def forum_poster(self):
         await self.bot.wait_until_ready()
@@ -258,13 +339,13 @@ class Tasks(commands.Cog):
                 if not channel:
                     continue
                 for forum_post in forums_posts:
-                    if post_type[1] == "devtracker" and not (detect(forum_post["content"]) == "en" or detect(forum_post["title"]) == "en"):
-                        continue
                     e = discord.Embed()
                     e.color = discord.Color.random()
                     e.set_author(name=forum_post["author"])
                     e.timestamp = datetime.utcfromtimestamp(forum_post["created_at"])
                     if forum_post["created_at"] < channel.created_at.timestamp():
+                        continue
+                    if datetime.utcnow().timestamp() - forum_post["created_at"] > 604800: 
                         continue
                     e.title = forum_post["title"]
                     e.url = forum_post["link"]

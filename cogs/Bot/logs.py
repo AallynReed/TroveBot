@@ -36,18 +36,27 @@ class Logs(commands.Cog):
         if not server.chunked:
             await server.chunk()
             server = self.bot.get_guild(server.id)
+        dm = guild.owner
+        try:
+            async for log in server.audit_logs(limit=10, action=discord.AuditLogAction.bot_add):
+                if log.target == self.bot.user:
+                    dm = log.user
+                    break
+        except:
+            ...
         if len([m for m in server.members if not m.bot]) < 10 and server.owner.id not in self.bot.owners:
             try:
-                await guild.owner.send("Unfortunately I am unable to join your server, 10 members (non bots) are required for me to join.")
+                await dm.send("Unfortunately I am unable to join your server, 10 members (non bots) are required for me to join.")
             except:
-                pass
-            return await guild.leave()
-        if 620784025518473226 in [m.id for m in guild.bots]:
+                ...
+        elif 620784025518473226 in [m.id for m in guild.bots]:
             try:
-                await guild.owner.send("Unfortunately <@620784025518473226> `TEA` bot is in your server, since I don't support naming and shaming of people who've broke ToS (which doing so is also breaking ToS) I also don't support Surge's crusade to shame people, thus Trove bot will not join a server that has TEA bot in it. You can participate in TEA which is a great concept (on paper) but sadly making a bot to blacklist and exclude people is where I draw the line, and change as to start somewhere.\nApologies and if you want to discuss about this matter privately feel free to do so by hitting me up in trove's support server where I'll create a channel for you 🙂")
+                await dm.send("Unfortunately <@620784025518473226> `TEA` bot is in your server, since I don't support naming and shaming of people who've broke ToS (which doing so is also breaking ToS) I also don't support Surge's crusade to shame people, thus Trove bot will not join a server that has TEA bot in it. You can participate in TEA which is a great concept (on paper) but sadly making a bot to blacklist and exclude people is where I draw the line, and change as to start somewhere.\nApologies and if you want to discuss about this matter privately feel free to do so by hitting me up in trove's support server where I'll create a channel for you 🙂")
             except:
-                pass
-            return await guild.leave()
+                ...
+        else:
+            return
+        await guild.leave()
 
 
     @commands.Cog.listener("on_guild_remove")
