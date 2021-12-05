@@ -12,7 +12,7 @@ from utils.buttons import Traceback
 class Logs(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        
+
     @commands.Cog.listener("on_guild_join")
     async def guild_join(self, guild):
         await self.bot.db.database_check(guild.id)
@@ -57,7 +57,6 @@ class Logs(commands.Cog):
         else:
             return
         await guild.leave()
-
 
     @commands.Cog.listener("on_guild_remove")
     async def guild_leave(self, guild):
@@ -187,7 +186,6 @@ class Logs(commands.Cog):
             if tb:
                 await tb.wait()
                 await msg.edit(view=None)
-
 
     @commands.Cog.listener("on_command")
     async def command_logger(self, ctx, *args, **kwargs):

@@ -71,6 +71,8 @@ class Trove(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, message):
+        if message.author.bot:
+            return
         if not message.guild:
             return
         ctx = await self.bot.get_context(message)
@@ -606,6 +608,55 @@ class Trove(commands.Cog):
             except:
                 pass
         
+    @commands.command(slash_command=True, help="Get time information about Advent's Calendar 2021 event on forums")
+    async def advent_calendar(self, ctx):
+        days = {
+            1: "http://forums.trovegame.com/showthread.php?150105-Advent-Calendar-2021-Day-1",
+            2: "http://forums.trovegame.com/showthread.php?150104-Advent-Calendar-2021-Day-2",
+            3: "http://forums.trovegame.com/showthread.php?150103-Advent-Calendar-2021-Day-3",
+            4: "http://forums.trovegame.com/showthread.php?150102-Advent-Calendar-2021-Day-4",
+            5: "http://forums.trovegame.com/showthread.php?150101-Advent-Calendar-2021-Day-5",
+            6: "http://forums.trovegame.com/showthread.php?150100-Advent-Calendar-2021-Day-6",
+            7: "http://forums.trovegame.com/showthread.php?150099-Advent-Calendar-2021-Day-7",
+            8: "http://forums.trovegame.com/showthread.php?150098-Advent-Calendar-2021-Day-8",
+            9: "http://forums.trovegame.com/showthread.php?150097-Advent-Calendar-2021-Day-9",
+            10: "http://forums.trovegame.com/showthread.php?150096-Advent-Calendar-2021-Day-10",
+            11: "http://forums.trovegame.com/showthread.php?150095-Advent-Calendar-2021-Day-11",
+            12: "http://forums.trovegame.com/showthread.php?150094-Advent-Calendar-2021-Day-12",
+            13: "http://forums.trovegame.com/showthread.php?150093-Advent-Calendar-2021-Day-13",
+            14: "http://forums.trovegame.com/showthread.php?150092-Advent-Calendar-2021-Day-14",
+            15: "http://forums.trovegame.com/showthread.php?150091-Advent-Calendar-2021-Day-15",
+            16: "http://forums.trovegame.com/showthread.php?150090-Advent-Calendar-2021-Day-16",
+            17: "http://forums.trovegame.com/showthread.php?150089-Advent-Calendar-2021-Day-17",
+            18: "http://forums.trovegame.com/showthread.php?150088-Advent-Calendar-2021-Day-18",
+            19: "http://forums.trovegame.com/showthread.php?150087-Advent-Calendar-2021-Day-19",
+            20: "http://forums.trovegame.com/showthread.php?150086-Advent-Calendar-2021-Day-20",
+            21: "http://forums.trovegame.com/showthread.php?150085-Advent-Calendar-2021-Day-21",
+            22: "http://forums.trovegame.com/showthread.php?150084-Advent-Calendar-2021-Day-22",
+            23: "http://forums.trovegame.com/showthread.php?150083-Advent-Calendar-2021-Day-23",
+            24: "http://forums.trovegame.com/showthread.php?150082-Advent-Calendar-2021-Day-24",
+        }
+        now = datetime.utcnow().replace(microsecond=0) + timedelta(hours=1) # Forum Event time
+        tomorrow_add = timedelta(days=1) - timedelta(hours=now.hour+1, minutes=now.minute, seconds=now.second)
+        tomorrow = now + tomorrow_add
+        timestamp = int(tomorrow.timestamp())
+        e = discord.Embed()
+        e.color = 0xB11E31
+        e.set_author(name="Advent Calendar 2021", icon_url=self.bot.user.avatar.url)
+        e.description = "[**What is Advent's Calendar?**](http://forums.trovegame.com/showthread.php?150131)"
+        e.description += "\n[**Check the calendar**](http://forums.trovegame.com/showthread.php?150130)"
+        e.description += f"\n\nNext day <t:{timestamp}:R> | <t:{timestamp}:D>"
+        e.set_footer(text="Times represent event time and not real world.")
+        if now.day in days:
+            today = days.get(now.day)
+            e.description += f"\n\nToday's image <t:{int(now.timestamp()-3600)}:f> [**Go To Forums**]({today})"
+            response = await (await self.bot.AIOSession.get(today)).text()
+            soup = BeautifulSoup(response, "html.parser")
+            htmlpost = soup.findAll("div", {"class" : "content"})[0]
+            image = htmlpost.find_all('img', {"border": "0"})[1]
+            e.set_image(url=image.get("src"))
+        await ctx.send(embed=e, ephemeral=True)
+
     @commands.command(slash_command=True, help="Shows when luxion is around and it's inventory.", aliases=["lux"])
     async def luxion(self, ctx):
         if self.trovetime.is_luxion:            

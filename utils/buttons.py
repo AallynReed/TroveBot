@@ -275,9 +275,9 @@ class BuildsPickView(BaseView):
                 pass
 
 class GemBuildsButton(discord.ui.Button["GemBuildsView"]):
-    def __init__(self, view, emoji, row=0):
+    def __init__(self, view, text, emoji, row=0):
         disabled = not (view.build_arguments._class and view.build_arguments.build_type)
-        super().__init__(disabled=disabled, emoji=emoji, row=row)
+        super().__init__(label=text, disabled=disabled, emoji=emoji, row=row)
         self.build_view = view
 
     async def no_concurrent(self, interaction):
@@ -637,7 +637,7 @@ class GemBuildsView(BaseView):
             #self.add_item(GemBuildsToggle(self, "mod", "Mod Coeff", False, disabled=self.build_arguments.build_type=="health", row=3)) # Mod
             self.add_item(GemBuildsToggle(self, "primordial", "Cosmic Primordial", False, row=3)) # Primordial
             self.add_item(GemBuildsToggle(self, "crystal5", "Crystal 5", False, row=3)) # Crystal 5
-            page_button = GemBuildsButton(self, "📑", row=3)
+            page_button = GemBuildsButton(self, "Page Mode", "📑", row=3)
             self.add_item(page_button)
         if not just_started:
             asyncio.create_task(self.update_message(paginate, bool(self.build_arguments.build_type)))
@@ -654,7 +654,7 @@ class GemBuildsView(BaseView):
             self.pages = pages
             paginator = Paginator(self.ctx, self.pages, start_end=True, timeout=self.timeout)
             paginator.message = self.message
-            paginator.add_item(GemBuildsButton(self, "✏️", row=0))
+            paginator.add_item(GemBuildsButton(self, "Edit Mode", "✏️", row=0))
             await self.message.edit(content=None, embed=self.pages[0]["embed"], view=paginator)
             self.timeout = None
             if await paginator.wait():

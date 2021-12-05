@@ -37,8 +37,8 @@ class BuildsMaker():
     def _get_builds(self):
         if self.arguments.build_type == "health":
             light = 0
-            base_damage = self.base_health
-            critical_damage = self.base_healthper
+            base_damage = self.get_value("base_health")
+            critical_damage = self.get_value("base_healthper")
             base_damage += self.arguments._class.health
             critical_damage += self.arguments._class.healthper
             if self.arguments.subclass and self.arguments.subclass.short == "CM":
@@ -47,10 +47,10 @@ class BuildsMaker():
                 base_damage += 17290
                 critical_damage += 104
         else:
-            light = self.base_light
-            base_damage = self.base_damage
-            critical_damage = self.base_cd
-            bonus_damage = self.bonus_dmg
+            light = self.get_value("base_light")
+            base_damage = self.get_value("base_damage")
+            critical_damage = self.get_value("base_cd")
+            bonus_damage = self.get_value("bonus_dmg")
             base_damage += self.arguments._class.dmg
             critical_damage += self.arguments._class.cd
             if self.arguments._class.dmg_type == "PD":
@@ -115,6 +115,9 @@ class BuildsMaker():
         builds.sort(key=lambda x: [abs(x[2]-self.arguments.light),-x[0]])
         return builds
 
+    def _run_builder(self):
+        return self._get_builds()
+
     def get_pages(self, arguments):
         self._add_arguments(arguments)
         _class = self.arguments._class
@@ -128,7 +131,7 @@ class BuildsMaker():
         mod = self.arguments.mod
         ally = self.arguments.ally
         last_updated = datetime.utcfromtimestamp(1637821955)
-        builds = self._get_builds()
+        builds = self._run_builder()
         if self.arguments.build:
             for build in builds:
                 if build[1] != self.arguments.build:
@@ -201,40 +204,41 @@ class BuildsMaker():
         return pages
 
 
+
   # Values
+
+    def get_value(self, attr: str):
+        return sum(getattr(self, attr).values())
 
     @property
     def base_light(self):
-        items = {
-            "hat": 845,
-            "face": 845,
-            "weapon": 1690,
-            "banner": 900,
-            "food": 300,
-            "mastery": 1000,
-            "dragon": 50,
-            "ring": 325
+        return {
+            "Hat": 845,
+            "Face": 845,
+            "Weapon": 1690,
+            "Banner": 900,
+            "Food": 300,
+            "Mastery": 1000,
+            "Dragon": 50,
+            "Ring": 325
         }
-        return sum(items.values())
 
     @property
     def base_damage(self):
-        items = {
-            "weapon": 14300,
-            "ring": 14300,
-            "banner": 500
+        return {
+            "Weapon": 14300,
+            "Ring": 14300,
+            "Banner": 500
         }
-        return sum(items.values())
 
     @property
     def base_cd(self):
-        items = {
-            "weapon": 44.2,
-            "face": 44.2,
-            "hat": 44.2,
-            "dunno": 100
+        return {
+            "Weapon": 44.2,
+            "Face": 44.2,
+            "Hat": 44.2,
+            "Club": 100
         }
-        return sum(items.values())
 
     @property
     def pd_dragons(self):
@@ -250,35 +254,32 @@ class BuildsMaker():
 
     @property
     def bonus_dmg(self):
-        items = {
-            "mastery": 100,
+        return {
+            "mastery": 500*0.2,
             "club": 15
         }
-        return sum(items.values())
 
     @property
     def base_health(self):
-        items = {
-            "weapon": 18876,
-            "face": 28600,
-            "hat": 28600,
-            "ring": 14475,
-            "dragons": 39000,
-            "torch": 10000
+        return {
+            "Weapon": 18876,
+            "Face": 28600,
+            "Hat": 28600,
+            "Ring": 14475,
+            "Dragons": 39000,
+            "Torch": 10000
         }
-        return sum(items.values())
 
     @property
     def base_healthper(self):
-        items = {
-            "face": 234,
-            "hat": 234,
-            "dragons": 117,
-            "ally": 15,
-            "mastery": 300,
-            "fixture": 100
+        return {
+            "Face": 234,
+            "Hat": 234,
+            "Dragons": 117,
+            "Ally": 15,
+            "Mastery": 300,
+            "Fixture": 100
         }
-        return sum(items.values())
 
   # Helper
 

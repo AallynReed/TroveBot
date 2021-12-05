@@ -31,69 +31,86 @@ class Profiles(commands.Cog):
     async def metrics_detector(self, message):
         if not hasattr(self.bot, "blacklist"):
             return
-        ctx = await self.bot.get_context(message)
-        if ctx.author.bot:
+        if message.author.id in self.bot.blacklist:
             return
-        if ctx.author.id in self.bot.blacklist:
+        if message.author.bot and message.id != 511:
             return
-        if not ctx.message.attachments:
+        if not message.attachments:
+            if message.channel.id == 915277668096827442:
+                await message.delete()
             return
-        f = ctx.message.attachments[0]
+        f = message.attachments[0]
         if f.filename != "exportMetrics.txt":
             return
-        if not ctx.guild:
-            return await ctx.send("You can't submit profiles in DM's.")
-        content = (await f.read()).decode("utf-8")
-        await self.log(ctx, f"Started submitting a profile.\n[exportMetrics.txt]({str(await self.post_mystb_in(content))})")
-        try:
-            await ctx.message.delete()
-        except:
-            pass
-        try:
-            data = MetricsConverter(self.bot.keys["Bot"]["Profile Encryption"], content).get_profile()
-            server = 0 if data["Environment"] == "PTS" else 1
-            del data["Environment"]
-        except Exception as e:
-            return await self.log(ctx, f"Failed to submit a profile. **{e}**")
-        try:
-            await ctx.message.delete()
-        except:
-            pass
-        #return await ctx.send("Profiles are currently disabled, waiting for server detection to be added", delete_after=60)
-        quick_request = self.quick_request.get(str(message.author.id))
-        if not quick_request or datetime.utcnow().timestamp() - quick_request > 900:
-            if quick_request:
-                del self.quick_request[str(message.author.id)]
-            text = "You are about to submit a export metrics file to create a profile."
-            #text += "\n**Since PTS is online, all profiles will be redirected to PTS Database, to submit a Live profile, wait until PTS goes off.**\n"
-            text += "Are you sure you want to proceed?"
-            interaction = Confirm(ctx, timeout=30)
-            interaction.message = await ctx.send(text, view=interaction, delete_after=30)
-            await interaction.wait()
+        if message.id != 511:
+            content = await f.read()
+            ctx = await self.bot.get_context(message)
+            if not ctx.guild:
+                return await ctx.send("You can't submit profiles in DM's.")
+            await self.log(message, f"Started submitting a profile.\n[exportMetrics.txt]({str(await self.post_mystb_in(content))})")
             try:
-                await interaction.message.delete()
+                await ctx.message.delete()
             except:
                 pass
-            if interaction.value is None:
-                return await ctx.send("Time out! Profile submission was cancelled because you took to much time to answer.", delete_after=10)
-            elif not interaction.value:
-                return await ctx.send("Profile submission was cancelled.", delete_after=10)
-            self.quick_request[str(message.author.id)] = int(datetime.utcnow().timestamp())
+            try:
+                data = MetricsConverter(self.bot.keys["Bot"]["Profile Encryption"], content.decode("utf-8")).get_profile()
+                server = 0 if data["Environment"] == "PTS" else 1
+                del data["Environment"]
+            except Exception as e:
+                return await self.log(message, f"Failed to submit a profile. **{e}**")
+            if server:
+                await self.trovesaurus_submit_profile(content)
+            try:
+                await ctx.message.delete()
+            except:
+                pass
+            #return await ctx.send("Profiles are currently disabled, waiting for server detection to be added", delete_after=60)
+            quick_request = self.quick_request.get(str(message.author.id))
+            if not quick_request or datetime.utcnow().timestamp() - quick_request > 900:
+                if quick_request:
+                    del self.quick_request[str(message.author.id)]
+                text = "You are about to submit a export metrics file to create a profile."
+                #text += "\n**Since PTS is online, all profiles will be redirected to PTS Database, to submit a Live profile, wait until PTS goes off.**\n"
+                text += "Are you sure you want to proceed?"
+                interaction = Confirm(ctx, timeout=30)
+                interaction.message = await ctx.send(text, view=interaction, delete_after=30)
+                await interaction.wait()
+                try:
+                    await interaction.message.delete()
+                except:
+                    pass
+                if interaction.value is None:
+                    return await ctx.send("Time out! Profile submission was cancelled because you took to much time to answer.", delete_after=10)
+                elif not interaction.value:
+                    return await ctx.send("Profile submission was cancelled.", delete_after=10)
+                self.quick_request[str(message.author.id)] = int(datetime.utcnow().timestamp())
+        else:
+            content = f
+            try:
+                data = MetricsConverter(self.bot.keys["Bot"]["Profile Encryption"], content).get_profile()
+                server = 0 if data["Environment"] == "PTS" else 1
+                del data["Environment"]
+            except Exception as e:
+                print(e)
+                return
         try:
-            name, _class = await self.save_profile(ctx.author, data, server)
-        except Exception as e:
-            print(e)
-            return await ctx.send(f"You can't submit this profile as it already belongs to someone else or the stats are invalid, if you think this is wrong contact <@565097923025567755> ||Sly#0511||")
-        await ctx.send("Profile submission was successful." + (" **(Quick request mode on)**" if quick_request else ""), delete_after=10)
-        await self.log(ctx, f"**{name}** submitted a profile for {_class}.\n")
+            name, _class = await self.save_profile(message.author, data, server)
+        except:
+            if message.id != 511:
+                return await ctx.send(f"You can't submit this profile as it already belongs to someone else or the stats are invalid, if you think this is wrong contact <@565097923025567755> ||Sly#0511||\nMetrics were still submitted to Trovesaurus at "+f'<https://trovesaurus.com/metrics/account/{data["Player Info"]["Name"]}>')
+        if message.id != 511:
+            await ctx.send("Profile submission was successful." + (f"\nCheck out at <https://trovesaurus.com/metrics/account/{name}>" if server else "") + (" **(Quick request mode on)**" if quick_request else ""))
+        await self.log(message, f"**{name}** submitted a profile for {_class}.\n")
 
-    async def trovesaurus(self, profile):
-        data = {"payload": json.dumps(profile), "Token": self.bot.keys["Trovesaurus"]["Token"]}
-        for _ in range(5):
-            async with self.session.post("https://trovesaurus.com/stuff", data=data) as request:
-                if request.status == 200:
-                    break
-            await asyncio.sleep(600)
+    async def trovesaurus_submit_profile(self, file):
+        data = {
+            "SubmitMetrics": "cool", 
+            "Token": self.bot.keys["Trovesaurus"]["Token"],
+            "File": file
+        }
+        async with self.session.post("https://trovesaurus.com/metrics", data=data) as request:
+            if request.status != 200:
+                print("An error occured sending metrics to trovesaurus.")
 
     async def post_mystb_in(self, content):
         payload = {"meta": [{"index":0, "syntax":"properties"}]}
@@ -111,22 +128,28 @@ class Profiles(commands.Cog):
             return "https://mystb.in/" + data["pastes"][0]["id"] + ".text"
         return
 
-    async def log(self, ctx, text):
+    async def log(self, message, text):
         e = discord.Embed()
         e.color = discord.Color.random()
-        e.timestamp = ctx.message.created_at
+        e.timestamp = message.created_at
         e.description = text
-        e.set_author(name=ctx.author, icon_url=ctx.author.avatar)
-        e.set_thumbnail(url=ctx.guild.icon)
-        e.set_footer(text=f"{ctx.guild.name} - {ctx.guild.id}")
+        if message.id != 511:
+            e.set_author(name=message.author, icon_url=message.author.avatar)
+        e.set_thumbnail(url=message.guild.icon or discord.Embed.Empty)
+        e.set_footer(text=f"{message.guild.name} - {message.guild.id}")
         await self.bot.profiles_logger.send(embed=e, username="Profiles")
 
     async def save_profile(self, user, data, server=1):
         odata = await self.bot.db.db_profiles.find_one({"Name": {"$regex": f'(?i){data["Player Info"]["Name"]}'}, "Bot Settings.Server": server})
-        if odata and odata["discord_id"] != user.id:
-            raise Exception("Nope")
-        if not odata:
-            odata = await self.bot.db.db_profiles.find_one({"discord_id": user.id, "Bot Settings.Server": server})
+        if user.id != 511:
+            if odata and odata["discord_id"] != user.id:
+                raise Exception("Nope")
+            if not odata:
+                odata = await self.bot.db.db_profiles.find_one({"discord_id": user.id, "Bot Settings.Server": server})
+        else:
+            if not odata:
+                raise Exception("Nope")
+            user.id = odata["discord_id"]
         profile, _class = self.get_profile(user.id, data, odata=odata, server=server)
         if not odata:
             await self.bot.db.db_profiles.insert_one(profile)

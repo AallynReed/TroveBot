@@ -37,6 +37,8 @@ class CommandHandler(commands.Cog):
 
     @commands.Cog.listener("on_message")
     async def command_handler(self, message):
+        if message.author.bot:
+            return
         ctx = await self.bot.get_context(message)
         if not message.guild and message.author.id != self.bot.user.id:
             if ctx.valid:
@@ -44,8 +46,6 @@ class CommandHandler(commands.Cog):
             files = [await f.to_file() for f in message.attachments]
             return await self.bot.dm_logger.send(content=message.content, files=files, username=str(message.author) + f" [{message.author.id}]", avatar_url=message.author.avatar)
         if not message.guild:
-            return
-        if message.author.bot:
             return
         if "owners" not in dir(self.bot) or message.author.id in self.bot.owners:
             return
