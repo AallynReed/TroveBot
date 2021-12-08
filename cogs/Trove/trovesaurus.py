@@ -42,39 +42,6 @@ class Trovesaurus(commands.Cog):
         ]
         return items
 
-    # @commands.command(slash_command=True, help="Search for items, decos or styles on Trovesaurus.")
-    # async def search(self, ctx, *, search=commands.Option(name="search", description="What to search on Trovesaurus?")):
-    #     items = []
-    #     navs = ["items", "deco", "styles"]
-    #     async with self.session.post("https://trovesaurus.com/search/", data={"Search": search}, allow_redirects=True) as request:
-    #         soup = BeautifulSoup(await request.text(), "html.parser")
-    #         nav_list = soup.find("ul", id="searchResultsNav")
-    #         nav = nav_list.findAll("li")[0].find("a").contents[0].strip()
-    #         if nav.lower() == "collections":
-    #             items.extend(self._get_figures(soup, search, nav))
-    #         nav_bar = nav_list.findAll("a", {"class": "nav-link"})
-    #         for nav in nav_bar:
-    #             nav = nav.contents[0].strip().lower()
-    #             if nav in navs:
-    #                 serch = search.replace(" ", "%20")
-    #                 async with self.session.post(f"https://trovesaurus.com/search/{serch}/{nav}") as req:
-    #                     soup = BeautifulSoup(await req.text(), "html.parser")
-    #                     items.extend(self._get_figures(soup, search, nav.capitalize()))
-    #         if not items:
-    #             return await ctx.send(f"No items match `{search}` in the following categories: `Collections`, `{'`, `'.join([i.capitalize() for i in navs])}`")
-    #         e = discord.Embed()
-    #         e.color = discord.Color.random()
-    #         e.description = ""
-    #         e.set_author(name=f"Results for search '{search}' at Trovesaurus", icon_url="https://trovesaurus.com/images/logos/Sage_64.png?1")
-    #         for item in items[:8]:
-    #             e.description += f"[`{item['nav']}/{item['name']}`]({item['link']})\n"
-    #         if len(items) > 8:
-    #             e.description += f"... and more\n"
-    #         if len(items) == 1:
-    #             e.set_thumbnail(url=items[0]["image"])
-    #         e.description += f"\nGet more results for this search at [Trovesaurus]({request.url})"
-    #         await ctx.send(embed=e, reference=ctx.message.reference, mention_author=True)
-
     @commands.command(slash_command=True, help="Search for items, decos or styles on Trovesaurus.")
     async def search(self, ctx, *, search=commands.Option(name="search", description="What to search on Trovesaurus?")):
         whitelist = [
@@ -245,7 +212,7 @@ class Trovesaurus(commands.Cog):
                         pass
                     break
 
-    @commands.command(name="reportbug", aliases=["bugreport", "rbug", "bugr"])
+    @commands.command(name="reportbug", aliases=["bugreport", "rbug", "bugr"], hidden=True)
     @commands.cooldown(1, 1800, commands.BucketType.guild)
     async def _report_a_bug(self, ctx):
         if ctx.channel.id != 832582272011599902:
@@ -639,7 +606,7 @@ class Trovesaurus(commands.Cog):
                 await self.bot.AIOSession.post("https://trovesaurus.com/discord/issues", data={"payload": json.dumps(data), "Token": self.bot.keys["Trovesaurus"]["Token"]})
                 break
 
-    @commands.command()
+    @commands.command(hidden=True)
     @perms.owners()
     async def update_allies(self, ctx):
         result = await self.bot.AIOSession.get("https://trovesaurus.com/collection/Pets.json")

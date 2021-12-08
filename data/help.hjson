@@ -278,6 +278,22 @@
         "hidden": false
     },
 # General
+    "advent_calendar": {
+        "module": "general",
+        "description": "Shows latest image and when the next day of advent calendar will be.",
+        "example": "{prefix}advent_calendar",
+        "subcommands": {},
+        "aliases": [],
+        "hidden": false
+    }
+    "chats": {
+        "module": "general",
+        "description": "Shows list of popular in game chats.",
+        "example": "{prefix}chats",
+        "subcommands": {},
+        "aliases": [],
+        "hidden": false
+    },
     "corruxion": {
         "module": "general",
         "description": "Shows if and when and for how long is corruxion is available.",
@@ -359,6 +375,22 @@
         ],
         "hidden": false
     },
+    "meta": {
+        "module": "general",
+        "description": "Shows current class Meta in the game",
+        "example": "{prefix}meta",
+        "subcommands": {},
+        "aliases": [],
+        "hidden": false
+    },
+    "paragon_rewards": {
+        "module": "general",
+        "description": "Shows paragon reward for a given level range.",
+        "example": "{prefix}paragon_rewards 1000 500",
+        "subcommands": {},
+        "aliases": [],
+        "hidden": false
+    },
     "playingtrove": {
         "module": "general",
         "description": "Shows all people playing trove in the server. **Depends on Discord Activity**",
@@ -367,6 +399,14 @@
         "aliases": [
             "pltrove"
         ],
+        "hidden": false
+    },
+    "search_ally": {
+        "module": "general",
+        "description": ".",
+        "example": "**Slash Command only**\n/search_ally",
+        "subcommands": {},
+        "aliases": [],
         "hidden": false
     },
     "server_time": {
@@ -415,14 +455,54 @@
         "aliases": [],
         "hidden": false
     },
-    "findmod": {
+    "imgur_upload": {
+        "module": "miscellaneous",
+        "description": "Upload an image to imgur.",
+        "example": "{prefix}iu [Attachment]",
+        "subcommands": {},
+        "aliases": [
+            "iu"
+        ],
+        "hidden": false
+    },
+    "join_info": {
+        "module": "miscellaneous",
+        "description": "Shows info about the join of a user.",
+        "example": "{prefix}join_info @User",
+        "subcommands": {},
+        "aliases": [
+            "ji"
+        ],
+        "hidden": false
+    },
+    "join_info_list": {
+        "module": "miscellaneous",
+        "description": "Shows a list of users who've joined the server in a range of time from creating account.",
+        "example": "{prefix}luxion",
+        "subcommands": {},
+        "aliases": [
+            "jil"
+        ],
+        "hidden": false
+    },
+    "mutual_servers": {
+        "module": "miscellaneous",
+        "description": "Check out mutual servers with bot.",
+        "example": "{prefix}mutual @User",
+        "subcommands": {},
+        "aliases": [
+            "mutual"
+        ],
+        "hidden": false
+    },
+    "search_mod": {
         "module": "miscellaneous",
         "description": "Search for mods in Trovesaurus database.",
         "example": "{prefix}findmod Sageosaurus",
         "subcommands": {},
         "aliases": [
             "sm",
-            "search_mod",
+            "find_mod",
             "mod",
             "searchmod",
             "find_mod"
@@ -447,6 +527,14 @@
         "aliases": [
             "iu"
         ],
+        "hidden": false
+    },
+    "invite": {
+        "module": "miscellaneous",
+        "description": "Show invite for the bot",
+        "example": "{prefix}invite",
+        "subcommands": {},
+        "aliases": [],
         "hidden": false
     },
     "ping": {

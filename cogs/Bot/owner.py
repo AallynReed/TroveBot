@@ -18,7 +18,17 @@ class Owner(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command()
+    @commands.command(hidden=True)
+    @perms.admins()
+    async def helpless(self, ctx):
+        data = hjson.loads(open("data/help.hjson").read()).keys()
+        commands = []
+        for command in self.bot.commands:
+            if command.name not in data and not command.hidden:
+                commands.append(command.name)
+        await ctx.send("\n".join(commands))
+
+    @commands.command(hidden=True)
     @perms.owners()
     async def export_chat(self, ctx, limit=100):
         transcript = await chat_exporter.export(ctx.channel, limit)
@@ -31,13 +41,13 @@ class Owner(commands.Cog):
         
         await ctx.reply(file=_file)        
 
-    @commands.command()
+    @commands.command(hidden=True)
     @perms.owners()
     async def relocale(self, ctx):
         self.bot._load_locales()
         await ctx.send("Reloaded languages.")
 
-    @commands.command()
+    @commands.command(hidden=True)
     @perms.owners()
     async def clearm(self, ctx, amount: int):
         i = 0
@@ -53,7 +63,7 @@ class Owner(commands.Cog):
                 break
         #await ctx.send(f"Deleted {i} messages.", delete_after=5)
 
-    @commands.command()
+    @commands.command(hidden=True)
     @perms.owners()
     async def dm_owners(self, ctx, *, content):
         done = []
@@ -77,7 +87,7 @@ class Owner(commands.Cog):
                 pass
         await ctx.send(f"Sent to {x}/{i}, failed {y}")
 
-    @commands.command()
+    @commands.command(hidden=True)
     @perms.owners()
     async def dm(self, ctx, user: discord.User, *, content=None):
         try:
@@ -89,7 +99,7 @@ class Owner(commands.Cog):
         except Exception as e:
             await ctx.send(str(e))
 
-    @commands.command()
+    @commands.command(hidden=True)
     @perms.admins()
     async def restart(self, ctx):
         if ctx.author.id == 565097923025567755:
@@ -97,14 +107,14 @@ class Owner(commands.Cog):
             await self.bot.change_presence(status=discord.Status.offline)
             os._exit(-1)
 
-    @commands.command()
+    @commands.command(hidden=True)
     @perms.admins()
     async def restartweb(self, ctx):
         if ctx.author.id == 565097923025567755:
             await ctx.send("Restarting website!")
             os.system("screen -XS slynxweb quit")
 
-    @commands.command()
+    @commands.command(hidden=True)
     @perms.admins()
     async def reload_values(self, ctx):
         self.bot.Trove.values._preload(True)
@@ -159,7 +169,7 @@ class Owner(commands.Cog):
                 embed = discord.Embed(description=str(e), colour=self.bot.error)
                 await ctx.send(embed=embed)
 
-    @commands.command(name="exception", aliases=["error", "lasterror"])
+    @commands.command(name="exception", aliases=["error", "lasterror"], hidden=True)
     @perms.admins()
     async def last_exception(self, ctx):
         if ctx.author.id not in self.bot.admin_ids:
@@ -172,7 +182,7 @@ class Owner(commands.Cog):
                 await ctx.author.send(f"```py\n{self.bot._last_exception}```")
             await ctx.message.add_reaction("✅")
 
-    @commands.command(aliases=["modules", "mods"])
+    @commands.command(aliases=["modules", "mods"], hidden=True)
     @perms.admins()
     async def cogs(self, ctx):
         "Shows all the cogs."
@@ -194,7 +204,7 @@ class Owner(commands.Cog):
         embed=discord.Embed(colour=self.bot.comment, title=f"Modules - {len(modules)}", description=modulesi)
         await ctx.reply(embed=embed)
 
-    @commands.command(aliases=["ul"])
+    @commands.command(aliases=["ul"], hidden=True)
     @perms.admins()
     async def unload(self, ctx, *, mod: str=None):
         """unloads a part of the bot."""
@@ -218,7 +228,7 @@ class Owner(commands.Cog):
             self.bot.unload_extension(module.load)
             await ctx.reply(f"Unloaded **{module.name}**")
 
-    @commands.command(aliases=["load"])
+    @commands.command(aliases=["load"], hidden=True)
     @perms.admins()
     async def reload(self, ctx, *, mod: str=None):
         modules = self.bot.modules("cogs/")
@@ -247,7 +257,7 @@ class Owner(commands.Cog):
             except Exception as e:
                 await ctx.reply(f"```py\n#Failed to reload {module.name}\n\n{str(type(e))}: {e}```")
 
-    @commands.command(aliases=["sf"])
+    @commands.command(aliases=["sf"], hidden=True)
     @perms.owners()
     async def send_file(self, ctx, *, file):
         if ctx.author.id not in self.bot.admin_ids:
@@ -258,7 +268,7 @@ class Owner(commands.Cog):
         except:
             await ctx.send("No file found.")
 
-    @commands.command(aliases=["rf"])
+    @commands.command(aliases=["rf"], hidden=True)
     @perms.owners()
     async def receive_file(self, ctx, *, file):
         if ctx.author.id not in self.bot.admin_ids:

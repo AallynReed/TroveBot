@@ -241,7 +241,7 @@ class Tasks(commands.Cog):
         text = re.sub(r'^\n+', '', text)
         return text
 
-    @commands.command(slash_command=True, slash_command_guilds=[834505270075457627], help="Import posts from forums onto bot")
+    @commands.command(slash_command=True, slash_command_guilds=[834505270075457627], help="Import posts from forums onto bot", hidden=True)
     async def import_posts(self, ctx,
         url=commands.Option(description="URL of forum page"),
         posttype: typing.Literal["PTS Patches", "PTS Posts", "Live Patches", "Console Patches"]=commands.Option(description="Select a type for the posts to be saved as."),

@@ -132,7 +132,7 @@ class OnlyFans(commands.Cog):
                 if m.id not in verified:
                     await self.bot.utils.take_roles(m, role)
 
-    @commands.command(name="levi")
+    @commands.command(name="levi", hidden=True)
     @commands.cooldown(1, 180, commands.BucketType.default)
     async def __levi(self, ctx, levi=None):
         await ctx.message.delete()
@@ -175,7 +175,7 @@ class OnlyFans(commands.Cog):
         except:
             pass
 
-    @commands.command()
+    @commands.command(hidden=True)
     @commands.cooldown(1, 180, commands.BucketType.default)
     async def ramp(self, ctx):
         if ctx.channel.id != 812762716908552272:
@@ -190,7 +190,7 @@ class OnlyFans(commands.Cog):
         else:
             ctx.command.reset_cooldown(ctx)
 
-    @commands.command(aliases=["lo"])
+    @commands.command(aliases=["lo"], hidden=True)
     async def levi_odds(self, ctx):
         guild = self.bot.get_guild(567505514108289044)
         ch = guild.get_channel(813061157475713035)
@@ -204,7 +204,7 @@ class OnlyFans(commands.Cog):
             x += int(values[1].split(" ")[0])
         await ctx.send(f"{i}/{x} -> **{round(i/x*100, 3)}%**")
 
-    @commands.command()
+    @commands.command(hidden=True)
     @commands.cooldown(2, 600, commands.BucketType.default)
     @perms.admins()
     async def pts_status(self, ctx):

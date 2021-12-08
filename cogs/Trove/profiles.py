@@ -98,8 +98,12 @@ class Profiles(commands.Cog):
         except:
             if message.id != 511:
                 return await ctx.send(f"You can't submit this profile as it already belongs to someone else or the stats are invalid, if you think this is wrong contact <@565097923025567755> ||Sly#0511||\nMetrics were still submitted to Trovesaurus at "+f'<https://trovesaurus.com/metrics/account/{data["Player Info"]["Name"]}>')
+            return
         if message.id != 511:
-            await ctx.send("Profile submission was successful." + (f"\nCheck out at <https://trovesaurus.com/metrics/account/{name}>" if server else "") + (" **(Quick request mode on)**" if quick_request else ""))
+            text = f"Profile for **{name}** as **{_class}** was submitted successfully."
+            text += f"\nCheck out at <https://trovesaurus.com/metrics/account/{name}>" if server and message.guild.id == 118027756075220992 else ""
+            text += " **(Quick request mode on)**" if quick_request else ""
+            await ctx.send(text)
         await self.log(message, f"**{name}** submitted a profile for {_class}.\n")
 
     async def trovesaurus_submit_profile(self, file):

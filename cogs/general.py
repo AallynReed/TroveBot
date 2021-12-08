@@ -21,7 +21,7 @@ class General(commands.Cog):
         self.bot = bot
         self.ocr_key = "79f3666bba88957"
 
-    @commands.command()
+    @commands.command(hidden=True)
     async def tooltip(self, ctx):
         response = await self.bot.AIOSession.get("https://trovesaurus.com/collections/pet/delve_hermitcrab_volcano.json")
         data = await response.text()
@@ -36,7 +36,6 @@ class General(commands.Cog):
             return await ctx.send("Can't get tooltip right now, try again later.")
         img = BytesIO(await request.read())
         await ctx.reply(file=discord.File(img, filename="image.png"))
-          
 
     @commands.command()
     async def slash(self, ctx):
@@ -45,19 +44,6 @@ class General(commands.Cog):
         e.description += "[link](https://discord.com/oauth2/authorize?client_id=425403525661458432&scope=applications.commands)"
         e.description += "\nOnly use this link if the bot is already in your server but doesn't have slash commands, **you do not need to remove bot and readd**"
         await ctx.send(embed=e)
-
-    @commands.command(aliases=["ss", "serverstatus"])
-    async def server_status(self, ctx, server: typing.Literal["pts", "live-eu", "live-us"]):
-        results = await self.bot.utils.PingTroveServer(server)
-        e = discord.Embed()
-        e.color = discord.Color.random()
-        e.timestamp = datetime.utcfromtimestamp(self.bot.uptime)
-        server_name = " ".join([w.capitalize() for w in server.split("-")])
-        e.set_author(name=server_name + " Status", icon_url=self.bot.user.avatar)
-        for server, status in results.items():
-            status = "Online" if status else "Offline"
-            e.add_field(name=server.capitalize(), value=status)
-        await ctx.reply(embed=e)
 
     @commands.command(slash_command=True, help="Display informtion about the bot", aliases=["bot_info"])
     async def botinfo(self, ctx):
@@ -89,7 +75,7 @@ class General(commands.Cog):
         e.set_author(name=f"Mutual servers with {user}", icon_url=user.avatar)
         await ctx.reply(embed=e)
 
-    @commands.command(aliases=["tfi"])
+    @commands.command(aliases=["tfi"], hidden=True)
     async def text_from_image(self, ctx):
         if not ctx.message.attachments or ctx.message.attachments[0].content_type not in ["image/png", "image/jpeg"]:
             return await ctx.send("Send a valid image file.")
@@ -211,20 +197,6 @@ class General(commands.Cog):
                 e.add_field(name="\u200b", value="\u200b")
         await ctx.reply(embed=e)
 
-    @commands.command()
-    async def timezones(self, ctx, year: int, month: int, day: int, hour: int, minute: int=0):
-        def str_time(time, is_full=False):
-            return (time.strftime("%A, %B %-d at ") if is_full else "") + time.strftime("%-H:%M %p")
-        try:
-            now = datetime(year=year, month=month, day=day, hour=hour, minute=minute)
-        except:
-            return await ctx.send("Uh Oh invalid date was provided.")
-        pt = str_time(now.astimezone(pytz.timezone("America/Los_Angeles")))
-        ct = str_time(now.astimezone(pytz.timezone("America/Chicago")))
-        cest = str_time(now.astimezone(pytz.timezone("Europe/Berlin")))
-        await ctx.send(f"{str_time(now, True)} UTC / {pt} PT / {ct} CT / {cest} CEST")
-
-
     @commands.command(slash_command=True, help="Send feedback to bot developer")
     @commands.bot_has_permissions(embed_links=1)
     @commands.cooldown(1, 60, commands.BucketType.user)
@@ -238,15 +210,6 @@ class General(commands.Cog):
     @commands.command(slash_command=True, help="Get an invite to bot support server")
     async def support(self, ctx):
         await ctx.send("Join support.\nhttps://discord.gg/YAY3jz4rNG")
-
-    @commands.command()
-    @commands.bot_has_permissions(manage_webhooks=1)
-    @perms.has_permissions("manage_guild")
-    async def announce(self, ctx, *, text):
-        await ctx.message.delete()
-        wb = await ctx.channel.create_webhook(name=ctx.guild.name)
-        await wb.send(text, username=ctx.guild.name, avatar_url=ctx.guild.icon, allowed_mentions=discord.AllowedMentions.none())
-        await wb.delete()
 
     @commands.command(aliases=["ji"])
     @commands.bot_has_permissions(embed_links=1)
@@ -351,7 +314,7 @@ class General(commands.Cog):
 
     @commands.command(aliases=["iu"])
     @commands.bot_has_permissions(embed_links=1)
-    async def imgurupload(self, ctx):
+    async def imgur_upload(self, ctx):
         try:
             try:
                 await ctx.message.delete()

@@ -24,6 +24,13 @@ class Calculations(commands.Cog):
             return await ctx.send("You can only do up to 6 gems at a time.")
         def get_gem_cost(gem):
             gem_cost = {}
+            gem_completions = []
+            total_boosts = 0
+            for boosts, percentage in gem:
+                total_boosts += int(boosts) + 1
+                gem_completions.append((100 - float(percentage)) * (int(boosts) + 1))
+            total_weight = sum(gem_completions)
+            completion = 1 - (total_weight / (total_boosts * 100))
             for i in range(len(gem)):
                 stat = gem[i]
                 if stat:
@@ -31,7 +38,7 @@ class Calculations(commands.Cog):
                     gem_cost[f"{i}-{stat[0]}:{stat[1]}"] = [focuses, resources]
                 else:
                     gem_cost[str(i)] = None
-            return gem_cost
+            return gem_cost, completion
         gems = [get_gem_cost(gem) for gem in augmentation["gems"]]
         e = discord.Embed(description=f"Prefered: **{augmentation['focus'].capitalize()}**", color=self.bot.comment)
         e.set_author(name="Gem Augmentation", icon_url="https://i.imgur.com/st2CWEz.png")
@@ -39,7 +46,7 @@ class Calculations(commands.Cog):
         e.set_footer(text=r"UI rounds values, so costs might not be 100% correct but it's a pretty accurate estimate")
         total_costs = {}
         for i in range(len(gems)):
-            gem = gems[i]
+            gem = gems[i][0]
             costs = {}
             for stat, value in gem.items():
                 if not value:
@@ -60,7 +67,7 @@ class Calculations(commands.Cog):
             for resource, cost in costs.items():
                 if cost > 0:
                     cost_text += f"{resource}: **{cost:,}**\n"
-            e.add_field(name=f"**Gem {i+1} Cost**", value=cost_text, inline=False)
+            e.add_field(name=f"**Gem {i+1} Cost** | **{round(gems[i][1]*100, 2)}% Augmented**", value=cost_text, inline=False)
         if len(augmentation["gems"]) > 1:
             cost_text = ""
             for resource, cost in total_costs.items():
@@ -143,7 +150,6 @@ class Calculations(commands.Cog):
             return
         next_level, points = self.bot.utils.mr_to_points(level)
         await ctx.send(f"Level: **{level}**\nMastery Points: **{points}**\nTo next Level: **{next_level}**")
-
 
 def setup(bot):
     bot.add_cog(Calculations(bot))

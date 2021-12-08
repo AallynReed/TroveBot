@@ -51,9 +51,9 @@
         "mastery": "0",
         "mastery_geode": "0",
         "name": "Batsicle",
-        "powerrank": "0",
-        "tooltip": "",
-        "updated_at": 1637100534
+        "powerrank": "5",
+        "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>3 Jump</li>\r\n</ul>",
+        "updated_at": 1638984164
     },
     "bat_lucky": {
         "blueprint": "c_c_bat_lucky_ui[skyrider3217].png",
@@ -499,9 +499,9 @@
         "mastery": "0",
         "mastery_geode": "0",
         "name": "Candy Socking",
-        "powerrank": "0",
-        "tooltip": "",
-        "updated_at": 1637100534
+        "powerrank": "5",
+        "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>8 Jump</li>\r\n</ul>",
+        "updated_at": 1638984164
     },
     "boot_redhat": {
         "blueprint": "2021/allies/boot_redhat/c_c_boot_redhat_ui.png",
@@ -1199,9 +1199,9 @@
         "mastery": "0",
         "mastery_geode": "0",
         "name": "Sushinoko",
-        "powerrank": "0",
-        "tooltip": "",
-        "updated_at": 1637100534
+        "powerrank": "5",
+        "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>6 Maximum Energy</li>\r\n</ul>",
+        "updated_at": 1638984164
     },
     "cragglepod_candle": {
         "blueprint": "c_c_cragglepod_candle_ui[octarock].png",
@@ -3859,9 +3859,9 @@
         "mastery": "0",
         "mastery_geode": "0",
         "name": "Laysback",
-        "powerrank": "0",
-        "tooltip": "",
-        "updated_at": 1637100534
+        "powerrank": "5",
+        "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>24 Magic Damage</li>\r\n</ul>",
+        "updated_at": 1638984164
     },
     "hoppet_faespirit": {
         "blueprint": "2021/allies/fae_forest_spirit/c_c_hoppet_faespirit_ui.png",
@@ -3929,9 +3929,9 @@
         "mastery": "0",
         "mastery_geode": "0",
         "name": "Momo",
-        "powerrank": "0",
-        "tooltip": "",
-        "updated_at": 1637100534
+        "powerrank": "5",
+        "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>15.0% Critical Damage</li>\r\n</ul>",
+        "updated_at": 1638984164
     },
     "jelotl_rainbowcow": {
         "blueprint": "2021/allies/jelotl_rainbowcow/c_c_jelotl_rainbowcow_ui.png",
@@ -5091,9 +5091,9 @@
         "mastery": "0",
         "mastery_geode": "0",
         "name": "Frolicking Fable",
-        "powerrank": "0",
-        "tooltip": "",
-        "updated_at": 1637100534
+        "powerrank": "5",
+        "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>8 Jump</li>\r\n</ul>",
+        "updated_at": 1638984164
     },
     "panda_pug": {
         "blueprint": "2021/allies/panda_pug/c_c_panda_ui.png",
@@ -5329,9 +5329,9 @@
         "mastery": "0",
         "mastery_geode": "0",
         "name": "Boy of Balance",
-        "powerrank": "0",
-        "tooltip": "",
-        "updated_at": 1637100534
+        "powerrank": "5",
+        "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>50 Light</li>\r\n</ul>",
+        "updated_at": 1638984164
     },
     "pebble_grumpy": {
         "blueprint": "2021/allies/pebble_grumpy/c_c_pebble_grumpy_ui.png",
@@ -5749,9 +5749,9 @@
         "mastery": "0",
         "mastery_geode": "0",
         "name": "Plush Prismasaur",
-        "powerrank": "0",
-        "tooltip": "",
-        "updated_at": 1637100534
+        "powerrank": "5",
+        "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>1.0% Critical Hit</li>\r\n</ul>",
+        "updated_at": 1638984164
     },
     "quarble_triceratops": {
         "blueprint": "c_c_quarble_triceratops_ui[skythevirus].png",
@@ -8336,12 +8336,12 @@
         "designer": "NotShyGuy",
         "file": "Pets",
         "filename": "collections/pet/wheel_potatocat",
-        "mastery": "0",
+        "mastery": "5",
         "mastery_geode": "0",
         "name": "Spuddy",
         "powerrank": "0",
-        "tooltip": "",
-        "updated_at": 1637100534
+        "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>1 Maximum Energy</li>\r\n</ul>",
+        "updated_at": 1638984164
     },
     "wheel_raverenewus": {
         "blueprint": "2020/c_c_wheel_renewus_ui.png",
@@ -8619,9 +8619,9 @@
         "mastery": "0",
         "mastery_geode": "0",
         "name": "Otto M. Umpire",
-        "powerrank": "0",
-        "tooltip": "",
-        "updated_at": 1637100534
+        "powerrank": "5",
+        "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>3 Jump</li>\r\n</ul>",
+        "updated_at": 1638984164
     },
     "zardille_vaporwave": {
         "blueprint": "c_c_zardille_vaporwave_ui[thesilverfoxe].png",

@@ -29,7 +29,7 @@ class Help(commands.Cog):
                 return command
         return None
 
-    @commands.command()
+    @commands.command(hidden=True)
     @commands.bot_has_permissions(embed_links=1, add_reactions=1)
     async def help(self, ctx, commandname=None, *, subcommand=None):
         if ctx.guild.id in [118027756075220992] and commandname:

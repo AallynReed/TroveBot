@@ -81,7 +81,7 @@ class Leaderboards(commands.Cog):
         dataframe = pd.DataFrame(lb, index=list(range(1, len(lb)+1)),columns=["Player", "Poop Made"])
         return dataframe
 
-    @commands.group(invoke_without_command=True, aliases=["lb"])
+    @commands.group(invoke_without_command=True, aliases=["lb"], hidden=True)
     async def leaderboard(self, ctx, leaderboard=None):
         e = discord.Embed()
         e.color = discord.Color.random()

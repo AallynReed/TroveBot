@@ -11,7 +11,7 @@ class Database(commands.Cog):
         self.bot = bot
         self.backup_directory = "dbbackups"
 
-    @commands.command()
+    @commands.command(hidden=True)
     async def full_backup(self, ctx):
         if ctx.author.id != 565097923025567755:
             return
@@ -33,7 +33,7 @@ class Database(commands.Cog):
                 await ctx.send(f"Backed up **{database}/{collection}**")
         await ctx.send("Finished database backups.")
 
-    @commands.command()
+    @commands.command(hidden=True)
     async def fullrestore(self, ctx):
         if ctx.author.id != 565097923025567755:
             return
