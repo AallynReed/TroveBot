@@ -120,6 +120,7 @@ class Trove(commands.AutoShardedBot):
         setattr(self, "Trove", Dummy())
         setattr(self.Trove, "values", Values())
         setattr(self.Trove, "time", TroveTime())
+        setattr(self.Trove, "sheets", {})
 
     async def _set_constants(self):
         authors = [

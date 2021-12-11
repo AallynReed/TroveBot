@@ -50,15 +50,16 @@ class CommandHandler(commands.Cog):
         if "owners" not in dir(self.bot) or message.author.id in self.bot.owners:
             return
         if ctx.valid:
-            if ctx.guild.id == 118027756075220992:
-                if ctx.command.name in ["search", "findmod"]:
-                    pass
-                elif ctx.command.name in ["help", "build", "gear", "augment", "coeff", "invite", "communities"] and ctx.channel.id in [776238026921082911]:
-                    pass
-                elif ctx.command.name in ["reportbug"] and ctx.channel.id in [832582272011599902]:
-                    pass
-                else:
-                    return
+            ...
+            # if ctx.guild.id == 118027756075220992:
+            #     if ctx.command.name in ["search", "findmod"]:
+            #         pass
+            #     elif ctx.command.name in ["help", "build", "gear", "augment", "coeff", "invite", "communities"] and ctx.channel.id in [776238026921082911]:
+            #         pass
+            #     elif ctx.command.name in ["reportbug"] and ctx.channel.id in [832582272011599902]:
+            #         pass
+            #     else:
+            #         return
         else:
             if ctx.channel.id == 832582272011599902 and not [r.id for r in ctx.author.roles if r.id in [533024164039098371, 125277653199618048,841729071854911568]]:
                 try:
@@ -117,15 +118,16 @@ class CommandHandler(commands.Cog):
         #    return
         ctx = await self.bot.get_context(after)
         if ctx.valid:
-            if ctx.guild.id == 118027756075220992:
-                if ctx.command.name in ["search", "findmod"]:
-                    pass
-                elif ctx.command.name in ["help", "build", "gear", "augment", "coeff", "invite", "communities"] and ctx.channel.id in [776238026921082911]:
-                    pass
-                elif ctx.command.name in ["reportbug"] and ctx.channel.id in [832582272011599902]:
-                    pass
-                else:
-                    return
+            ...
+            # if ctx.guild.id == 118027756075220992:
+            #     if ctx.command.name in ["search", "findmod"]:
+            #         pass
+            #     elif ctx.command.name in ["help", "build", "gear", "augment", "coeff", "invite", "communities"] and ctx.channel.id in [776238026921082911]:
+            #         pass
+            #     elif ctx.command.name in ["reportbug"] and ctx.channel.id in [832582272011599902]:
+            #         pass
+            #     else:
+            #         return
         if not ctx.valid and len(ctx.message.mentions) == 1 and ctx.guild.me in ctx.message.mentions:
             prefix = await self.bot.prefix(bot=self.bot, message=after)
             return await ctx.send(f"Your prefix is `{prefix[0]}`\nUse `{prefix[0]}prefix self <prefix>` to change your prefix.")

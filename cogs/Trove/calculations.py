@@ -1,11 +1,11 @@
 # Priority: 1
 import re
 import typing
+from datetime import datetime
 
 import discord
 from discord.ext import commands
 from simpleeval import simple_eval
-
 from utils.objects import AugmentationStats
 
 
@@ -43,7 +43,7 @@ class Calculations(commands.Cog):
         e = discord.Embed(description=f"Prefered: **{augmentation['focus'].capitalize()}**", color=self.bot.comment)
         e.set_author(name="Gem Augmentation", icon_url="https://i.imgur.com/st2CWEz.png")
         e.set_image(url="https://i.imgur.com/M5rAxEM.png")
-        e.set_footer(text=r"UI rounds values, so costs might not be 100% correct but it's a pretty accurate estimate")
+        e.set_footer(text=r"Game UI rounds values, so costs might not be 100% correct but it's a pretty accurate estimate")
         total_costs = {}
         for i in range(len(gems)):
             gem = gems[i][0]
@@ -52,9 +52,11 @@ class Calculations(commands.Cog):
                 if not value:
                     e.add_field(name="----------------", value="\u200b")
                     continue
-                stat_focuses = f"<:foc1:873291782732009493>Rough: **{value[0][0]}**"
+                stat_focuses = f"<:foc1:873291782732009493>Rough: **{value[0][0]}**" if value[0][0] > 0 else ""
                 stat_focuses += f"\n<:foc2:873291782773940225>Precise: **{value[0][1]}**" if value[0][1] > 0 else ""
                 stat_focuses += f"\n<:foc3:873291783025598514>Superior: **{value[0][2]}**" if value[0][2] > 0 else ""
+                if not stat_focuses:
+                    stat_focuses = "\u200b"
                 e.add_field(name=f"----------------\n**<:boost:873291316447047761> {stat[2:]}%**", value=stat_focuses)
                 for resource, cost in value[1]:
                     if resource not in total_costs.keys():
@@ -150,6 +152,51 @@ class Calculations(commands.Cog):
             return
         next_level, points = self.bot.utils.mr_to_points(level)
         await ctx.send(f"Level: **{level}**\nMastery Points: **{points}**\nTo next Level: **{next_level}**")
+
+    @commands.command(slash_command=True, help="Get the calculated rewards for paragon levels")
+    async def paragon_rewards(self, ctx,
+        maximum: int=commands.Option(name="maximum", description="Maximum level of the range."),
+        minimum: int=commands.Option(name="minimum", default=1, description="Minimum level of the range.")):
+        if not 0 < maximum <= 1000:
+            return await ctx.reply("Maximum must be greater than 0 and smaller or equal to 1000.")
+        if not 0 < minimum <= 999:
+            return await ctx.reply("Maximum must be greater than 0 and smaller or equal to 999.")
+        if not minimum < maximum:
+            return await ctx.reply("Maximum must be greater than minimum.")
+        primes = list(self.bot.utils.primes(minimum, maximum))
+        trovian_loops = 0
+        primal_loops = 0
+        paragon_pinatas = 0
+        for i in range(minimum, maximum):
+            trovian_loops += 1
+            if i in primes:
+                primal_loops += 1
+                paragon_pinatas += 1
+        await ctx.send(f"**Start Level:** {minimum}\n**End Level:** {maximum}\n**Trovian Loops:** {trovian_loops}\n**Primal Loops:** {primal_loops}\n**Paragon Pinatas:** {paragon_pinatas} ({paragon_pinatas*2} if patron)\n**Pinata Rolls:** {paragon_pinatas}")
+
+    @commands.command(slash_command=True, help="Display maximum Magic Find in Trove PC.", aliases=["mf"])
+    async def magic_find(self, ctx):
+        e=discord.Embed(color=self.bot.comment, timestamp=datetime.utcfromtimestamp((await self.bot.db.db_bot.find_one({"_id": "0511"}))["mastery"]["mastery_update"]))
+        e.set_author(name="Max Magic Find", icon_url="https://i.imgur.com/sCIbgLX.png")
+        live_level, _, _ = self.bot.utils.points_to_mr(self.bot.Trove.max_live_mastery)
+        pts_level, _, _ = self.bot.utils.points_to_mr(self.bot.Trove.max_pts_mastery)
+        base = self.bot.Trove.values.base_mf
+        live_mf = base + (live_level - 500)
+        pts_mf = base + (pts_level - 500)
+        def mastery_table(mf):
+            return f"""
+```
+  Magic Find  | Normal | Patron |
+--------------|--------|--------|
+  Normal      |  {round(mf*1.5)}  |  {round(mf*2*1.5)} |
++ Sunday      |  {round((mf+100)*1.5)}  |  {round((mf+200)*2*1.5)} |
++ Clov & Elix |  {round((mf+100+75+50)*1.5)}  |  {round((mf+200+75+50)*2*1.5)} |
+```
+"""
+        e.add_field(name="Live Max Magic Find", value=mastery_table(live_mf), inline=False)
+        e.add_field(name="PTS Max Magic Find", value=mastery_table(pts_mf))
+        e.set_footer(text="Last updated on")
+        await ctx.send(embed=e)
 
 def setup(bot):
     bot.add_cog(Calculations(bot))

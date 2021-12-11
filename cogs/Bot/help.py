@@ -8,7 +8,6 @@ from utils.buttons import HelpView
 
 class Help(commands.Cog):
     """Help module"""
-
     def __init__(self, bot):
         self.bot = bot
         self.bot.help = HelpAPI(self.bot.db.database)
@@ -29,11 +28,15 @@ class Help(commands.Cog):
                 return command
         return None
 
-    @commands.command(hidden=True)
+    @commands.command(slash_command=True, help="Help for all of the released commands on bot.")
     @commands.bot_has_permissions(embed_links=1, add_reactions=1)
-    async def help(self, ctx, commandname=None, *, subcommand=None):
-        if ctx.guild.id in [118027756075220992] and commandname:
-            commandname = None if commandname.lower() not in ["build", "gear", "search", "findmod", "augment", "coeff", "invite", "communities"] else commandname.lower()
+    async def help(self, ctx, 
+            commandname=commands.Option(default=None, description="Input command to get help on"),
+            *, subcommand=commands.Option(default=None, description="Input subcommands to get help on.")):
+        if subcommand and not commandname:
+            return await ctx.send("You must input a command in order to check for subcommands.", ephemeral=True)
+        # if ctx.guild.id in [118027756075220992] and commandname:
+        #     commandname = None if commandname.lower() not in ["build", "gear", "search", "findmod", "augment", "coeff", "invite", "communities"] else commandname.lower()
         msg = ""
         page = 1
         prefix = ctx.prefix
@@ -75,8 +78,8 @@ class Help(commands.Cog):
         elif not commandname and not subcommand:
             commands_list = {}
             for command in await self.bot.help.get_all_commands():
-                if ctx.guild.id in [118027756075220992] and command.name not in ["search", "build", "gear", "findmod", "augment", "coeff", "invite", "communities"]:
-                    continue
+                # if ctx.guild.id in [118027756075220992] and command.name not in ["search", "build", "gear", "findmod", "augment", "coeff", "invite", "communities"]:
+                #     continue
                 if command.module not in commands_list.keys():
                     commands_list[command.module] = []
                 commands_list[command.module].append(command)
@@ -105,6 +108,7 @@ class Help(commands.Cog):
                 "calculations": "List of commands to calculate stuff easily.",
                 "club": "List of commands to manage club.",
                 "general": "List of general trove commands.",
+                "information": "List of trove informational commands.",
                 "miscellaneous": "List of miscellaneous commands.",
                 "profiles": "List of commands for profiles system.",
                 "settings": "List of commands to change bot's behavior."

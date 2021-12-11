@@ -3,9 +3,9 @@ import base64
 import json
 import math
 import re
-import socket
+from PIL import Image
+from io import BytesIO
 from datetime import datetime
-from functools import partial
 from typing import Literal, Optional
 
 import discord
@@ -48,62 +48,7 @@ class Utilities(commands.Cog):
         self.bot = bot
         self.bot.utils = self
 
- # Trove 
-
-    async def PingTroveServer(self, server):
-        servers = {
-            "pts": {
-                "auth": {
-                    "address": "34.74.111.29",
-                    "port": "6560"
-                },
-                "game": {
-                    "address": "34.73.157.213",
-                    "port": "37001"
-                }
-            },
-            "live-eu": {
-                "auth": {
-                    "address": "46.253.150.1",
-                    "port": "6560"
-                },
-                "game": {
-                    "address": "208.94.26.8",
-                    "port": "37001"
-                }
-            },
-            "live-us": {
-                "auth": {
-                    "address": "208.94.26.4",
-                    "port": "6560"
-                },
-                "game": {
-                    "address": "208.94.26.6",
-                    "port": "37001"
-                }
-            }
-        }
-        servers = self.json(servers)
-        results = MD()
-        for key, value in servers.get(server).items():
-            address = value.get("address")
-            if not address:
-                continue
-            port = value.get("port")
-            task = partial(self._ping_server, address, port)
-            result = await self.bot.loop.run_in_executor(None, task)
-            results[key] = result
-        return results
-            
-    def _ping_server(self, ip, port):
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.settimeout(5)
-        try:
-            s.connect((ip, int(port)))
-            s.shutdown(2)
-            return True
-        except:
-            return False
+ # Trove
 
     def get_augmentation_cost(self, stat, prefered=None):
         r_augment = [2.500, 1.250, 0.833, 0.625]
@@ -415,6 +360,105 @@ class Utilities(commands.Cog):
             except discord.errors.NotFound:
                 ...
         return getter
+
+    async def get_sigil(self, pr, totalmr):
+        url_mr = ""
+        url_pr = ""
+        # Mastery
+        if 1 <= totalmr <= 9:
+            url_mr = "https://i.imgur.com/ytgFQJq.png"
+        if 10 <= totalmr <= 29:
+            url_mr = "https://i.imgur.com/qFlsroS.png"
+        if 30 <= totalmr <= 49:
+            url_mr = "https://i.imgur.com/VcnmxYG.png"
+        if 50 <= totalmr <= 74:
+            url_mr = "https://i.imgur.com/k1uSwAJ.png"
+        if 75 <= totalmr <= 99:
+            url_mr = "https://i.imgur.com/ST8NDsO.png"
+        if 100 <= totalmr <= 149:
+            url_mr = "https://i.imgur.com/uWDUKxk.png"
+        if 150 <= totalmr <= 199:
+            url_mr = "https://i.imgur.com/atceNdE.png"
+        if 200 <= totalmr <= 249:
+            url_mr = "https://i.imgur.com/WuPD8Vi.png"
+        if 250 <= totalmr <= 299:
+            url_mr = "https://i.imgur.com/IG4Uncx.png"
+        if 300 <= totalmr <= 349:
+            url_mr = "https://i.imgur.com/222rH1k.png"
+        if 350 <= totalmr <= 399:
+            url_mr = "https://i.imgur.com/9hiZXCZ.png"
+        if 400 <= totalmr <= 449:
+            url_mr = "https://i.imgur.com/ZEAVWDA.png"
+        if 450 <= totalmr <= 499:
+            url_mr = "https://i.imgur.com/Z7g60mW.png"
+        if 500 <= totalmr <= 549:
+            url_mr = "https://i.imgur.com/BzJj2lL.png"
+        if 550 <= totalmr <= 599:
+            url_mr = "https://i.imgur.com/n04blVH.png"
+        if 600 <= totalmr <= 649:
+            url_mr = "https://i.imgur.com/EufwyxA.png"
+        if 650 <= totalmr <= 699:
+            url_mr = "https://i.imgur.com/wq5D6Iw.png"
+        if 700 <= totalmr <= 749:
+            url_mr = "https://i.imgur.com/sYTJNHU.png"
+        if 750 <= totalmr <= 799:
+            url_mr = "https://i.imgur.com/jpx5SZE.png"
+        if 800 <= totalmr <= 849:
+            url_mr = "https://i.imgur.com/6kS2qH3.png"
+        # Power
+        if 1 <= pr <= 249:
+            url_pr = "https://i.imgur.com/ytgFQJq.png"
+        if 250 <= pr <= 549:
+            url_pr = "https://i.imgur.com/Lu25aXz.png"
+        if 550 <= pr <= 899:
+            url_pr = "https://i.imgur.com/BLgFldK.png"
+        if 900 <= pr <= 1199:
+            url_pr = "https://i.imgur.com/93uU1oA.png"
+        if 1200 <= pr <= 2499:
+            url_pr = "https://i.imgur.com/AOWt4On.png"
+        if 2500 <= pr <= 4999:
+            url_pr = "https://i.imgur.com/l6TejUh.png"
+        if 5000 <= pr <= 7499:
+            url_pr = "https://i.imgur.com/rF0ezqj.png"
+        if 7500 <= pr <= 9999:
+            url_pr = "https://i.imgur.com/G27zi8j.png"
+        if 10000 <= pr <= 14999:
+            url_pr = "https://i.imgur.com/cTCm7QK.png"
+        if 15000 <= pr <= 19999:
+            url_pr = "https://i.imgur.com/9QN4F1W.png"
+        if 20000 <= pr <= 24999:
+            url_pr = "https://i.imgur.com/FpXg2LU.png"
+        if 25000 <= pr <= 29999:
+            url_pr = "https://i.imgur.com/E7mqm6F.png"
+        if 30000 <= pr <= 34999:
+            url_pr = "https://i.imgur.com/x7EqPKj.png"
+        if 35000 <= pr <= 39999:
+            url_pr = "https://i.imgur.com/cdT2Hub.png"
+        if 40000 <= pr:
+            url_pr = "https://i.imgur.com/6m6jfYq.png"
+        if url_mr == "" or url_pr == "":
+            return False
+        image_mr = await (await self.bot.AIOSession.get(url_mr)).read()
+        img1 = Image.open(BytesIO(image_mr))
+        image_pr = await (await self.bot.AIOSession.get(url_pr)).read()
+        img2 = Image.open(BytesIO(image_pr))
+        img1.paste(img2, (0, 0), img2)
+        data = BytesIO()
+        img1.save(data, "PNG")
+        data.seek(0)
+        return data
+
+    def primes(self, start, end):
+        for num in range(2, end+1):
+            if num < 2:
+                continue
+            kill = False
+            for n in range(2,int(num/2)+1):
+                if num%n==0:
+                    kill = True
+            if kill:
+                continue
+            yield num
 
 def setup(bot):
     bot.add_cog(Utilities(bot))

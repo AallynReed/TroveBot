@@ -1,9 +1,7 @@
 # Priority: 1
 import asyncio
-import itertools
 import os
 from datetime import datetime
-from functools import partial
 import string
 
 import discord
@@ -18,20 +16,7 @@ class Builds(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.values = Values()
-        self.last_updated = 1638985903
-
-    @commands.command(slash_command=True, help="Show current Meta for different game situations.")
-    @commands.bot_has_permissions(embed_links=1)
-    async def meta(self, ctx):
-        e = discord.Embed(color=0x0000ff, timestamp=datetime.utcfromtimestamp(self.last_updated))
-        e.set_author(name="Meta", icon_url=self.bot.user.avatar.url)
-        e.description = "Here are the game's Meta classes for each activity."
-        e.add_field(name="Farming (Adventure/Topside)", value="Physical: <:c_NN:876846928808259654> **Neon Ninja**\nMagic: <:c_DT:876846922135126036> **Dino Tamer** or <:c_BD:876846944604024842> **Bard**", inline=False)
-        e.add_field(name="DPS (Single Target)", value="Magic: <:c_CM:876846891747410001> **Chloromancer**", inline=False)
-        e.add_field(name="Delve Path (Delve Dusk - | Below Depth ~129)", value="Magic: <:c_TR:876846901801123850> **Tomb Raiser**", inline=False)
-        e.add_field(name="Delve Path (Delve Dusk + | Above Depth ~129)", value="Magic: <:c_IS:876846881311965224> **Ice Sage**", inline=False)
-        e.set_footer(text="Last updated")
-        await ctx.send(embed=e)
+        self.bot.Trove.last_updated = 1638985903
 
     @commands.command(slash_command=True, help="Show gear for a class")
     @commands.cooldown(1, 120, commands.BucketType.user)
@@ -87,7 +72,7 @@ class Builds(commands.Cog):
                 build = "Farming"
             trovesaurus = f"https://trovesaurus.com/builds/{_class.name.replace(' ', '%20')}/{build_type}"
             #tiers = ["<:Star5:841015868930523176>", "<:Star4:841015868863283240>", "<:Star3:841015868716220447>", "<:Star2:841015868854501376>", "<:Star1:841015868993175592>"]
-            e = discord.Embed(description=f"**Check on [Trovesaurus]({trovesaurus})**",color=discord.Color.random(), timestamp=datetime.utcfromtimestamp(self.last_updated))
+            e = discord.Embed(description=f"**Check on [Trovesaurus]({trovesaurus})**",color=discord.Color.random(), timestamp=datetime.utcfromtimestamp(self.bot.Trove.last_updated))
             e.description += f"\n\nRating: " + '<:Star:841018551087530024>' * (6-class_build['tier']) + '<:StarOutline:841018551418880010>' * (class_build['tier'] - 1)
             e.set_author(name=f"In depth {build_type} build for {_class.name}", icon_url=_class.image)
             e.add_field(name="<:hat:834512699585069086>Hat", value=self.readable_stats(class_build["hat"]))

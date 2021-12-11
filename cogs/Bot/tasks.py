@@ -3,6 +3,7 @@ import asyncio
 import json
 import re
 import typing
+import urllib.request as urlget
 from datetime import datetime, timedelta
 
 import aiohttp
@@ -11,6 +12,7 @@ import html2text
 import pytz
 from bs4 import BeautifulSoup
 from discord.ext import commands, tasks
+from openpyxl import load_workbook
 from pushbullet import Pushbullet
 
 from utils.objects import TroveTime  # pyright: reportMissingImports=false
@@ -32,6 +34,8 @@ class Tasks(commands.Cog):
             #["Dev Tracker", "devtracker", "forumdisplay.php?3-Dev-Tracker", "threads"] # Dev Tracker
         ]
         print("Task Handler:\n|")
+        self.sheet_timer.start()
+        print("|--> Running Spreadsheet Retriever...")
         self.forum_retriever.start()
         self.reddit_retriever.start()
         print("|--> Running Forum Retriever...")
@@ -53,6 +57,7 @@ class Tasks(commands.Cog):
         self.weekly_data = json.load(open("/home/sly/nucleo/data/weekly_buffs.json"))
 
     def cog_unload(self):
+        self.sheet_timer.cancel()
         self.forum_retriever.cancel()
         self.forum_poster.cancel()
         self.reddit_retriever.cancel()
@@ -437,6 +442,18 @@ class Tasks(commands.Cog):
             except:
                 ...
         await asyncio.sleep(60)
+
+    @tasks.loop(seconds=60)
+    async def sheet_timer(self):
+        def load_sheets():
+            urlget.urlretrieve("https://docs.google.com/spreadsheets/d/1hsz9Xhf52xjX0pcfb95Tm3-MvVh9lMfq4bGi5fo7zCs/export?format=xlsx&id=1hsz9Xhf52xjX0pcfb95Tm3-MvVh9lMfq4bGi5fo7zCs", 'data/sheets/luxion_sheet.xlsx')
+            try:
+                self.bot.Trove.sheets["summer"] = load_workbook(filename="data/sheets/luxion_sheet.xlsx")
+            except:
+                pass
+            urlget.urlretrieve("https://docs.google.com/spreadsheets/d/1YBf3__CPCy9iL4HDEoF1_q88vaFtAR6mA4GZxIzOEG8/export?format=xlsx&id=1YBf3__CPCy9iL4HDEoF1_q88vaFtAR6mA4GZxIzOEG8", 'data/sheets/memento_list_sheet.xlsx')
+            self.bot.Trove.sheets["memento_list"] = load_workbook(filename="data/sheets/memento_list_sheet.xlsx", data_only=True)
+        await self.bot.loop.run_in_executor(None, load_sheets)
 
     @tasks.loop(seconds=5)
     async def dragon_merchant(self):

@@ -203,6 +203,24 @@
         ],
         "hidden": false
     },
+    "magic_find": {
+        "module": "calculations",
+        "description": "Shows current max obtainable magic find. Giving 0 disables clover and elixir.",
+        "example": "{prefix}magic_find\n{prefix}magic_find 0",
+        "subcommands": {},
+        "aliases": [
+            "mf"
+        ],
+        "hidden": false
+    },
+    "paragon_rewards": {
+        "module": "calculations",
+        "description": "Shows paragon rewards for a given level range.",
+        "example": "{prefix}paragon_rewards 1000 500",
+        "subcommands": {},
+        "aliases": [],
+        "hidden": false
+    },
 # Club
     "blacklist": {
         "module": "club",
@@ -314,16 +332,6 @@
         ],
         "hidden": false
     },
-    "effort_leaderboard": {
-        "module": "general",
-        "description": "Shows the rewards for completing objectives towards effort leaderboard.",
-        "example": "{prefix}effort_leaderboard",
-        "subcommands": {},
-        "aliases": [
-            "effort"
-        ],
-        "hidden": false
-    },
     "luxion": {
         "module": "general",
         "description": "Shows if and when and for how long is luxion is available.",
@@ -331,16 +339,6 @@
         "subcommands": {},
         "aliases": [
             "lux"
-        ],
-        "hidden": false
-    },
-    "magic_find": {
-        "module": "general",
-        "description": "Shows current max obtainable magic find. Giving 0 disables clover and elixir.",
-        "example": "{prefix}magic_find\n{prefix}magic_find 0",
-        "subcommands": {},
-        "aliases": [
-            "mf"
         ],
         "hidden": false
     },
@@ -383,27 +381,9 @@
         "aliases": [],
         "hidden": false
     },
-    "paragon_rewards": {
-        "module": "general",
-        "description": "Shows paragon reward for a given level range.",
-        "example": "{prefix}paragon_rewards 1000 500",
-        "subcommands": {},
-        "aliases": [],
-        "hidden": false
-    },
-    "playingtrove": {
-        "module": "general",
-        "description": "Shows all people playing trove in the server. **Depends on Discord Activity**",
-        "example": "{prefix}playingtrove",
-        "subcommands": {},
-        "aliases": [
-            "pltrove"
-        ],
-        "hidden": false
-    },
     "search_ally": {
         "module": "general",
-        "description": ".",
+        "description": "Search for an ally based on name, stat or ability.",
         "example": "**Slash Command only**\n/search_ally",
         "subcommands": {},
         "aliases": [],
@@ -428,8 +408,50 @@
         "aliases": [],
         "hidden": false
     },
+# Information
+    "chats": {
+        "module": "information",
+        "description": "List of commonly used chats in-game.",
+        "example": "{prefix}chats",
+        "subcommands": {},
+        "aliases": [
+            "chatcmd"
+        ],
+        "hidden": false
+    },
+    "effort_leaderboard": {
+        "module": "information",
+        "description": "Shows the rewards for completing objectives towards effort leaderboard.",
+        "example": "{prefix}effort_leaderboard",
+        "subcommands": {},
+        "aliases": [
+            "effort"
+        ],
+        "hidden": false
+    },
+    "light_steps": {
+        "module": "information",
+        "description": "Shows the light required in some game situations.",
+        "example": "{prefix}light_steps",
+        "subcommands": {},
+        "aliases": [
+            "lightsteps",
+            "lsteps"
+        ],
+        "hidden": false
+    },
+    "playing_trove": {
+        "module": "information",
+        "description": "Shows all people playing trove in the server. **Depends on Discord Activity**",
+        "example": "{prefix}playingtrove",
+        "subcommands": {},
+        "aliases": [
+            "pltrove"
+        ],
+        "hidden": false
+    },
     "weekly": {
-        "module": "general",
+        "module": "information",
         "description": "Shows current chaos loot and weekly buff, as well as event if there's one.",
         "example": "{prefix}weekly",
         "subcommands": {},

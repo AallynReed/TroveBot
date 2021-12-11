@@ -429,6 +429,26 @@ class Values():
         }
         return sum(items.values())
 
+    def max_pr(self, mastery, pts=False, console=False):
+        items = {
+            "hat": 1698,
+            "weapon": 1698,
+            "face": 1698,
+            "gems": 24769,
+            "dragons": 1620,
+            "banner": 350,
+            "ring": 1513,
+            "ally": 75,
+            "class_level": 450,
+            "subclass": 90,
+            "emblem": 50 * 2,
+            "flask": 50,
+            "mastery_geode": 5 * 100,
+            "mastery_rank": 4 * 500,
+            "500_plus_mastery": mastery
+        }
+        return sum(items.values())
+
     def _classes(self):
         classes = [
             ["SH", "Shadow Hunter", "https://i.imgur.com/E32gMrC.png", "https://i.imgur.com/HvvIHUK.png"],
@@ -878,30 +898,25 @@ class MetricsConverter():
 
 class AugmentationStats(commands.Converter):
     async def convert(self, ctx, argument):
-        gem_regex = r"(?:([0-3]):([0-9]{1,2})(?:\W|$))"
+        gem_regex = r"(?:([0-3]):([0-9]{1,2}|100)(?:\W|$))"
         focus_regex = r"rough|precise|superior"
         find_focus = re.findall(focus_regex, argument)
         focus = find_focus or "precise"
         if isinstance(focus, list):
             focus = focus[0]
-        def adjust_missing(gem):
-            for _ in range(3 - len(gem)):
-                gem.append(None)
-            return gem
         gems_input = []
         for gem in argument.split("+"):
             gem = gem.strip()
             gem = re.findall(gem_regex, gem)
             if not len(gem):
                 continue
-            if len(gem) > 3:
-                raise Exception("Gems can't have more than 3 stats.")
+            if len(gem) != 3:
+                raise Exception("Gems must have 3 stats.")
             boosts = 0
             for boost, progress in gem:
                 boosts += int(boost)
             if boosts > 3:
                 raise Exception("Gems can't have more than 3 boosts.")
-            gem = adjust_missing(gem)
             gems_input.append(gem)
         if not gems_input:
             raise Exception("No valid Gem format found.")

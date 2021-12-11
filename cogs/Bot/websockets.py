@@ -159,10 +159,11 @@ class WebSockets(commands.Cog):
         return await websocket.send("200")
 
     async def depth_list(self, websocket, data):
-        if not "memento_list" in dir(self):
+        if not "memento_list" in self.bot.Trove.sheets:
             return await websocket.send("503")
+        memento_list = self.bot.Trove.sheets["memento_list"]
         sheets = []
-        for s in self.memento_list.sheetnames:
+        for s in memento_list.sheetnames:
             if s == "Oct 11 - 17":
                 break
             if re.findall(r"^(Temp Sheet|[a-z]{3,5} [0-9]{1,2}-[0-9]{1,2})$", s, re.IGNORECASE):
@@ -170,7 +171,7 @@ class WebSockets(commands.Cog):
         if data["sheet"] not in sheets:
             return await websocket.send("404")
         _filter = data["filter"].replace(" | ", "|").split("|") if data["filter"] else None
-        ml = self.memento_list[data["sheet"]]
+        ml = memento_list[data["sheet"]]
         depths = []
         mount_bosses = {
            # Shadow Towers
