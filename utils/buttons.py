@@ -133,6 +133,13 @@ class HelpView(BaseView):
         self.category = None
         self.get_buttons()
 
+    async def on_timeout(self):
+        #await super().on_timeout()
+        try:
+            await self.message.delete()
+        except:
+            pass
+
     def get_buttons(self):
         if self.children:
             self.clear_items()
@@ -159,7 +166,9 @@ class HelpButton(discord.ui.Button["HelpView"]):
             self.view.category = self.label.lower()
             paginator = Paginator(self.ctx, self.pages)
             paginator.add_item(HelpButton(self.ctx, [], [], label="Back", view=self.view))
-            return await interaction.response.edit_message(embed=self.pages[0]["embed"], view=paginator)
+            await interaction.response.edit_message(embed=self.pages[0]["embed"], view=paginator)
+            if await paginator.wait():
+                await self.view.on_timeout()
 
 class ProfileView(BaseView):
     def __init__(self, ctx, get_profile, user, classes, server=1):
@@ -260,8 +269,12 @@ class BuildsPickView(BaseView):
             except:
                 pass
             try:
-                await self.message.edit(content=f"{ctx.author.mention} used `{ctx.prefix}gear` for **{self._class} {self.build_type.capitalize()} General build** automatically hidden after 5 minutes. Click the 👁️ to show\nYou may also follow this link <{self.build['link']}> for this build.", suppress=True)
-                await self.message.add_reaction("👁️")
+                channel = self.message.channel
+                message = await channel.fetch_message(self.message.id)
+                await message.edit(content=f"{ctx.author.mention} used `{ctx.prefix}gear` for **{self._class} {self.build_type.capitalize()} General build** automatically hidden after 5 minutes. Click the 👁️ to show\nYou may also follow this link <{self.build['link']}> for this build.", suppress=True)
+                await message.add_reaction("👁️")
+                # await self.message.edit(content=f"{ctx.author.mention} used `{ctx.prefix}gear` for **{self._class} {self.build_type.capitalize()} General build** automatically hidden after 5 minutes. Click the 👁️ to show\nYou may also follow this link <{self.build['link']}> for this build.", suppress=True)
+                # await self.message.add_reaction("👁️")
             except:
                 return
         elif not self.build_type:
@@ -596,8 +609,12 @@ class GemBuildsView(BaseView):
             except:
                 pass
             try:
-                await self.message.edit(content=f"{ctx.author.mention} used `{ctx.prefix}build` for **{self.build_arguments._class} {self.build_arguments.build_type.capitalize()} Gem build** automatically hidden after 5 minutes. Click the 👁️ to show.", suppress=True, view=None)
-                await self.message.add_reaction("👁️")
+                channel = self.message.channel
+                message = await channel.fetch_message(self.message.id)
+                await message.edit(content=f"{ctx.author.mention} used `{ctx.prefix}build` for **{self.build_arguments._class} {self.build_arguments.build_type.capitalize()} Gem build** automatically hidden after 5 minutes. Click the 👁️ to show.", suppress=True, view=None)
+                await message.add_reaction("👁️")
+                # await self.message.edit(content=f"{ctx.author.mention} used `{ctx.prefix}build` for **{self.build_arguments._class} {self.build_arguments.build_type.capitalize()} Gem build** automatically hidden after 5 minutes. Click the 👁️ to show.", suppress=True, view=None)
+                # await self.message.add_reaction("👁️")
             except:
                 pass
 

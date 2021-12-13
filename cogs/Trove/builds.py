@@ -45,7 +45,7 @@ class Builds(commands.Cog):
             content = f"Pick a build type for **{_class}**"        
         else:
             content = None
-        view.message = await ctx.send(content, embed=page["embed"] if page else None, view=view)
+        view.message = await ctx.reply(content, embed=page["embed"] if page else None, view=view)
 
     def get_all_gear_pages(self, ctx, ):
         all_gears = {}
@@ -102,14 +102,14 @@ class Builds(commands.Cog):
     @commands.bot_has_permissions(embed_links=1)
     async def build(self, ctx):
         view = GemBuildsView(ctx)
-        view.message = await ctx.send(content="Builds will only be calculated once all **Required** fields are filled in.", view=view)
+        view.message = await ctx.reply(content="Builds will only be calculated once all **Required** fields are filled in.", view=view)
 
     @commands.command(aliases=["gu"], hidden=True)
     async def gear_update(self, ctx):
         if ctx.author.id not in [565097923025567755,237634733264207872]:
             return
         self.values.update_gear_builds()
-        await ctx.send("Updated gear builds.")
+        await ctx.reply("Updated gear builds.")
 
     @commands.Cog.listener()
     async def on_raw_reaction_add(self, payload):

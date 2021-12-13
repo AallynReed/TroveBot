@@ -77,6 +77,10 @@ class BuildsMaker():
                 light += self.arguments.ally["stats"]["Light"]
                 if not self.arguments.ally["damage"] or self.arguments.ally["damage"] == self.arguments._class.dmg_type:
                     bonus_damage += self.arguments.ally["stats"]["Damage"]
+            if self.arguments.crystal5:
+                base_damage += 6916
+                critical_damage += 3.75
+                light += 780
         builds = []
         builder = self._generate_combinations(coeff=self.arguments.build_type in ["health", "coeff"], light=self.arguments.light)
         for build in builder:

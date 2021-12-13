@@ -293,8 +293,6 @@ class WebSockets(commands.Cog):
         guild_data = []
         i = 0
         for g in sorted(self.bot.guilds, key=lambda x: -len(x.members)):
-            if len(g.members) <= 69 and g.id != 567505514108289044:
-                continue
             gdata = {
                 "index": i,
                 "spaced": bool(i%3),

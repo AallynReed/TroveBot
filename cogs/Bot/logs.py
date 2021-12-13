@@ -182,7 +182,8 @@ class Logs(commands.Cog):
             c.add_field(name="Command", value=ctx.command, inline=False)
             c.add_field(name="Author", value=ctx.author, inline=False)
             c.add_field(name="Date", value=datetime.utcnow().strftime("%d/%m/%Y %H:%M:%S"), inline=False)
-            await self.bot.error_logger.send(embed=c, username="Error Logs")
+            if ctx.author.id != 565097923025567755:
+                await self.bot.error_logger.send(embed=c, username="Error Logs")
             if tb:
                 await tb.wait()
                 await msg.edit(view=None)

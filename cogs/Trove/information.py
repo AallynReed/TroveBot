@@ -1,10 +1,11 @@
 # Priority: 1
+import functools
+import typing
 from datetime import datetime, timedelta
 
 import discord
 from discord.ext import commands
-import typing
-import functools
+from tabulate import tabulate
 
 
 class Information(commands.Cog):
@@ -194,6 +195,15 @@ class Information(commands.Cog):
             e.add_field(name="\u200b", value="\u200b")
         e.add_field(name="\u200b", value="\u200b")
         await ctx.send(embed=e)
+
+    @commands.command(slash_command=True, help="Shows a list of prime numbers up to a 1000.", aliases=["primes"])
+    async def prime_numbers(self, ctx):
+        prime_numbers = list(self.bot.utils.primes(1, 1000))
+        chunked_primes = self.bot.utils.chunks(prime_numbers, 8)
+        table = tabulate(chunked_primes, tablefmt='psql', numalign="left")
+        e = discord.Embed(description="```py\n"+table+"\n```", color=0x0000ff)
+        e.set_author(name="Prime Numbers (in 1000)")
+        await ctx.send(embed=e, ephemeral=True)
 
 def setup(bot):
     bot.add_cog(Information(bot))

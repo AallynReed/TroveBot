@@ -1,5 +1,6 @@
 # Priority: 9
 import io
+import json
 import os
 from datetime import datetime
 
@@ -32,13 +33,9 @@ class Owner(commands.Cog):
     @perms.owners()
     async def export_chat(self, ctx, limit=100):
         transcript = await chat_exporter.export(ctx.channel, limit)
-
         if transcript is None:
             return await ctx.reply("There are no messages.")
-
-        _file = discord.File(io.BytesIO(transcript.encode()),
-                                    filename=f"transcript-{ctx.channel.name}.html")
-        
+        _file = discord.File(io.BytesIO(transcript.encode()), filename=f"transcript-{ctx.channel.name}.html")
         await ctx.reply(file=_file)        
 
     @commands.command(hidden=True)
@@ -119,6 +116,57 @@ class Owner(commands.Cog):
     async def reload_values(self, ctx):
         self.bot.Trove.values._preload(True)
         await ctx.send("Reloaded values")
+
+    @commands.command(hidden=True)
+    @perms.owners()
+    async def update_allies(self, ctx):
+        result = await self.bot.AIOSession.get("https://trovesaurus.com/collection/Pets.json")
+        allies_list = await result.json()
+        now = int(datetime.utcnow().timestamp())
+        i = 0
+        x = 0
+        y = 0
+        z = 0
+        old_allies = json.loads(open("data/allies.json").read())
+        allies = json.loads(open("data/allies.json").read())
+        found_allies = []
+        for ally_item in allies_list:
+            i += 1
+            ally = ally_item.split("/")[-1]
+            found_allies.append(ally)
+            stop = False
+            for data in old_allies.keys():
+                if ally == data:
+                    if old_allies[data]["updated_at"] + 86400 > now:
+                        stop = True
+                        break    
+            if stop:
+                continue
+            ally_result = await self.bot.AIOSession.get("https://trovesaurus.com/collections/pet/"+ally+".json")
+            ally_data = await ally_result.json()
+            if ally in allies.keys():
+                old_ally = allies[ally]
+                ally_data["updated_at"] = old_ally["updated_at"]
+                if ally_data == old_ally:
+                    continue
+                x += 1
+            else:
+                z += 1
+            ally_data["updated_at"] = now
+            allies[ally] = ally_data
+            if not i%50:
+                with open("data/allies.json", "w+") as f:
+                    f.write(json.dumps(allies, indent=4, sort_keys=True))
+        to_delete = []
+        for qualified_name in old_allies.keys():
+            if qualified_name not in found_allies:
+                to_delete.append(qualified_name)
+                y += 1
+        for dele in to_delete:
+            del allies[dele]
+        with open("data/allies.json", "w+") as f:
+            f.write(json.dumps(allies, indent=4, sort_keys=True))
+        await ctx.send(f"Done - Checked: **{i}** | Updated: **{x}** | Removed: **{y}** | Added: **{z}**")
 
     @commands.command(hidden=True, aliases=["uh"])
     @perms.admins()
@@ -221,6 +269,8 @@ class Owner(commands.Cog):
             await ctx.reply(f"Unloaded **{i}/{len(modules)}** modules." + (f" **{len(modules)-len(loaded)}** were already unloaded." if extra else ""))
         else:
             module = find(lambda x: x.name.startswith(mod.lower()), modules)
+            if not module:
+                return await ctx.send(f"Module `{mod}` not found.")
             if module.name.lower() == "owner":
                 return await ctx.reply("Can't unload that module.")
             if module not in loaded:
@@ -247,15 +297,17 @@ class Owner(commands.Cog):
             return await ctx.reply(f"Successfully reloaded **{i-len(failed)}/{len(modules)}** modules." + (f" Failed to reload {len(failed)}" if failed else ""))
         else:
             module = find(lambda x: x.name.startswith(mod.lower()), modules)
+            if not module:
+                return await ctx.send(f"Module `{mod}` not found.")
             try:
                 if module in loaded:
                     self.bot.reload_extension(module.load)
-                    await ctx.reply(f"Successfully reloaded {module.name}")
+                    await ctx.reply(f"Successfully reloaded **{module.name}**")
                 else:
                     self.bot.load_extension(module.load)
-                    await ctx.reply(f"Successfully loaded {module.name}")
+                    await ctx.reply(f"Successfully loaded **{module.name}**")
             except Exception as e:
-                await ctx.reply(f"```py\n#Failed to reload {module.name}\n\n{str(type(e))}: {e}```")
+                await ctx.reply(f"```py\n#Failed to reload **{module.name}**\n\n{str(type(e))}: {e}```")
 
     @commands.command(aliases=["sf"], hidden=True)
     @perms.owners()

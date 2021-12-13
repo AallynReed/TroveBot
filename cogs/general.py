@@ -513,7 +513,7 @@ class General(commands.Cog):
         bot = ctx.guild.me
         data = await self.bot.db.db_servers.find_one({"_id": ctx.guild.id})
         channels = channels or [c for c in ctx.guild.channels if isinstance(c, (discord.TextChannel, discord.VoiceChannel)) and c.permissions_for(bot).read_messages]
-        channels.sort(key=lambda x: x.position)
+        channels.sort(key=lambda x: (x.category.position if x.category else -1, x.position))
         e = discord.Embed()
         e.set_author(name="Permission Diagnostic Tool", icon_url=bot.avatar)
         e.color = self.bot.progress

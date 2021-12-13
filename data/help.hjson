@@ -429,6 +429,16 @@
         ],
         "hidden": false
     },
+    "prime_numbers": {
+        "module": "information",
+        "description": "Shows a list of prime numbers up to a 1000.",
+        "example": "{prefix}prime_numbers",
+        "subcommands": {},
+        "aliases": [
+            "primes"
+        ],
+        "hidden": false
+    },
     "light_steps": {
         "module": "information",
         "description": "Shows the light required in some game situations.",
@@ -517,20 +527,6 @@
         ],
         "hidden": false
     },
-    "search_mod": {
-        "module": "miscellaneous",
-        "description": "Search for mods in Trovesaurus database.",
-        "example": "{prefix}findmod Sageosaurus",
-        "subcommands": {},
-        "aliases": [
-            "sm",
-            "find_mod",
-            "mod",
-            "searchmod",
-            "find_mod"
-        ],
-        "hidden": false
-    },
     "giveaway": {
         "module": "miscellaneous",
         "description": "Learn more about Trove Bot giveaway\n**Current Giveaway:** No Giveaway",
@@ -563,14 +559,6 @@
         "module": "miscellaneous",
         "description": "Display bot's ping.",
         "example": "{prefix}ping",
-        "subcommands": {},
-        "aliases": [],
-        "hidden": false
-    },
-    "search": {
-        "module": "miscellaneous",
-        "description": "Search for things in Trovesaurus database.",
-        "example": "{prefix}search Chaos Chest",
         "subcommands": {},
         "aliases": [],
         "hidden": false
