@@ -33,8 +33,8 @@ $auto_resets_weekly_text_on:Weeklies reset posts are now enabled and will be sen
 $auto_resets_weekly_text_off:Weeklies reset posts were disabled.
 $auto_resets_weekly_voice_on:Weeklies buffs will be placed in {}
 $auto_resets_weekly_voice_off:Weeklies buffs were disabled.
-$auto_dragon_merchant_voice_on:Dragon Merchants will be placed in {}
-$auto_dragon_merchant_voice_off:Dragon Merchants were disabled.
+$auto_dragon_merchant_voice_on:Dragon Merchants widget will be placed in {}
+$auto_dragon_merchant_voice_off:Dragon Merchants widget was disabled.
 $auto_clock_channel_on:Clock will now be placed in {}
 $auto_clock_channel_off:Clock is now disabled.
 $auto_clock_format_max_characters:You can't set more than 100 characters as a channel name.

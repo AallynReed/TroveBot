@@ -44,7 +44,8 @@ class Tasks(commands.Cog):
         print("|--> Running Forum Poster...")
         self.bot_stats.start()
         self.clock.start()
-        self.dragon_merchant.start()
+        self.dragon_merchant_voice.start()
+        self.dragon_merchant_text.start()
         print("|--> Running Clock...")
         self.daily_text_channels.start()
         self.daily_voice_channels.start()
@@ -64,7 +65,8 @@ class Tasks(commands.Cog):
         self.reddit_poster.cancel()
         self.bot_stats.cancel()
         self.clock.cancel()
-        self.dragon_merchant.cancel()
+        self.dragon_merchant_voice.cancel()
+        self.dragon_merchant_text.cancel()
         self.daily_text_channels.cancel()
         self.daily_voice_channels.cancel()
         self.weekly_text_channels.cancel()
@@ -456,7 +458,7 @@ class Tasks(commands.Cog):
         await self.bot.loop.run_in_executor(None, load_sheets)
 
     @tasks.loop(seconds=5)
-    async def dragon_merchant(self):
+    async def dragon_merchant_voice(self):
         data = await self.bot.db.db_servers.find({"automation.dragon_merchant.voice.channel": {"$ne": None}}, {"automation": 1}).to_list(length=99999)
         text = "🐲"
         if self.time.is_luxion:
@@ -477,6 +479,39 @@ class Tasks(commands.Cog):
                 await channel.edit(name=text)
             except:
                 ...
+        await asyncio.sleep(60)
+
+    @tasks.loop(seconds=5)
+    async def dragon_merchant_text(self):
+        data = await self.bot.db.db_servers.find({"automation.dragon_merchant.text.channel": {"$ne": None}}, {"automation": 1}).to_list(length=99999)
+        if not data:
+            return
+        now = self.time.now
+        e = discord.Embed()
+        if (self.time.luxion_start - timedelta(days=14)) == now.day and now.hour == 0 and now.minute == 0:
+            dragon = "Luxion"
+            avatar = "https://i.imgur.com/9eOV0JD.png"
+            e.color = 0xc8ad18
+            e.set_image(url="https://i.imgur.com/zWkZ9Xd.png")
+        elif (self.time.corruxion_start - timedelta(days=14)) == now.day and now.hour == 0 and now.minute == 0:
+            dragon = "Corruxion"
+            avatar = "https://i.imgur.com/BPNdE1w.png"
+            e.color = 0x850eff
+            e.set_image(url="https://i.imgur.com/AqXZGaJ.png")
+        else:
+            return
+        e.set_author(name="Dragon Merchant", icon_url=avatar)
+        e.title = f"{dragon} has landed in the Hub"
+        for server in data:
+            channel = self.bot.get_channel(server["automation"]["dragon_merchant"]["text"]["channel"])
+            if channel:
+                role = self.bot.get_guild(server["_id"]).get_role(server["automation"]["dragon_merchant"]["text"]["role"])
+                content = role.mention if role else None
+                msg = await channel.send(content=content, embed=e)
+                try:
+                    await msg.publish()
+                except:
+                    pass
         await asyncio.sleep(60)
 
     @tasks.loop(seconds=5)

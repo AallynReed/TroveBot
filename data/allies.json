@@ -2449,6 +2449,20 @@
         "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>5.0% Attack Speed</li>\r\n<li>5 Energy Regen</li>\r\n</ul>",
         "updated_at": 1637100534
     },
+    "dragonfly_hellbug": {
+        "blueprint": "2022/allies/dragonfly_hellbug/c_c_dragonfly_hellbug_ui.png",
+        "category": "Store",
+        "desc": "You can hear it's there.",
+        "designer": "Trove Team",
+        "file": "Pets",
+        "filename": "collections/pet/dragonfly_hellbug",
+        "mastery": "0",
+        "mastery_geode": "0",
+        "name": "Hecksquito",
+        "powerrank": "0",
+        "tooltip": "",
+        "updated_at": 1639596617
+    },
     "dragonfly_junebug": {
         "blueprint": "c_c_dragonfly_junebug_ui[junebug].png",
         "category": "Dev Dream",
@@ -3709,6 +3723,20 @@
         "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>5 Movement Speed</li>\r\n<li>45 Magic Damage</li>\r\n</ul>",
         "updated_at": 1637100534
     },
+    "heckbug_octopus": {
+        "blueprint": "2022/allies/heckbug_octopus/c_c_octopus_overseer_ui.png",
+        "category": "Event",
+        "desc": "Can be seen at times tending to the juvenile heckbugs in geode.",
+        "designer": "Trove Team",
+        "file": "Pets",
+        "filename": "collections/pet/heckbug_octopus",
+        "mastery": "0",
+        "mastery_geode": "0",
+        "name": "Heckbug Tender",
+        "powerrank": "0",
+        "tooltip": "",
+        "updated_at": 1639596617
+    },
     "hellbug_blue": {
         "blueprint": "c_m_hellbug_blue_body.png",
         "category": "Event",
@@ -4660,6 +4688,20 @@
         "powerrank": "0",
         "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>9.0% Energy Regen</li>\r\n<li>2 Movement Speed</li>\r\n</ul>",
         "updated_at": 1637100534
+    },
+    "monkey_puss": {
+        "blueprint": "2022/allies/monkey_puss/c_c_monkey_puss_ui.png",
+        "category": "Store",
+        "desc": "Is that your claws or a dagger?",
+        "designer": "Trove Team",
+        "file": "Pets",
+        "filename": "collections/pet/monkey_puss",
+        "mastery": "0",
+        "mastery_geode": "0",
+        "name": "Meowcutio",
+        "powerrank": "0",
+        "tooltip": "",
+        "updated_at": 1639596617
     },
     "monkey_simian_toad": {
         "blueprint": "2021/allies/cc_monkey_simian_toad/c_c_monkey_simian_ui[thestimergames].png",
@@ -5704,12 +5746,12 @@
         "designer": "JoshuaFT",
         "file": "Pets",
         "filename": "collections/pet/punchbot_tsaucer",
-        "mastery": "0",
+        "mastery": "20",
         "mastery_geode": "0",
         "name": "T-Saucer",
-        "powerrank": "0",
-        "tooltip": "",
-        "updated_at": 1637100534
+        "powerrank": "20",
+        "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>120 Maximum Health</li>\r\n<li>20 Energy Regen</li>\r\n</ul>",
+        "updated_at": 1639596617
     },
     "quarble": {
         "blueprint": "c_c_quarble_ui[locarb].png",
@@ -7132,12 +7174,12 @@
         "designer": "Trove Team",
         "file": "Pets",
         "filename": "collections/pet/rooster_cardinal",
-        "mastery": "0",
+        "mastery": "20",
         "mastery_geode": "0",
         "name": "Cardinal Joy",
-        "powerrank": "0",
-        "tooltip": "",
-        "updated_at": 1637100534
+        "powerrank": "20",
+        "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>20% Magic Damage</li>\r\n<li>10% Health Regen</li>\r\n</ul>\r\n<p>Gain a movement speed boost when a nearby enemy dies.</p>",
+        "updated_at": 1639596617
     },
     "rooster_chick": {
         "blueprint": "c_c_rooster_chick_ui[skyrider3217].png",
@@ -7930,12 +7972,12 @@
         "designer": "Trove Team",
         "file": "Pets",
         "filename": "collections/pet/tentacle_seal",
-        "mastery": "0",
+        "mastery": "20",
         "mastery_geode": "0",
         "name": "Robby",
-        "powerrank": "0",
-        "tooltip": "",
-        "updated_at": 1637100534
+        "powerrank": "20",
+        "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>5000 Maximum Health</li>\r\n<li>10% Health Regen</li>\r\n</ul>\r\n<p>Gain 15% health when a nearby enemy dies.</p>",
+        "updated_at": 1639596617
     },
     "tentacle_shamrock": {
         "blueprint": "c_c_tentacle_shamrock_ui[skyrider3217].png",

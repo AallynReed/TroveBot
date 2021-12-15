@@ -79,7 +79,7 @@ class BuildsMaker():
                     bonus_damage += self.arguments.ally["stats"]["Damage"]
             if self.arguments.crystal5:
                 base_damage += 6916
-                critical_damage += 3.75
+                critical_damage += 3.75 - (1.25 * (3 - self.arguments.cd_count)) if self.arguments.build_type == "farm" else 3.75
                 light += 780
         builds = []
         builder = self._generate_combinations(coeff=self.arguments.build_type in ["health", "coeff"], light=self.arguments.light)
@@ -134,7 +134,7 @@ class BuildsMaker():
         crystal5 = self.arguments.crystal5
         mod = self.arguments.mod
         ally = self.arguments.ally
-        last_updated = datetime.utcfromtimestamp(1637821955)
+        last_updated = datetime.utcfromtimestamp(1639596498)
         builds = self._run_builder()
         if self.arguments.build:
             for build in builds:

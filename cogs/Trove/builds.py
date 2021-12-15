@@ -9,14 +9,14 @@ from discord.ext import commands
 from openpyxl import Workbook, utils
 from openpyxl.styles import Font, PatternFill, Alignment
 from utils.buttons import BuildsPickView, GemBuildsView
-from utils.objects import ArgumentFinder, BuildType, GameClass, Values
+from utils.objects import BuildType, GameClass, Values
 
 
 class Builds(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.values = Values()
-        self.bot.Trove.last_updated = 1638985903
+        self.bot.Trove.last_updated = 1639596498
 
     @commands.command(slash_command=True, help="Show gear for a class")
     @commands.cooldown(1, 120, commands.BucketType.user)

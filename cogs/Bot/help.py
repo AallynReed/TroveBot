@@ -77,12 +77,14 @@ class Help(commands.Cog):
             await ctx.send("Command not found!")
         elif not commandname and not subcommand:
             commands_list = {}
+            x = 0
             for command in await self.bot.help.get_all_commands():
                 # if ctx.guild.id in [118027756075220992] and command.name not in ["search", "build", "gear", "findmod", "augment", "coeff", "invite", "communities"]:
                 #     continue
                 if command.module not in commands_list.keys():
                     commands_list[command.module] = []
                 commands_list[command.module].append(command)
+                x += 1
             for module in commands_list.keys():
                 commands_list[module] = self.bot.utils.chunks(commands_list[module], 10)
                 i = 1
@@ -115,7 +117,7 @@ class Help(commands.Cog):
             }
             e = discord.Embed()
             e.color = discord.Color.random()
-            e.set_author(name=f"Help", icon_url=self.bot.user.avatar)
+            e.set_author(name=f"Help | {x} Total Commands", icon_url=self.bot.user.avatar)
             e.description = "" if ctx.guild.id not in [118027756075220992] else "**Trovesaurus has a limited feature set.** To access other features, add the bot to your own server.\n\n"
             e.description += "**Modules:**\n\n"
             e.description += "\n".join(sorted([f"`{m.capitalize()}`\n{module_descriptions[m]}\n" for m in commands_list.keys()]))

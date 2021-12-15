@@ -166,17 +166,33 @@ class Automation(commands.Cog):
         else:
             return await ctx.reply(await ctx.locale("auto_resets_weekly_mention_off"))
 
-    # @automation.group(hidden=True, aliases=["luxion" ,"corruxion"])
-    # async def dragon_merchant(self, _):
-    #     ...
+    @automation.group(slash_command=True, aliases=["dragon", "dm"], help="Automation subcommand group for dragon merchant messages")
+    async def dragon_merchant(self, _):
+        ...
 
-    # @dragon_merchant.command(hidden=True, name="voice")
-    # async def _voice(self, ctx, channel: discord.VoiceChannel=commands.Option(default=None, description="Select a voice channel")):
-    #     await self.bot.db.db_servers.update_one({"_id": ctx.guild.id}, {"$set": {"automation.dragon_merchant.voice.channel": channel.id if channel else channel}})
-    #     if channel:
-    #         return await ctx.reply((await ctx.locale("auto_dragon_merchant_voice_on")).format(channel.mention))
-    #     else:
-    #         return await ctx.reply(await ctx.locale("auto_dragon_merchant_voice_off"))
+    @dragon_merchant.command(slash_command=True, name="voice", help="Dragon Merchant subcommand for voice channel")
+    async def _voice(self, ctx, channel: discord.VoiceChannel=commands.Option(default=None, description="Select a voice channel")):
+        await self.bot.db.db_servers.update_one({"_id": ctx.guild.id}, {"$set": {"automation.dragon_merchant.voice.channel": channel.id if channel else channel}})
+        if channel:
+            return await ctx.reply((await ctx.locale("auto_dragon_merchant_voice_on")).format(channel.mention))
+        else:
+            return await ctx.reply(await ctx.locale("auto_dragon_merchant_voice_off"))
+
+    @dragon_merchant.command(slash_command=True, name="text", help="Dragon Merchant subcommand for text channel")
+    async def _text(self, ctx, channel: discord.TextChannel=commands.Option(default=None, description="Select a text channel")):
+        await self.bot.db.db_servers.update_one({"_id": ctx.guild.id}, {"$set": {"automation.dragon_merchant.text.channel": channel.id if channel else channel}})
+        if channel:
+            return await ctx.reply("Dragon Merchant posts are now enabled and will be sent to {}".format(channel.mention))
+        else:
+            return await ctx.reply("Dragon Merchant posts are now disabled.")
+
+    @dragon_merchant.command(slash_command=True, name="mention", help="Dragon Merchant subcommand for mentioning a role when posting dragon merchant messages")
+    async def dragon_mention(self, ctx, role: discord.Role=commands.Option(name="role", default=None, description="Select a role")):
+        await self.bot.db.db_servers.update_one({"_id": ctx.guild.id}, {"$set": {"automation.dragon_merchant.text.role": role.id if role else role}})
+        if role:
+            return await ctx.reply("Dragon Merchants posts will now mention {}".format(role.mention), allowed_mentions=discord.AllowedMentions.none())
+        else:
+            return await ctx.reply("Dragon Merchants posts will not mention anymore.")
 
   # Clock
 

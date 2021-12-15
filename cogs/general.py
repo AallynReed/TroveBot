@@ -209,7 +209,7 @@ class General(commands.Cog):
 
     @commands.command(slash_command=True, help="Get an invite to bot support server")
     async def support(self, ctx):
-        await ctx.send("Join support.\nhttps://discord.gg/YAY3jz4rNG")
+        await ctx.send("Join support.\nhttps://discord.gg/YAY3jz4rNG", ephemeral=True)
 
     @commands.command(aliases=["ji"])
     @commands.bot_has_permissions(embed_links=1)

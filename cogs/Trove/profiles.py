@@ -239,7 +239,7 @@ class Profiles(commands.Cog):
         await self._profile(ctx, user, _class)
 
     @commands.group(
-        slash_command=True,
+        slash_command=False,
         help="Check out someone's PTS profile or manage your own",
         name="ptsprofile",
         invoke_without_command=True,
@@ -336,7 +336,7 @@ class Profiles(commands.Cog):
     async def request(self, ctx):
         await self.__request(ctx)
 
-    @pprofile.command(slash_command=True, help="Learn how to request a PTS profile", name="request")
+    @pprofile.command(slash_command=False, help="Learn how to request a PTS profile", name="request")
     async def _request(self, ctx):
         await self.__request(ctx)
 
@@ -355,7 +355,7 @@ class Profiles(commands.Cog):
     async def primary(self, ctx, _class: GameClass):
         await self.__primary(ctx, _class)
 
-    @pprofile.command(name="primary", slash_command=True, help="Select which class is shown by default in your profile")
+    @pprofile.command(name="primary", slash_command=False, help="Select which class is shown by default in your profile")
     async def _primary(self, ctx, _class: GameClass=commands.Option(name="class", description="Input a class")):
         await self.__primary(ctx, _class, 0)
 
@@ -373,7 +373,7 @@ class Profiles(commands.Cog):
     async def _list(self, ctx, user: typing.Union[discord.User, str]=None):
         await self.__list_(ctx, user)
 
-    @pprofile.command(name="list", slash_command=True, help="List all the classes you've submitted to your PTS profile")
+    @pprofile.command(name="list", slash_command=False, help="List all the classes you've submitted to your PTS profile")
     async def __list(self, ctx, user: typing.Union[discord.User, str]=commands.Option(name="user_or_player", default=None, description="Input a user or a player")):
         await self.__list_(ctx, user, 0)
 
@@ -428,7 +428,7 @@ class Profiles(commands.Cog):
 
     @pprofile.command(
         name="delete",
-        slash_command=True,
+        slash_command=False,
         help="Delete your PTS profile", 
         aliases=["del"])
     async def _delete(self, ctx, user: typing.Union[discord.User, str]=commands.Option(name="user_or_player", default=None, description="Input a user or player")):
@@ -470,7 +470,7 @@ class Profiles(commands.Cog):
         i = len(await self.bot.db.db_profiles.find({"Bot Settings.Server": 1}, {"discord_id": 1}).to_list(length=999999))
         await ctx.send(f"There's a total of **{i}** profiles.")
 
-    @pprofile.command(name="total", slash_command=True, help="Check amount of PTS profiles submitted")
+    @pprofile.command(name="total", slash_command=False, help="Check amount of PTS profiles submitted")
     async def _total(self, ctx):
         i = len(await self.bot.db.db_profiles.find({"Bot Settings.Server": 0}, {"discord_id": 1}).to_list(length=999999))
         await ctx.send(f"There's a total of **{i}** profiles.")
@@ -479,7 +479,7 @@ class Profiles(commands.Cog):
     async def stats(self, ctx, user: typing.Union[discord.User, str]=None):
         await self.mastery_stats(ctx, user, "Stats")
 
-    @pprofile.command(name="stats", slash_command=True, help="Check out the stats in your/someone's PTS profile")
+    @pprofile.command(name="stats", slash_command=False, help="Check out the stats in your/someone's PTS profile")
     async def _stats(self, ctx, user: typing.Union[discord.User, str]=commands.Option(name="user_or_player", default=None, description="Input a user or player")):
         await self.mastery_stats(ctx, user, "Stats", 0)
 
@@ -487,7 +487,7 @@ class Profiles(commands.Cog):
     async def mastery(self, ctx, user: typing.Union[discord.User, str]=None):
         await self.mastery_stats(ctx, user, "Collected Mastery")
 
-    @pprofile.command(name="mastery", slash_command=True, help="Check out the mastery your/someone's profile")
+    @pprofile.command(name="mastery", slash_command=False, help="Check out the mastery your/someone's profile")
     async def _mastery(self, ctx, user: typing.Union[discord.User, str]=commands.Option(name="user_or_player", default=None, description="Input a user or player")):
         await self.mastery_stats(ctx, user, "Collected Mastery", 0)
 

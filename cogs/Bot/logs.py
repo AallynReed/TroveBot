@@ -46,7 +46,7 @@ class Logs(commands.Cog):
             ...
         if len([m for m in server.members if not m.bot]) < 10 and server.owner.id not in self.bot.owners:
             try:
-                await dm.send("Unfortunately I am unable to join your server, 10 members (non bots) are required for me to join.")
+                await dm.send("Unfortunately I am unable to join your server, 10 members (non bots) are required for me to join.\nThis is due to Discord limiting bot to 100 servers, and me wainting bot to reach as many people as possible whilst not losing access to important data it relies on to work properly such as knowing what is in your message content to know whether you used or not a command and which one you used.\n\nApologies for the inconvenience.")
             except:
                 ...
         elif 620784025518473226 in [m.id for m in guild.bots]:
@@ -220,7 +220,8 @@ class Logs(commands.Cog):
             prefix = ctx.prefix if not ctx.interaction else "/"
             embed1 = discord.Embed(title="Command Executed!", url=ctx.message.jump_url, colour=ctx.guild.owner.color, timestamp=datetime.utcnow())
             embed1.set_author(name=f"{ctx.guild.name} [{ctx.guild.id}]", icon_url=self.bot.user.avatar)
-            embed1.set_thumbnail(url=ctx.guild.icon)
+            if ctx.guild.icon:
+                embed1.set_thumbnail(url=ctx.guild.icon)
             embed1.set_footer(text=f"Member Count: {ctx.guild.member_count}")
             embed1.add_field(name="Channel", value="Channel Name: `#{}`\nChannel ID: `{}`".format(ctx.channel.name, str(ctx.channel.id)), inline=False)
             embed1.add_field(name="Author", value="Author: `@{}`\nAuthor ID: `{}`".format(ctx.author, ctx.author.id), inline=False)
