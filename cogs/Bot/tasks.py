@@ -76,6 +76,11 @@ class Tasks(commands.Cog):
     async def terminate_session(self):
         await self.session.close()
 
+    async def wait_midnight(self):
+        now = self.time.now
+        time = (23 - now.hour) * 3600 + (3540 - now.minute * 60) + (60 - now.second)
+        await asyncio.sleep(time)
+
     @property
     def forums_time(self):
         return datetime.utcnow().astimezone(pytz.timezone("GMT")) - timedelta(hours=7)
@@ -423,12 +428,17 @@ class Tasks(commands.Cog):
     @tasks.loop(seconds=5)
     async def clock(self):
         time = self.time.now
-        if time.minute%5:
-            return
         data = await self.bot.db.db_servers.find({"clock.channel": {"$ne": None}}, {"clock": 1}).to_list(length=99999)
         if not data:
             return
         for server in data:
+            timeout = server["clock"]["slowmode"]
+            if timeout:
+                if time.minute%timeout:
+                    continue
+            else:
+                if time.minute != timeout:
+                    continue
             channel = self.bot.get_channel(server["clock"]["channel"])
             if not channel:
                 continue
@@ -440,10 +450,10 @@ class Tasks(commands.Cog):
             if channel.name == text:
                 continue
             try:
-                await channel.edit(name=text)
+                asyncio.create_task(channel.edit(name=text))
             except:
                 ...
-        await asyncio.sleep(60)
+        await asyncio.sleep(15)
 
     @tasks.loop(seconds=60)
     async def sheet_timer(self):
@@ -479,21 +489,23 @@ class Tasks(commands.Cog):
                 await channel.edit(name=text)
             except:
                 ...
-        await asyncio.sleep(60)
+        await self.wait_midnight()
 
     @tasks.loop(seconds=5)
     async def dragon_merchant_text(self):
+        now = self.time.now
+        if not (now.hour == 0 and now.minute == 0):
+            return
         data = await self.bot.db.db_servers.find({"automation.dragon_merchant.text.channel": {"$ne": None}}, {"automation": 1}).to_list(length=99999)
         if not data:
             return
-        now = self.time.now
         e = discord.Embed()
-        if (self.time.luxion_start - timedelta(days=14)) == now.day and now.hour == 0 and now.minute == 0:
+        if self.time.luxion_start.day == now.day:
             dragon = "Luxion"
             avatar = "https://i.imgur.com/9eOV0JD.png"
             e.color = 0xc8ad18
             e.set_image(url="https://i.imgur.com/zWkZ9Xd.png")
-        elif (self.time.corruxion_start - timedelta(days=14)) == now.day and now.hour == 0 and now.minute == 0:
+        elif self.time.corruxion_start.day == now.day:
             dragon = "Corruxion"
             avatar = "https://i.imgur.com/BPNdE1w.png"
             e.color = 0x850eff
@@ -544,13 +556,18 @@ class Tasks(commands.Cog):
     @tasks.loop(seconds=5)
     async def daily_voice_channels(self):
         data = await self.bot.db.db_servers.find({"automation.daily.voice.channel": {"$ne": None}}, {"automation": 1}).to_list(length=99999)
-        if data:
-            for server in data:
-                dailies = ["🏹Delve Day", "🐟Gathering Day", "💎Gem Day", "🌀Adventure Day", "🐉Dragon Day", "💉XP Day", "💰Loot Day"]
-                channel = self.bot.get_channel(server["automation"]["daily"]["voice"]["channel"])
-                daily = dailies[self.time.now.weekday()]
-                if channel and channel.name != daily:
+        if not data:
+            return
+        for server in data:
+            dailies = ["🏹Delve Day", "🐟Gathering Day", "💎Gem Day", "🌀Adventure Day", "🐉Dragon Day", "💉XP Day", "💰Loot Day"]
+            channel = self.bot.get_channel(server["automation"]["daily"]["voice"]["channel"])
+            daily = dailies[self.time.now.weekday()]
+            if channel and channel.name != daily:
+                try:
                     await channel.edit(name=daily)
+                except:
+                    ...
+        await self.wait_midnight()
 
     @tasks.loop(seconds=5)
     async def weekly_text_channels(self):
@@ -587,7 +604,11 @@ class Tasks(commands.Cog):
             for server in data:
                 channel = self.bot.get_channel(server["automation"]["weekly"]["voice"]["channel"])
                 if channel and channel.name != buff:
-                    await channel.edit(name=buff)
+                    try:
+                        await channel.edit(name=buff)
+                    except:
+                        ...
+        await self.wait_midnight()
 
 def setup(bot):
     n = Tasks(bot)

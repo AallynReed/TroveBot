@@ -1,8 +1,11 @@
-import discord
 import asyncio
 import re
 from functools import partial
+
+import discord
+
 from utils.builds import BuildsMaker
+
 
 class Dummy():
     ...
@@ -29,6 +32,24 @@ class BaseView(discord.ui.View):
             pass
 
 # Static
+
+class OptionPicker(BaseView):
+    def __init__(self, ctx, options):
+        super().__init__(
+            timeout=60
+        )
+        self.ctx = ctx
+        self.value = None
+        for option in options:
+            self.add_item(OptionPickerButton(emoji=option["emoji"], text=option["text"]))
+        
+class OptionPickerButton(discord.ui.Button["OptionPicker"]):
+    def __init__(self, emoji, text):
+        super().__init__(style=discord.ButtonStyle.secondary, emoji=emoji, label=text)
+
+    async def callback(self, interaction: discord.Interaction):
+        self.view.value = self.label
+        self.view.stop()
 
 class Confirm(BaseView):
     def __init__(self, ctx, timeout=180):

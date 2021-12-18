@@ -116,10 +116,9 @@ class Information(commands.Cog):
                             platform = "<:windows:839445248517079050>"
                         if activity.application_id == 438122941302046720:
                             platform = "<:xbox:839439645359603713>"
-                        if ctx.guild.get_member(member.id):
-                            is_in = True
-                        else:
-                            is_in = False
+                        # if activity.application_id == 1234:
+                        #     platform = "<:playstation:921080331782737990>"
+                        is_in = bool(ctx.guild.get_member(member.id))
                         playingtrove.append([str(member), member.id, activity.created_at.timestamp(), platform, is_in])
                         break
             return checked, playingtrove, fake

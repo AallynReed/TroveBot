@@ -7,7 +7,6 @@ from io import BytesIO
 
 import discord
 import psutil
-import pytz
 import requests
 import utils.checks as perms
 from discord.ext import commands

@@ -1,6 +1,5 @@
 # Priority: 1
 import asyncio
-import io
 import json
 import re
 import urllib.request as urlget
@@ -12,7 +11,7 @@ from discord.ext import commands, tasks
 from openpyxl import load_workbook
 
 import websockets
-from utils.objects import GameClass, MetricsConverter
+from utils.objects import MetricsConverter
 
 
 class WebSockets(commands.Cog):

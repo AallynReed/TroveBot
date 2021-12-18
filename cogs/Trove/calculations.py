@@ -85,7 +85,7 @@ class Calculations(commands.Cog):
         no_commas: typing.Optional[typing.Literal["true"]]=commands.Option(name="no_commas", default=None, description="Whether to disable commas in the result or not"),
         debug: typing.Optional[typing.Literal["true"]]=commands.Option(name="debug", default=None, description="Whether to show debug info or not"),
         *,
-        expression=commands.Option(name="expression", default=None, description="Input an arguments")):
+        expression=commands.Option(name="expression", description="Input an arguments")):
         args = expression
         if not args:
             return await ctx.send("Please give an expression to solve.", delete_after=10)

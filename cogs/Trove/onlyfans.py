@@ -4,7 +4,6 @@ import re
 from datetime import datetime, timedelta
 
 import discord
-from discord.mentions import AllowedMentions
 import utils.checks as perms
 from discord.ext import commands, tasks
 

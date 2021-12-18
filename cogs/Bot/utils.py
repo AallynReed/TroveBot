@@ -3,13 +3,13 @@ import base64
 import json
 import math
 import re
-from PIL import Image
-from io import BytesIO
 from datetime import datetime
+from io import BytesIO
 from typing import Literal, Optional
 
 import discord
 from discord.ext import commands
+from PIL import Image
 
 
 class MD(dict):
@@ -459,6 +459,31 @@ class Utilities(commands.Cog):
             if kill:
                 continue
             yield num
+        
+    async def ssend(self, channel, *args, **kwargs):
+        try:
+            await channel.send(*args, **kwargs)
+        except discord.errors.Forbidden:
+            return False
+        return True
+
+    async def eedit(self, message, *args, **kwargs):
+        try:
+            if "delete_after" in kwargs:
+                del kwargs["delete_after"]
+            await message.edit(*args, **kwargs)
+        except discord.errors.NotFound:
+            return False
+        return True
+
+    async def ddelete(self, message):
+        try:
+            await message.delete()
+        except discord.errors.NotFound:
+            return False
+        return True
+
+    
 
 def setup(bot):
     bot.add_cog(Utilities(bot))

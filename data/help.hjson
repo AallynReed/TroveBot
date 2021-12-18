@@ -263,25 +263,17 @@
                 "example": "{prefix}blacklist info IceMoon\n{prefix}blacklist info @SnowFlake",
                 "aliases": []
             },
-            "search": {
+            "timeout": {
                 "module": "club",
-                "description": "Under Construction **(Administrator Only)**",
-                "example": "{prefix}blacklist search",
-                "aliases": [],
-                "subcommands": {
-                    "player": {
-                        "module": "club",
-                        "description": "Under Construction **(Administrator Only)**",
-                        "example": "{prefix}blacklist search player IceMoon",
-                        "aliases": []
-                    },
-                    "reason": {
-                        "module": "club",
-                        "description": "Under Construction **(Administrator Only)**",
-                        "example": "{prefix}blacklist search reason toxic",
-                        "aliases": []
-                    }
-                }
+                "description": "Adds/Removes a timeout for the user in blacklist **(Administrator Only)**",
+                "example": "{prefix}blacklist timeout IceMoon 0\n{prefix}blacklist timeout Icemoon 8 weeks",
+                "aliases": []
+            },
+            "timeout": {
+                "module": "club",
+                "description": "Set a channel to be notified when a blacklist timeout ends **(Administrator Only)**",
+                "example": "{prefix}blacklist channel #Blacklist\n{prefix}blacklist channel",
+                "aliases": []
             }
         }
     },

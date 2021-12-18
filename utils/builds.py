@@ -207,8 +207,6 @@ class BuildsMaker():
             pages.append(page)
         return pages
 
-
-
   # Values
 
     def get_value(self, attr: str):

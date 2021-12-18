@@ -1,8 +1,8 @@
+import hashlib
 import json
 import re
 import urllib.request as urlget
 from datetime import datetime, timedelta
-import hashlib
 from io import BytesIO
 from typing import Literal, Optional
 
@@ -10,9 +10,71 @@ from discord.ext import commands
 from openpyxl import load_workbook
 from PIL import Image
 from pytz import UTC
+
 from utils.trovesaurus import Ally
 
 TimestampStyle = Literal['f', 'F', 'd', 'D', 't', 'T', 'R']
+
+class TimeConvert(commands.Converter):
+    async def convert(self, ctx, argument):
+        return TimeConverter(argument)
+
+class TimeConverter():
+    def __init__(self, input, fuzzy=True):
+        self.fuzzy = fuzzy
+        if isinstance(input, (int, float)) or input.isdigit():
+            self.seconds = int(input)
+        elif isinstance(input, str):
+            parts = self._get_time_parts(input)
+            result = self._parts_to_int(parts)
+            self.seconds = result
+        else:
+            raise ValueError("Wrong Input")
+        self.delta = timedelta(seconds=self.seconds)
+
+    @property
+    def _periods(self):
+        periods = {}
+        periods["year"] = 31557600 if self.fuzzy else 31536000
+        periods["month"] = 2629800 if self.fuzzy else 2592000
+        periods["week"] = 604800
+        periods["day"] = 86400
+        periods["hour"] = 3600
+        periods["minute"] = 60
+        periods["second"] = 1
+        return periods
+
+    def _get_time_parts(self, input):
+        regex = r"((?!0)[0-9]+) ?(?:(y(?:ears?)?)|(months?)|(w(?:eeks?)?)|(d(?:ays?)?)|(h(?:ours?)?)|(m(?:inutes?)?)|(s(?:econds?)?))"
+        result = re.findall(regex, input, re.IGNORECASE)
+        if not result:
+            raise ValueError("No time parts detected")
+        return result
+
+    def _parts_to_int(self, parts):
+        seconds = 0
+        for part in parts:
+            broken_part = part[1:]
+            for i in range(len(broken_part)):
+                if broken_part[i]:
+                    seconds += int(part[0]) * list(self._periods.values())[i]
+        return seconds
+
+    def _naturaldelta(self):
+        strings = []
+        used_units = []
+        for name, value in self._periods.items():
+            if self.seconds < value:
+                continue
+            if len(used_units) == 3:
+                break
+            used_units.append(name)
+            time, self.seconds = divmod(self.seconds, value)
+            strings.append(f"{time} {name}" + ("s" if time != 1 else ""))
+        return strings
+            
+    def __str__(self):
+        return ", ".join(self._naturaldelta())
 
 class DictConvert(commands.Converter):
     async def convert(self, ctx, argument):
@@ -27,9 +89,7 @@ class TrovePlayer(commands.Converter):
         try:
             nick = re.match(r"^([a-z_0-9]{2,19})$", argument, re.IGNORECASE)
             if nick:
-                data = await ctx.bot.db.db_profiles.find_one({"Name": {"$regex": f"(?i)^{argument}$"}})
-                if data:
-                    return argument
+                return argument
             raise Exception("No shot.")
         except:
             raise commands.BadArgument("Invalid nickname.")

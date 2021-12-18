@@ -146,7 +146,8 @@ class Database(DB):
             },
             "clock": {
                 "channel": None,
-                "format": None
+                "format": None,
+                "slowmode": 5
             },
             "forums_posts": {},
             "twitch": {
@@ -154,6 +155,9 @@ class Database(DB):
                 "message": None,
                 "channels": [],
                 "notified": []
+            },
+            "blacklist": {
+                "channel": None
             }
         }
 

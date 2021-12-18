@@ -4,7 +4,6 @@ from datetime import datetime
 
 import discord
 import magic
-import re
 from discord.ext import commands
 from utils.buttons import Traceback
 
@@ -90,7 +89,10 @@ class Logs(commands.Cog):
         elif isinstance(error, commands.NoPrivateMessage):
             await ctx.send("You cannot use bot commands in direct messages.", delete_after=10)#, ephemeral=True)
         elif isinstance(error, commands.DisabledCommand):
-            await ctx.send(f"**{ctx.command}** is currently disabled!", delete_after=10)#, ephemeral=True)
+            extra = ""
+            if ctx.command.slash_command and (ctx.command.slash_command_guilds is None or ctx.guild.id in ctx.command.slash_command_guilds):
+                extra += "\nUse slash command version instead"
+            await ctx.send(f"**{ctx.command}** is currently disabled!" + extra, delete_after=10)#, ephemeral=True)
         elif isinstance(error, commands.CommandOnCooldown):
             if ctx.command.name == "reportbug":
                 try:

@@ -17,6 +17,16 @@ class Automation(commands.Cog):
         self.auto_nickname.stop()
         self.auto_club_member_role.stop()
 
+    def check_perms(self, channel):
+        perms: discord.Permissions = channel.permissions_for(channel.guild.me)
+        if isinstance(channel, discord.TextChannel):
+            if not perms.view_channel or not perms.read_messages or not perms.send_messages or not perms.embed_links:
+                return False
+        elif isinstance(channel, discord.VoiceChannel):
+            if not perms.view_channel or not perms.connect or not perms.manage_channels:
+                return False
+        return True
+            
     @tasks.loop(seconds=60)
     async def auto_nickname(self):
         data = await self.bot.db.db_servers.find({"automation.nickname.toggle": True}, {"PTS mode": 1, "automation": 1}).to_list(length=999999)
@@ -108,7 +118,7 @@ class Automation(commands.Cog):
         channel = self.bot.get_channel(data["clock"]["channel"])
         e.add_field(name=await ctx.locale("auto_settings_embed_clock_field_channel_title"), value=channel.mention if channel else await ctx.locale("auto_settings_embed_clock_field_channel_disabled"))
         e.add_field(name=await ctx.locale("auto_settings_embed_clock_field_format_title"), value=data["clock"]["format"] or "`⌛{hour24}:{minute}`")
-        e.add_field(name="\u200b", value="\u200b")
+        e.add_field(name="Update rate", value=data["clock"]["slowmode"] or "`⌛{hour24}:{minute}`")
         e.add_field(name="👤 Profile Auto Nickname", value=data["PTS mode"], inline=False)
         await ctx.reply(embed=e)
 
@@ -120,6 +130,8 @@ class Automation(commands.Cog):
 
     @resets.command(slash_command=True, help="Reset subcommand for daily resets in text channels", aliases=["dt"])
     async def daily_text(self, ctx, channel: discord.TextChannel=commands.Option(name="text_channel", default=None, description="Select a text channel")):
+        if channel and not self.check_perms(channel):
+            return await ctx.send(f"I need `View Channel`, `Read Messages`, `Send Messages` and `Embed Links` permissions in {channel.mention}", ephemeral=True)
         await self.bot.db.db_servers.update_one({"_id": ctx.guild.id}, {"$set": {"automation.daily.text.channel": channel.id if channel else channel}})
         if channel:
             return await ctx.reply((await ctx.locale("auto_resets_daily_text_on")).format(channel.mention))
@@ -128,6 +140,8 @@ class Automation(commands.Cog):
 
     @resets.command(slash_command=True, help="Reset subcommand for daily resets in voice channels", aliases=["dv"])
     async def daily_voice(self, ctx, channel: discord.VoiceChannel=commands.Option(name="voice_channel", default=None, description="Select a voice channel")):
+        if channel and not self.check_perms(channel):
+            return await ctx.send(f"I need `View Channel`, `Connect` and `Manage Channel` permissions in {channel.mention}", ephemeral=True)
         await self.bot.db.db_servers.update_one({"_id": ctx.guild.id}, {"$set": {"automation.daily.voice.channel": channel.id if channel else channel}})
         if channel:
             return await ctx.reply((await ctx.locale("auto_resets_daily_voice_on")).format(channel.mention))
@@ -136,6 +150,8 @@ class Automation(commands.Cog):
 
     @resets.command(slash_command=True, help="Reset subcommand for weekly resets in text channels", aliases=["wt"])
     async def weekly_text(self, ctx, channel: discord.TextChannel=commands.Option(name="text_channel", default=None, description="Select a text channel")):
+        if channel and not self.check_perms(channel):
+            return await ctx.send(f"I need `View Channel`, `Read Messages`, `Send Messages` and `Embed Links` permissions in {channel.mention}", ephemeral=True)
         await self.bot.db.db_servers.update_one({"_id": ctx.guild.id}, {"$set": {"automation.weekly.text.channel": channel.id if channel else channel}})
         if channel:
             return await ctx.reply((await ctx.locale("auto_resets_weekly_text_on")).format(channel.mention))
@@ -144,6 +160,8 @@ class Automation(commands.Cog):
 
     @resets.command(slash_command=True, help="Reset subcommand for weekly resets in voice channels", aliases=["wv"])
     async def weekly_voice(self, ctx, channel: discord.VoiceChannel=commands.Option(name="voice_channel", default=None, description="Select a voice channel")):
+        if channel and not self.check_perms(channel):
+            return await ctx.send(f"I need `View Channel`, `Connect` and `Manage Channel` permissions in {channel.mention}", ephemeral=True)
         await self.bot.db.db_servers.update_one({"_id": ctx.guild.id}, {"$set": {"automation.weekly.voice.channel": channel.id if channel else channel}})
         if channel:
             return await ctx.reply((await ctx.locale("auto_resets_weekly_voice_on")).format(channel.mention))
@@ -172,6 +190,8 @@ class Automation(commands.Cog):
 
     @dragon_merchant.command(slash_command=True, name="voice", help="Dragon Merchant subcommand for voice channel")
     async def _voice(self, ctx, channel: discord.VoiceChannel=commands.Option(default=None, description="Select a voice channel")):
+        if channel and not self.check_perms(channel):
+            return await ctx.send(f"I need `View Channel`, `Connect` and `Manage Channel` permissions in {channel.mention}", ephemeral=True)
         await self.bot.db.db_servers.update_one({"_id": ctx.guild.id}, {"$set": {"automation.dragon_merchant.voice.channel": channel.id if channel else channel}})
         if channel:
             return await ctx.reply((await ctx.locale("auto_dragon_merchant_voice_on")).format(channel.mention))
@@ -180,6 +200,8 @@ class Automation(commands.Cog):
 
     @dragon_merchant.command(slash_command=True, name="text", help="Dragon Merchant subcommand for text channel")
     async def _text(self, ctx, channel: discord.TextChannel=commands.Option(default=None, description="Select a text channel")):
+        if channel and not self.check_perms(channel):
+            return await ctx.send(f"I need `View Channel`, `Read Messages`, `Send Messages` and `Embed Links` permissions in {channel.mention}", ephemeral=True)
         await self.bot.db.db_servers.update_one({"_id": ctx.guild.id}, {"$set": {"automation.dragon_merchant.text.channel": channel.id if channel else channel}})
         if channel:
             return await ctx.reply("Dragon Merchant posts are now enabled and will be sent to {}".format(channel.mention))
@@ -202,6 +224,8 @@ class Automation(commands.Cog):
 
     @clock.command(slash_command=True, help="Select a voice channel for clock")
     async def channel(self, ctx, channel: discord.VoiceChannel=commands.Option(name="voice_channel", default=None, description="Select a voice channel")):
+        if channel and not self.check_perms(channel):
+            return await ctx.send(f"I need `View Channel`, `Connect` and `Manage Channel` permissions in {channel.mention}", ephemeral=True)
         await self.bot.db.db_servers.update_one({"_id": ctx.guild.id}, {"$set": {"clock.channel": channel.id if channel else channel}})
         if channel:
             return await ctx.reply((await ctx.locale("auto_clock_channel_on")).format(channel.mention))
@@ -213,7 +237,14 @@ class Automation(commands.Cog):
         if _format and  len(_format) > 100:
             return await ctx.reply(await ctx.locale("auto_clock_format_max_characters"))
         await self.bot.db.db_servers.update_one({"_id": ctx.guild.id}, {"$set": {"clock.format": _format}})
-        await ctx.reply(await ctx.locale("auto_clock_format_success").format(_format if _format else 'default'))
+        await ctx.reply((await ctx.locale("auto_clock_format_success")).format(_format if _format else None))
+
+    @clock.command(slash_command=True, help="Select amount of minutes for voice channels to update")
+    async def update_time(self, ctx, minutes: int=commands.Option(default=5, description="Select amount of minutes 0 or 5-59")):
+        if minutes > 59 or minutes < 5 and minutes != 0:
+            return await ctx.reply("Minutes must be in a range of `5 - 59` or 0 to update at minute `0` of every hour", ephemeral=True)
+        await self.bot.db.db_servers.update_one({"_id": ctx.guild.id}, {"$set": {"clock.slowmode": minutes}})
+        await ctx.reply("Clock widget will now update " + (f"**every minute divisable by {minutes}**" if minutes else "**every hour**"))
 
     @automation.group(slash_command=True, help="Automation subcommand group for club related commands")
     async def club(self, ctx):
@@ -258,17 +289,15 @@ class Automation(commands.Cog):
 
     @posts.command(slash_command=True, help="Select a channel for PTS Patch Notes to be posted in", aliases=["ppn"])
     async def pts_patch_notes(self, ctx, channel: discord.TextChannel):
-        perms = channel.permissions_for(ctx.guild.me)
-        if not (perms.send_messages and perms.embed_links and perms.view_channel):
-            return await ctx.send(f"I require `View Channel` and `Send Messages` and `Embed Links` permissions in {channel.mention} to enable this feature in that channel.")
+        if channel and not self.check_perms(channel):
+            return await ctx.send(f"I need `View Channel`, `Read Messages`, `Send Messages` and `Embed Links` permissions in {channel.mention}", ephemeral=True)
         await self.bot.db.db_servers.update_one({"_id": ctx.guild.id}, {"$set": {"forums_posts.pts.channel": channel.id}})
         await ctx.reply(f"PTS Patch Notes will now be posted in {channel.mention} very shortly.")
 
     @posts.command(slash_command=True, help="Select a channel for PTS User Posts to be posted in", aliases=["pup"])
     async def pts_user_posts(self, ctx, channel: discord.TextChannel):
-        perms = channel.permissions_for(ctx.guild.me)
-        if not (perms.send_messages and perms.embed_links and perms.view_channel):
-            return await ctx.send(f"I require `View Channel` and `Send Messages` and `Embed Links` permissions in {channel.mention} to enable this feature in that channel.")
+        if channel and not self.check_perms(channel):
+            return await ctx.send(f"I need `View Channel`, `Read Messages`, `Send Messages` and `Embed Links` permissions in {channel.mention}", ephemeral=True)
         await self.bot.db.db_servers.update_one({"_id": ctx.guild.id}, {"$set": {"forums_posts.ptsposts.channel": channel.id}})
         await ctx.reply(f"PTS Posts will now be posted in {channel.mention} very shortly.")
 
@@ -282,17 +311,15 @@ class Automation(commands.Cog):
     
     @posts.command(slash_command=True, help="Select a channel for PC Live Patch Notes to be posted in", aliases=["lpn"])
     async def live_patch_notes(self, ctx, channel: discord.TextChannel):
-        perms = channel.permissions_for(ctx.guild.me)
-        if not (perms.send_messages and perms.embed_links and perms.view_channel):
-            return await ctx.send(f"I require `View Channel` and `Send Messages` and `Embed Links` permissions in {channel.mention} to enable this feature in that channel.")
+        if channel and not self.check_perms(channel):
+            return await ctx.send(f"I need `View Channel`, `Read Messages`, `Send Messages` and `Embed Links` permissions in {channel.mention}", ephemeral=True)
         await self.bot.db.db_servers.update_one({"_id": ctx.guild.id}, {"$set": {"forums_posts.livepatches.channel": channel.id}})
         await ctx.reply(f"Live Patch Notes will now be posted in {channel.mention} very shortly.")
 
     @posts.command(slash_command=True, help="Select a channel for Console Patch Notes to be posted in", aliases=["cpn"])
     async def console_patch_notes(self, ctx, channel: discord.TextChannel):
-        perms = channel.permissions_for(ctx.guild.me)
-        if not (perms.send_messages and perms.embed_links and perms.view_channel):
-            return await ctx.send(f"I require `View Channel` and `Send Messages` and `Embed Links` permissions in {channel.mention} to enable this feature in that channel.")
+        if channel and not self.check_perms(channel):
+            return await ctx.send(f"I need `View Channel`, `Read Messages`, `Send Messages` and `Embed Links` permissions in {channel.mention}", ephemeral=True)
         await self.bot.db.db_servers.update_one({"_id": ctx.guild.id}, {"$set": {"forums_posts.consolepatches.channel": channel.id}})
         await ctx.reply(f"Console Patch Notes will now be posted in {channel.mention} very shortly.")
     
