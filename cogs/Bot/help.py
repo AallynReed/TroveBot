@@ -2,8 +2,8 @@
 import discord
 from discord.ext import commands
 
-from utils.HelpAPI import HelpAPI
 from utils.buttons import HelpView
+from utils.HelpAPI import HelpAPI
 
 
 class Help(commands.Cog):

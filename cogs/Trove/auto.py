@@ -1,10 +1,10 @@
 # Priority: 1
-import discord
-from discord.ext import commands, tasks
-from datetime import datetime
 import re
+from datetime import datetime
 
+import discord
 import utils.checks as perms
+from discord.ext import commands, tasks
 
 
 class Automation(commands.Cog):

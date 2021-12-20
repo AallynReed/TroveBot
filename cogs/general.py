@@ -15,10 +15,8 @@ from utils.buttons import Paginator
 
 class General(commands.Cog):
     """General module."""
-
     def __init__(self, bot):
         self.bot = bot
-        self.ocr_key = "79f3666bba88957"
 
     @commands.command(hidden=True)
     async def tooltip(self, ctx):
@@ -73,24 +71,6 @@ class General(commands.Cog):
         e.description = "\n".join(servers)
         e.set_author(name=f"Mutual servers with {user}", icon_url=user.avatar)
         await ctx.reply(embed=e)
-
-    @commands.command(aliases=["tfi"], hidden=True)
-    async def text_from_image(self, ctx):
-        if not ctx.message.attachments or ctx.message.attachments[0].content_type not in ["image/png", "image/jpeg"]:
-            return await ctx.send("Send a valid image file.")
-        if ctx.message.attachments[0].size / 1024 / 1024 > 1:
-            return await ctx.send("Max image file size accepted by API is 1 MB.")
-        _file = await ctx.message.attachments[0].read()
-        payload = {
-            "apikey": self.ocr_key,
-            "language": "eng",
-            f"file.{ctx.message.attachments[0].filename.split('.')[-1]}": _file
-        }
-        request = await self.bot.AIOSession.post("https://api.ocr.space/parse/image", data=payload)
-        text = (await request.json())['ParsedResults'][0]['ParsedText']
-        if len(text) > 2000-7:
-            return await ctx.send(file=discord.File(BytesIO(text.encode), filename="image.txt"))
-        await ctx.reply(f"```\n{text}```")
 
     @commands.command(aliases=["ga"])
     @commands.bot_has_permissions(embed_links=1)

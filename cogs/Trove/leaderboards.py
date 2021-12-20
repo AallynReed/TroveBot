@@ -1,15 +1,12 @@
 # Priority: 1
 import asyncio
+import json
 import operator
 import re
-import json
-from typing import Collection
 
 import discord
-from discord.ext import commands, tasks
-
-import utils.checks as perms
 import pandas as pd
+from discord.ext import commands, tasks
 from utils.objects import Values
 
 

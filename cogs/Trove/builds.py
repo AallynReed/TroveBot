@@ -1,13 +1,13 @@
 # Priority: 1
 import asyncio
 import os
-from datetime import datetime
 import string
+from datetime import datetime
 
 import discord
 from discord.ext import commands
 from openpyxl import Workbook, utils
-from openpyxl.styles import Font, PatternFill, Alignment
+from openpyxl.styles import Alignment, Font, PatternFill
 from utils.buttons import BuildsPickView, GemBuildsView
 from utils.objects import BuildType, GameClass, Values
 

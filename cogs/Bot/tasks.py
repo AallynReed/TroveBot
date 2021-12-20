@@ -15,7 +15,7 @@ from discord.ext import commands, tasks
 from openpyxl import load_workbook
 from pushbullet import Pushbullet
 
-from utils.objects import TroveTime  # pyright: reportMissingImports=false
+from utils.objects import TroveTime
 
 
 class Tasks(commands.Cog):

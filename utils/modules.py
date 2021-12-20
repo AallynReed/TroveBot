@@ -1,6 +1,7 @@
 import os
 import re
 
+
 class Module():
     def __init__(self, data):
         for k, v in data.items():

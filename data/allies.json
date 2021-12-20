@@ -510,12 +510,12 @@
         "designer": "Trove Team",
         "file": "Pets",
         "filename": "collections/pet/boot_redhat",
-        "mastery": "0",
+        "mastery": "10",
         "mastery_geode": "0",
         "name": "Mopes",
-        "powerrank": "0",
-        "tooltip": "",
-        "updated_at": 1637100534
+        "powerrank": "5",
+        "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>8% Health Regen</li>\r\n<li>15% Physical Damage</li>\r\n</ul>",
+        "updated_at": 1639926479
     },
     "boot_stockingbad": {
         "blueprint": "2019/snowfest_2019_pack/c_c_boot_stockingbad_ui.png",
@@ -4304,12 +4304,12 @@
         "designer": "Trove Team",
         "file": "Pets",
         "filename": "collections/pet/llama_rudolf",
-        "mastery": "0",
+        "mastery": "10",
         "mastery_geode": "0",
         "name": "Rudy",
-        "powerrank": "0",
-        "tooltip": "",
-        "updated_at": 1637100534
+        "powerrank": "20",
+        "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>10 Movement Speed</li>\r\n<li>50 Magic Find</li>\r\n</ul>",
+        "updated_at": 1639926479
     },
     "mammoth_prestige": {
         "blueprint": "2021/allies/mammoth_prestige/c_c_mammoth_ui.png",
@@ -6838,12 +6838,12 @@
         "designer": "Trove Team",
         "file": "Pets",
         "filename": "collections/pet/qubrik_friendgift",
-        "mastery": "0",
+        "mastery": "10",
         "mastery_geode": "0",
         "name": "Prancing Present",
-        "powerrank": "0",
-        "tooltip": "",
-        "updated_at": 1637100534
+        "powerrank": "20",
+        "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>30 Magic Find</li>\r\n<li>5% Attack Speed</li>\r\n<li>2% Critical Hit</li>\r\n</ul>",
+        "updated_at": 1639926479
     },
     "qubrik_puzzlecube": {
         "blueprint": "c_c_qubrik_puzzlecube_ui[delicious].png",
@@ -7832,12 +7832,12 @@
         "designer": "Trove Team",
         "file": "Pets",
         "filename": "collections/pet/tato_snowman",
-        "mastery": "0",
+        "mastery": "10",
         "mastery_geode": "0",
         "name": "Lil' Chillio II",
-        "powerrank": "0",
-        "tooltip": "",
-        "updated_at": 1637100534
+        "powerrank": "20",
+        "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>15 Maximum Energy</li>\r\n<li>15% Magic Damage</li>\r\n<li>-10% Incoming Damage</li>\r\n</ul>",
+        "updated_at": 1639926479
     },
     "tato_sunfest": {
         "blueprint": "c_c_tato_sunfest_ui.png",

@@ -10,8 +10,7 @@ from io import BytesIO
 import discord
 from aiohttp import ClientSession, MultipartWriter
 from discord.ext import commands
-
-from utils.buttons import Confirm, ProfileView, Paginator
+from utils.buttons import Confirm, Paginator, ProfileView
 from utils.objects import Class, GameClass, MetricsConverter, TrovePlayer
 
 

@@ -96,6 +96,7 @@ class Database(DB):
             "_id": server_id,
             "locale": "en",
             "PTS mode": False,
+            "self_cleanup": False,
             "commands": {
                 "list_mode": 0,
                 "list": {}

@@ -1,5 +1,6 @@
 from discord.ext import commands
 
+
 def has_permissions(*perms):
     def predicate(ctx):
         setattr(ctx.command, "permissions",", ".join(perms))

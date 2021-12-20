@@ -1,5 +1,5 @@
-from pymongo import MongoClient
 import discord
+from pymongo import MongoClient
 
 client = MongoClient()
 db = client["sly"]

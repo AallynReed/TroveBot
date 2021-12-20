@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 from typing import Literal
 
 import discord
-import utils.checks as perms  # pyright: reportMissingImports=false
+import utils.checks as perms
 from bs4 import BeautifulSoup
 from discord.ext import commands
 from utils.buttons import Paginator

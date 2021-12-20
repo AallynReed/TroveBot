@@ -5,6 +5,7 @@ from datetime import datetime
 import discord
 import magic
 from discord.ext import commands
+
 from utils.buttons import Traceback
 
 
@@ -43,9 +44,10 @@ class Logs(commands.Cog):
                     break
         except:
             ...
-        if len([m for m in server.members if not m.bot]) < 10 and server.owner.id not in self.bot.owners:
+        limit = 20
+        if len([m for m in server.members if not m.bot]) < 20 and server.owner.id not in self.bot.owners:
             try:
-                await dm.send("Unfortunately I am unable to join your server, 10 members (non bots) are required for me to join.\nThis is due to Discord limiting bot to 100 servers, and me wainting bot to reach as many people as possible whilst not losing access to important data it relies on to work properly such as knowing what is in your message content to know whether you used or not a command and which one you used.\n\nApologies for the inconvenience.")
+                await dm.send(f"Unfortunately I am unable to join your server, **{limit}** members (non bots) are required for me to join.\nThis is due to Discord limiting bot to 100 servers, and me wainting bot to reach as many people as possible whilst not losing access to important data it relies on to work properly such as knowing what is in your message content to know whether you used or not a command and which one you used.\n\nApologies for the inconvenience.")
             except:
                 ...
         elif 620784025518473226 in [m.id for m in guild.bots]:

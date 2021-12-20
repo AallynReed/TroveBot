@@ -4,7 +4,6 @@ import json
 import os
 from datetime import datetime
 
-import chat_exporter
 import discord
 import hjson
 from discord.ext import commands
@@ -13,7 +12,6 @@ from discord.utils import find
 import utils.checks as perms
 from utils.modules import get_loaded_modules
 
-wrap = "```py\n{}\n```"
 
 class Owner(commands.Cog):
     def __init__(self, bot):
@@ -27,16 +25,7 @@ class Owner(commands.Cog):
         for command in self.bot.commands:
             if command.name not in data and not command.hidden:
                 commands.append(command.name)
-        await ctx.send("\n".join(commands))
-
-    @commands.command(hidden=True)
-    @perms.owners()
-    async def export_chat(self, ctx, limit=100):
-        transcript = await chat_exporter.export(ctx.channel, limit)
-        if transcript is None:
-            return await ctx.reply("There are no messages.")
-        _file = discord.File(io.BytesIO(transcript.encode()), filename=f"transcript-{ctx.channel.name}.html")
-        await ctx.reply(file=_file)        
+        await ctx.send("\n".join(commands))      
 
     @commands.command(hidden=True)
     @perms.owners()
