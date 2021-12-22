@@ -81,7 +81,7 @@ class Traceback(discord.ui.View):
     async def show(self, button: discord.ui.Button, interaction: discord.Interaction):
         if len(self.exception) > 2000:
             await interaction.response.send_message(f"```py\n{self.exception[:1990]}```", ephemeral=True)
-            await interaction.response.send_message(f"```py\n{self.exception[1990:3980]}```", ephemeral=True)
+            await interaction.followup.send(f"```py\n{self.exception[1990:3980]}```", ephemeral=True)
         else:
             await interaction.response.send_message(f"```py\n{self.exception}```", ephemeral=True)
 
