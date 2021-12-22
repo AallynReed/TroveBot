@@ -90,7 +90,7 @@ class Help(commands.Cog):
                 i = 1
                 new_pages = []
                 for page in commands_list[module]:
-                    msg = "" if ctx.guild.id != 118027756075220992 else "**Trovesaurus has a limited feature set.** To access other features, add the bot to your own server.\n\n"
+                    msg = ""# if ctx.guild.id != 118027756075220992 else "**Trovesaurus has a limited feature set.** To access other features, add the bot to your own server.\n\n"
                     for command in page:
                         msg += f'`{command.name}` - {command.description}\n\n'
                     embed=discord.Embed(title=f"Page: {i}/{len(commands_list[module])}",description=msg, colour=discord.Color.random())

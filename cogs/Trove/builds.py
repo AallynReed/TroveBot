@@ -16,7 +16,7 @@ class Builds(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.values = Values()
-        self.bot.Trove.last_updated = 1639596498
+        self.bot.Trove.last_updated = 1640180877
 
     @commands.command(slash_command=True, help="Show gear for a class")
     @commands.cooldown(1, 120, commands.BucketType.user)
@@ -101,6 +101,8 @@ class Builds(commands.Cog):
     @commands.cooldown(1, 180, commands.BucketType.user)
     @commands.bot_has_permissions(embed_links=1)
     async def build(self, ctx):
+        # if ctx.author.id not in [565097923025567755]:
+        #     return await ctx.send("This command is under update...please wait a few minutes.", delete_after=15)
         view = GemBuildsView(ctx)
         view.message = await ctx.reply(content="Builds will only be calculated once all **Required** fields are filled in.", view=view)
 

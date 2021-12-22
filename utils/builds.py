@@ -1,4 +1,5 @@
 import itertools
+import re
 from datetime import datetime
 
 import discord
@@ -81,9 +82,14 @@ class BuildsMaker():
                 base_damage += 6916
                 critical_damage += 3.75 - (1.25 * (3 - self.arguments.cd_count)) if self.arguments.build_type == "farm" else 3.75
                 light += 780
+            if self.arguments.food:
+                light += 300
+        filt = self.build_part(self.arguments.filter) if self.arguments.filter else self.arguments.filter
         builds = []
         builder = self._generate_combinations(coeff=self.arguments.build_type in ["health", "coeff"], light=self.arguments.light)
         for build in builder:
+            if filt and filt not in build:
+                continue
             gem_damage, gem_critical_damage, gem_light = self._get_gem_build_stats(build, prim=self.arguments.primordial, health=self.arguments.build_type=="health")
             build_damage = base_damage + gem_damage
             build_critical = critical_damage + gem_critical_damage
@@ -134,6 +140,7 @@ class BuildsMaker():
         crystal5 = self.arguments.crystal5
         mod = self.arguments.mod
         ally = self.arguments.ally
+        food = self.arguments.food
         last_updated = datetime.utcfromtimestamp(1639596498)
         builds = self._run_builder()
         if self.arguments.build:
@@ -169,7 +176,7 @@ class BuildsMaker():
                 "\n**Ally** " + (ally["name"] if ally else "❌") +
                 (f"\n**Gear CD Count** {cd_count}" if build_type == "farm" else "") + 
                 "\n**Subclass** " + (subclass.name if subclass else "❌") + ("" if not subclass or subclass.short != "GS" else " **(Mid Air bonus applied)**") + 
-                "\n**Food** " + "Freerange Electrolytic Crystals" +
+                "\n**Food** " + ("Freerange Electrolytic Crystals" if food else "No Food") +
                 "\n**Force Light** " + (str(light) if light else "❌") + 
                 "\n**Bard Battle Song** " + ("✅" if bardcd else "❌") + 
                 ("\n**Cosmic Primordial** ✅" if primordial else "") + 
@@ -219,7 +226,6 @@ class BuildsMaker():
             "Face": 845,
             "Weapon": 1690,
             "Banner": 900,
-            "Food": 300,
             "Mastery": 1000,
             "Dragon": 50,
             "Ring": 325
@@ -299,6 +305,9 @@ class BuildsMaker():
         elif len(build) == 10:
             text += " + " + "/".join([str(i) for i in build][4:7]) + " " + "/".join([str(i) for i in build][7:10])
         return text
+
+    def build_part(self, text):
+        return tuple(int(i) for i in re.findall(r"([0-9]{1,2})\/([0-9]{1,2})(?:\/([0-6]{1}))?", text)[0] if i)
 
     def _generate_combinations(self, coeff=False, light=False):
         tuples1 = []

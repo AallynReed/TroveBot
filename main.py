@@ -43,7 +43,7 @@ class TroveContext(commands.Context):
 class Trove(commands.AutoShardedBot):
     def __init__(self):
         super().__init__(
-            command_prefix=self.prefix,
+            command_prefix=self.get_prefix,
             case_insensitive=True,
             intents=self._get_intents(),
             description="Trove",
@@ -61,11 +61,12 @@ class Trove(commands.AutoShardedBot):
     async def get_context(self, message, *, cls=None):
         return await super().get_context(message, cls=cls or TroveContext)
 
-    async def prefix(self, bot, message):
+    async def get_prefix(self, message):
         ns = await self.db.db_bot.find_one({"_id": "0511"}, {"prefixes": 1})
         user_prefixes = ns["prefixes"]["users"].get(str(message.author.id)) or []
         server_prefixes = (ns["prefixes"]["servers"].get(str(message.guild.id)) if message.guild else None) or []
-        return ((list(server_prefixes) + list(user_prefixes)) or ["n!"]) + ["<@425403525661458432> ", "<@!425403525661458432> "]
+        return commands.when_mentioned_or(*(list(server_prefixes) + list(user_prefixes)) or "n!")(self, message)
+
 
     async def on_ready(self):
         print("Bot connected as " + self.user.name + "#" + self.user.discriminator)

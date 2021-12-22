@@ -210,6 +210,7 @@ class WebSockets(commands.Cog):
             biome = ml[f'H{i+add}'].value
             if biome == "#N/A":
                 biome = None
+            npc = ml[f'B{i+add}'].fill.start_color.index not in ["FF000000", "FF222222"]
             # if not (i+1)%3 and biome:
             #     mementos.append(biome)
             if not [m for m in mementos if m] and not boss and not biome:
@@ -219,7 +220,8 @@ class WebSockets(commands.Cog):
                     "level": 110+i,
                     "mementos": mementos,
                     "boss": boss if boss else "Unknown",
-                    "biome": biome if biome else "Unknown"
+                    "biome": biome if biome else "Unknown",
+                    "npc": npc
                 }
                 depth["has_mount"] = True if boss in mount_bosses.keys() else False
                 depth["mounts"] = mount_bosses[boss] if depth["has_mount"] else None

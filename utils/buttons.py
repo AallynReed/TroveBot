@@ -383,7 +383,7 @@ class GemBuildsInput(discord.ui.Button["GemBuildsView"]):
 
     async def callback(self, interaction: discord.Interaction):
         if not await self.no_concurrent(interaction):
-            if self.value and self.field == "build":
+            if self.value and self.field in ["build", "filter"]:
                 value = None
             elif self.value and self.field in ["light", "ally", "cd_count"]:
                 value = 0
@@ -401,6 +401,8 @@ class GemBuildsInput(discord.ui.Button["GemBuildsView"]):
                     return await interaction.followup.send(f"You've cancelled input.", ephemeral=True)
                 if self.field == "build":
                     value = self.validate_build(message.content)
+                elif self.field == "filter":
+                    value = self.validate_build_part(message.content)
                 else:
                     value = int(message.content)
             setattr(self.view.build_arguments, self.field, value)
@@ -439,6 +441,14 @@ class GemBuildsInput(discord.ui.Button["GemBuildsView"]):
             asyncio.create_task(self.delete_msg(message, True))
         return False
 
+    def check_filter(self, message):
+        if self.view.ctx.author == message.author and self.view.ctx.channel == message.channel:
+            if self.validate_build_part(message.content) or message.content.lower() == "cancel":
+                asyncio.create_task(self.delete_msg(message))
+                return True
+            asyncio.create_task(self.delete_msg(message, True))
+        return False
+
     async def delete_msg(self, message, wrong=False):
         try:
             await message.delete()
@@ -455,6 +465,19 @@ class GemBuildsInput(discord.ui.Button["GemBuildsView"]):
             if self.is_valid_build(res):
                 return res
         return False
+
+    def validate_build_part(self, text):
+        regex = r"([0-9]{1,2})\/([0-9]{1,2})(?:\/([0-6]{1}))?"
+        result = re.findall(regex, text)
+        if not result:
+            return False
+        result = tuple(int(i) for i in result[0] if i)
+        total = sum(result)
+        if len(result) == 2 and total not in [9, 18]:
+            return False
+        if len(result) == 3 and total not in [3, 6]:
+            return False
+        return "/".join([str(r) for r in result])
 
     def is_valid_build(self, build):
         if sum(build[0]) != 9:
@@ -665,13 +688,15 @@ class GemBuildsView(BaseView):
             self.add_item(GemBuildsInput(self, "light", "Light", "Type a value for light limit between 1 and 15000", disabled=self.build_arguments.build_type=="health", row=2)) # Light
             self.add_item(GemBuildsToggle(self, "deface", "Face Damage", True, disabled=self.build_arguments.build_type=="health", row=2)) # Deface
             self.add_item(GemBuildsToggle(self, "bardcd", "Bard Song", False, disabled=self.build_arguments.build_type=="health", row=2)) # Song
+            self.add_item(GemBuildsToggle(self, "food", "Food", False, disabled=self.build_arguments.build_type in ["health", "coeff"], row=2)) # Food
             _class = [c for c in classes if c.name == self.build_arguments._class]
             if (_class and _class[0].infinite_as) or self.build_arguments.build_type != "farm":
                 self.build_arguments.cd_count = 3
                 self.add_item(GemBuildsInput(self, "cd_count", "Gear CD", "Type a value for amount of Critical Damage stats to have in gear between 1 and 3", disabled=True, row=2)) # Farm
             else:
                 self.add_item(GemBuildsInput(self, "cd_count", "Gear CD", "Type a value for amount of Critical Damage stats to have in gear between 1 and 3", row=2)) # Farm
-            self.add_item(GemBuildsInput(self, "build", "Build", "Type a valid build to get detailed stats of. Example: `0/9/15/3`", row=3)) # Build
+            self.add_item(GemBuildsInput(self, "build", "Build", "Type a valid build to get detailed stats of. Example: `0/9/15/3`", disabled=bool(self.build_arguments.filter), row=3)) # Build
+            self.add_item(GemBuildsInput(self, "filter", "Filter", "Type a valid build part to filter builds list. Example: `0/9` or `0/0/3`", disabled=bool(self.build_arguments.build), row=3)) # Build Part
             #self.add_item(GemBuildsToggle(self, "mod", "Mod Coeff", False, disabled=self.build_arguments.build_type=="health", row=3)) # Mod
             self.add_item(GemBuildsToggle(self, "primordial", "Cosmic Primordial", False, row=3)) # Primordial
             self.add_item(GemBuildsToggle(self, "crystal5", "Crystal 5", False, row=3)) # Crystal 5
@@ -724,7 +749,9 @@ class GemBuildsView(BaseView):
             "deface": False,
             "ally": None, # Button + Message
             "mod": False,
-            "bardcd": False
+            "bardcd": False,
+            "food": True,
+            "filter": None
         }
         self.build_arguments = Dummy()
         for k, v in build_arguments.items():
@@ -798,6 +825,15 @@ class GemBuildsView(BaseView):
             },
             "Lil Luckbeast": {
                 "name": "Lil Luckbeast",
+                "type": "farm",
+                "damage": None,
+                "stats": {
+                    "Damage": 0,
+                    "Light": 0
+                }
+            },
+            "Clownish Kicker": {
+                "name": "Clownish Kicker",
                 "type": "farm",
                 "damage": None,
                 "stats": {
