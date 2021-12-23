@@ -69,7 +69,7 @@ class BuildsMaker():
                 base_damage += 4719
             if self.arguments.subclass and self.arguments.subclass.short in ["BR", "BD"]:
                 critical_damage += 20
-            if self.arguments.build_type == "farm":
+            if self.arguments.build_type in ["farm", "light"]:
                 critical_damage -= 44.2 * (3 - self.arguments.cd_count)
             if self.arguments.bardcd:
                 bonus_damage += 45
@@ -84,7 +84,7 @@ class BuildsMaker():
                 light += 780
             if self.arguments.food:
                 light += 300
-        filt = self.build_part(self.arguments.filter) if self.arguments.filter else self.arguments.filter
+        filt = self.build_part(self.arguments.filter)[0] if self.arguments.filter else self.arguments.filter
         builds = []
         builder = self._generate_combinations(coeff=self.arguments.build_type in ["health", "coeff"], light=self.arguments.light)
         for build in builder:
@@ -141,6 +141,8 @@ class BuildsMaker():
         mod = self.arguments.mod
         ally = self.arguments.ally
         food = self.arguments.food
+        deface = self.arguments.deface
+        filt = self.build_part(self.arguments.filter)[1] if self.arguments.filter else self.arguments.filter
         last_updated = datetime.utcfromtimestamp(1639596498)
         builds = self._run_builder()
         if self.arguments.build:
@@ -172,15 +174,19 @@ class BuildsMaker():
             e = discord.Embed(color=0x008000, timestamp=last_updated)
             e.set_footer(text="Values on masterchat's spreadsheet and coefficient mod lack accuracy due to the use of rounded values, bot is more accurate since it doesn't use rounding. | Last updated on")
             e.description = (
+                ("\n**Class** " + _class.name) + 
                 "\n**Type** " + build_type.capitalize() + (" (DPS)" if build_type == "light" else "") + 
-                "\n**Ally** " + (ally["name"] if ally else "❌") +
-                (f"\n**Gear CD Count** {cd_count}" if build_type == "farm" else "") + 
-                "\n**Subclass** " + (subclass.name if subclass else "❌") + ("" if not subclass or subclass.short != "GS" else " **(Mid Air bonus applied)**") + 
-                "\n**Food** " + ("Freerange Electrolytic Crystals" if food else "No Food") +
-                "\n**Force Light** " + (str(light) if light else "❌") + 
-                "\n**Bard Battle Song** " + ("✅" if bardcd else "❌") + 
+                (f"\n**Ally** {ally['name']}" if ally else "") +
+                (f"\n**Gear Crit Dmg Count** {cd_count}" if build_type in ["farm", "light"] else "") +
+                (f"\n**Subclass** {subclass.name}" if subclass else "") + ("" if not subclass or subclass.short != "GS" else " **(Mid Air bonus applied)**") + 
+                ("\n**Food** Freerange Electrolytic Crystals" if food else "") +
+                (f"\n**Force Light** {light}" if light else "") +  
+                (f"\n**No Damage on Face** ✅" if deface else "") + 
+                ("\n**Bard Battle Song** ✅" if bardcd else "") + 
                 ("\n**Cosmic Primordial** ✅" if primordial else "") + 
-                ("\n**Crystal 5** ✅" if crystal5 else ""))
+                ("\n**Crystal 5** ✅" if crystal5 else "") +
+                (f"\n**Filter Builds** {filt}" if filt else "")
+            )
             e.description += "\n\n`👍` Cheap\n`💸` Expensive"
             e.description += ("\n\nElemental Format: `DMG/CD/DMG/CD`\nCosmic Format: `DMG/CD/<LIGHT> DMG/CD/<LIGHT>`" if build_type != 'health' else "\n\nFormat: `HP/HP%/HP/HP%`") + "\n```"
             x = i * 10
@@ -307,7 +313,8 @@ class BuildsMaker():
         return text
 
     def build_part(self, text):
-        return tuple(int(i) for i in re.findall(r"([0-9]{1,2})\/([0-9]{1,2})(?:\/([0-6]{1}))?", text)[0] if i)
+        part = tuple(int(i) for i in re.findall(r"([0-9]{1,2})\/([0-9]{1,2})(?:\/([0-6]{1}))?", text)[0] if i)
+        return part, "/".join([str(i) for i in part])
 
     def _generate_combinations(self, coeff=False, light=False):
         tuples1 = []

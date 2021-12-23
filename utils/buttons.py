@@ -308,18 +308,19 @@ class BuildsPickView(BaseView):
             except:
                 pass
 
-class GemBuildsButton(discord.ui.Button["GemBuildsView"]):
-    def __init__(self, view, text, emoji, row=0):
-        disabled = not (view.build_arguments._class and view.build_arguments.build_type)
-        super().__init__(label=text, disabled=disabled, emoji=emoji, row=row)
-        self.build_view = view
-
+class GemBaseButton(discord.ui.Button["GemBuildsView"]):
     async def no_concurrent(self, interaction):
         value = self.view.waiting_input
         if value:
             await interaction.response.send_message("You can't activate 2 inputs at the same time, please finish first input.", ephemeral=True)
             return value
         return value
+
+class GemBuildsButton(GemBaseButton):
+    def __init__(self, view, text, emoji, row=0):
+        disabled = not (view.build_arguments._class and view.build_arguments.build_type)
+        super().__init__(label=text, disabled=disabled, emoji=emoji, row=row)
+        self.build_view = view
 
     async def callback(self, interaction: discord.Interaction):
         if str(self.emoji) == "✏️":
@@ -329,20 +330,13 @@ class GemBuildsButton(discord.ui.Button["GemBuildsView"]):
         elif not await self.no_concurrent(interaction):
             self.view.setup_buttons(True)
 
-class GemBuildsToggle(discord.ui.Button["GemBuildsView"]):
+class GemBuildsToggle(GemBaseButton):
     def __init__(self, view, field, label, invert, disabled=False, row=0):
         super().__init__(label=label, disabled=disabled, row=row)
         self.field = field
         self.raw_value = getattr(view.build_arguments, field)
         self.value = not self.raw_value if invert else self.raw_value
         self._set_style()
-    
-    async def no_concurrent(self, interaction):
-        value = self.view.waiting_input
-        if value:
-            await interaction.response.send_message("You can't activate 2 inputs at the same time, please finish first input.", ephemeral=True)
-            return value
-        return value
 
     def _set_style(self):
         if self.value:
@@ -352,10 +346,11 @@ class GemBuildsToggle(discord.ui.Button["GemBuildsView"]):
 
     async def callback(self, interaction: discord.Interaction):
         if not await self.no_concurrent(interaction):
+            await interaction.response.defer()
             setattr(self.view.build_arguments, self.field, not self.raw_value)
             self.view.setup_buttons()
 
-class GemBuildsInput(discord.ui.Button["GemBuildsView"]):
+class GemBuildsInput(GemBaseButton):
     def __init__(self, view, field, label, hint, disabled=False, row=0):
         super().__init__(disabled=disabled, row=row)
         self.build_view = view
@@ -373,13 +368,6 @@ class GemBuildsInput(discord.ui.Button["GemBuildsView"]):
             self.style = discord.ButtonStyle.green
         else:
             self.style = discord.ButtonStyle.grey
-    
-    async def no_concurrent(self, interaction):
-        value = self.view.waiting_input
-        if value:
-            await interaction.response.send_message("You can't activate 2 inputs at the same time, please finish first input.", ephemeral=True)
-            return value
-        return value
 
     async def callback(self, interaction: discord.Interaction):
         if not await self.no_concurrent(interaction):
@@ -564,6 +552,7 @@ class GemBuildTypeOptions(GemBuildsOption):
 
     async def callback(self, interaction: discord.Interaction):
         if not await self.no_concurrent(interaction):
+            await interaction.response.defer()
             self.view.build_arguments.build_type = self.values[0].lower()
             if self.values[0].lower() == "farm":
                 self.view.build_arguments.cd_count = 0
@@ -603,6 +592,7 @@ class ClassOptions(GemBuildsOption):
     
     async def callback(self, interaction: discord.Interaction):
         if not await self.no_concurrent(interaction):
+            await interaction.response.defer()
             if self.something == "class":
                 self.view.build_arguments._class = self.values[0]
             elif self.something == "subclass":
@@ -667,7 +657,7 @@ class GemBuildsView(BaseView):
             self.clear_items()
         classes = [c for c in self.classes]
         if not self.build_arguments._class or not self.build_arguments.build_type:
-            self.add_item(ClassOptions(self, classes, "class", "(Required)", row=0)) # Class
+            self.add_item(ClassOptions(self, classes, "class", "(Required)", row=0))
         if self.build_arguments._class:
             types = ["light", "farm", "coeff", "health"]
             build_types = []
@@ -677,29 +667,27 @@ class GemBuildsView(BaseView):
                     t = "light"
                 if bt == "health":
                     t = "tank"
-                class_build = self.ctx.bot.Trove.values.gear_builds[self.build_arguments._class][t]
                 build_types.append(bt)
             if not self.build_arguments.build_type:
-                self.add_item(GemBuildTypeOptions(self, build_types, row=1)) # Build Type
+                self.add_item(GemBuildTypeOptions(self, build_types, row=1))
         if self.build_arguments._class and self.build_arguments.build_type:
-            self.add_item(ClassOptions(self, classes, "subclass", "(Optional)", row=0)) # Subclass
+            self.add_item(ClassOptions(self, classes, "subclass", "(Optional)", row=0))
             if self.build_arguments.build_type != "health":
-                self.add_item(AllyOptions(self, row=1)) # Ally
-            self.add_item(GemBuildsInput(self, "light", "Light", "Type a value for light limit between 1 and 15000", disabled=self.build_arguments.build_type=="health", row=2)) # Light
-            self.add_item(GemBuildsToggle(self, "deface", "Face Damage", True, disabled=self.build_arguments.build_type=="health", row=2)) # Deface
-            self.add_item(GemBuildsToggle(self, "bardcd", "Bard Song", False, disabled=self.build_arguments.build_type=="health", row=2)) # Song
-            self.add_item(GemBuildsToggle(self, "food", "Food", False, disabled=self.build_arguments.build_type in ["health", "coeff"], row=2)) # Food
+                self.add_item(AllyOptions(self, row=1))
+            self.add_item(GemBuildsInput(self, "light", "Light", "Type a value for light limit between 1 and 15000", disabled=self.build_arguments.build_type=="health", row=2))
+            self.add_item(GemBuildsToggle(self, "deface", "Face Damage", True, disabled=self.build_arguments.build_type=="health", row=2))
+            self.add_item(GemBuildsToggle(self, "bardcd", "Bard Song", False, disabled=self.build_arguments.build_type=="health", row=2))
+            self.add_item(GemBuildsToggle(self, "food", "Food", False, disabled=self.build_arguments.build_type in ["health", "coeff"], row=2))
             _class = [c for c in classes if c.name == self.build_arguments._class]
-            if (_class and _class[0].infinite_as) or self.build_arguments.build_type != "farm":
-                self.build_arguments.cd_count = 3
-                self.add_item(GemBuildsInput(self, "cd_count", "Gear CD", "Type a value for amount of Critical Damage stats to have in gear between 1 and 3", disabled=True, row=2)) # Farm
+            if (_class and _class[0].infinite_as) or self.build_arguments.build_type in ["health", "coeff"]:
+                self.add_item(GemBuildsInput(self, "cd_count", "Gear CD", "Type a value for amount of Critical Damage stats to have in gear between 1 and 3", disabled=True, row=2))
             else:
-                self.add_item(GemBuildsInput(self, "cd_count", "Gear CD", "Type a value for amount of Critical Damage stats to have in gear between 1 and 3", row=2)) # Farm
-            self.add_item(GemBuildsInput(self, "build", "Build", "Type a valid build to get detailed stats of. Example: `0/9/15/3`", disabled=bool(self.build_arguments.filter), row=3)) # Build
-            self.add_item(GemBuildsInput(self, "filter", "Filter", "Type a valid build part to filter builds list. Example: `0/9` or `0/0/3`", disabled=bool(self.build_arguments.build), row=3)) # Build Part
+                self.add_item(GemBuildsInput(self, "cd_count", "Gear CD", "Type a value for amount of Critical Damage stats to have in gear between 1 and 3", row=2))
+            self.add_item(GemBuildsInput(self, "build", "Build", "Type a valid build to get detailed stats of. Example: `0/9/15/3`", disabled=bool(self.build_arguments.filter), row=3))
+            self.add_item(GemBuildsInput(self, "filter", "Filter", "Type a valid build part to filter builds list. Example: `0/9` or `0/0/3`", disabled=bool(self.build_arguments.build), row=3))
             #self.add_item(GemBuildsToggle(self, "mod", "Mod Coeff", False, disabled=self.build_arguments.build_type=="health", row=3)) # Mod
-            self.add_item(GemBuildsToggle(self, "primordial", "Cosmic Primordial", False, row=3)) # Primordial
-            self.add_item(GemBuildsToggle(self, "crystal5", "Crystal 5", False, row=3)) # Crystal 5
+            self.add_item(GemBuildsToggle(self, "primordial", "Cosmic Primordial", False, row=3))
+            self.add_item(GemBuildsToggle(self, "crystal5", "Crystal 5", False, row=3))
             page_button = GemBuildsButton(self, "Page Mode", "📑", row=3)
             self.add_item(page_button)
         if not just_started:
@@ -740,14 +728,14 @@ class GemBuildsView(BaseView):
         build_arguments = {
             "_class": None,
             "build_type": None,
-            "build": None, # Button + Message
+            "build": None,
             "subclass": None,
             "primordial": False,
             "crystal5": False,
-            "light": 0, # Button + Message
-            "cd_count": 0,  # Button + Message
+            "light": 0,
+            "cd_count": 3,
             "deface": False,
-            "ally": None, # Button + Message
+            "ally": None,
             "mod": False,
             "bardcd": False,
             "food": True,
