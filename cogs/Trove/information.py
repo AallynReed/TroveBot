@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 import discord
 from discord.ext import commands
 from tabulate import tabulate
+from utils.CustomObjects import CEmbed
 
 
 class Information(commands.Cog):
@@ -24,7 +25,7 @@ class Information(commands.Cog):
             "ganda": "Join **Nitro Glitterine** farms in Geode Topside.",
             "egg": "Join **Egg** farms. __(During **Bunfest** event only)__"
         }
-        e = discord.Embed()
+        e = CEmbed()
         e.color = discord.Color.random()
         e.description = ""
         for chat, description in sorted(chats.items()):
@@ -34,7 +35,7 @@ class Information(commands.Cog):
 
     @commands.command(aliases=["effort"])
     async def effort_leaderboard(self, ctx):
-        e = discord.Embed()
+        e = CEmbed()
         e.set_author(name="Effort Contest Objectives", icon_url=ctx.guild.me.avatar)
         e.description = """```py\n#Dungeon Objectives:
     1 star dungeon objective - 1 point
@@ -72,7 +73,7 @@ class Information(commands.Cog):
 
     @commands.command(aliases=["lightsteps", "lsteps"])
     async def light_steps(self, ctx):
-        e = discord.Embed(title="Light Steps", color=discord.Color.random())
+        e = CEmbed(title="Light Steps", color=discord.Color.random())
         e.set_image(url="https://i.imgur.com/FTN3hcc.png")
         e.set_footer(text=f"Data provided by {self.bot.get_user(523714260090748938)}")
         await ctx.send(embed=e)
@@ -80,7 +81,7 @@ class Information(commands.Cog):
     @commands.command(slash_command=True, help="Show current Meta for different game situations.")
     @commands.bot_has_permissions(embed_links=1)
     async def meta(self, ctx):
-        e = discord.Embed(color=0x0000ff, timestamp=datetime.utcfromtimestamp(self.bot.Trove.last_updated))
+        e = CEmbed(color=0x0000ff, timestamp=datetime.utcfromtimestamp(self.bot.Trove.last_updated))
         e.set_author(name="Meta", icon_url=self.bot.user.avatar.url)
         e.description = "Here are the game's Meta classes for each activity."
         e.add_field(name="Farming (Adventure/Topside)", value="Physical: <:c_NN:876846928808259654> **Neon Ninja**\nMagic: <:c_DT:876846922135126036> **Dino Tamer** or <:c_BD:876846944604024842> **Bard**", inline=False)
@@ -127,7 +128,7 @@ class Information(commands.Cog):
         playingtrove.sort(key=lambda x: x[2])
         pages = self.bot.utils.chunks(playingtrove, 10)
         page = 0
-        e = discord.Embed(color=discord.Color.random())
+        e = CEmbed(color=discord.Color.random())
         e.set_author(name=f"Playing Trove... ({len(playingtrove)})", icon_url="https://i.imgur.com/sCIbgLX.png")
         if len(pages) == 0:
             e.description = "There's no one in this server playing trove right now!"
@@ -179,13 +180,14 @@ class Information(commands.Cog):
         if sheet["A10"].value.timestamp() + 86400 * 6 < now.timestamp():
             await ctx.send("Info fetched is outdated, try again later.")
             return
+        weekly = self.bot.Trove.weekly_data[str(self.bot.Trove.time.weekly_time)]
         num = 10
         if sheet["A10"].value.timestamp() > now.timestamp():
             num = 11
-        e = discord.Embed(description="\nWeekly's info was fetched from **[this spreadsheet](https://trove.summerhaas.com/luxion)** made by **__SummerHaas__**", color=self.bot.comment, timestamp=sheet[f"A{num}"].value)
+        e = CEmbed(description="\nWeekly's info was fetched from **[this spreadsheet](https://trove.summerhaas.com/luxion)** made by **__SummerHaas__**", color=self.bot.comment, timestamp=sheet[f"A{num}"].value)
         e.set_author(name="Chaos Chests & Weekly")
         e.add_field(name="CC Loot", value=sheet[f"B{num}"].value if sheet[f"B{num}"].value else "Unknown")
-        e.add_field(name="Weekly bonus", value=sheet[f"C{num}"].value)
+        e.add_field(name="Weekly bonus", value=weekly["name"])
         e.add_field(name="\u200b", value="\u200b")
         e.add_field(name="Weekly Deal", value=sheet[f"D{num}"].value)
         if sheet[f"E{num}"].value:
@@ -195,14 +197,55 @@ class Information(commands.Cog):
         e.add_field(name="\u200b", value="\u200b")
         await ctx.send(embed=e)
 
-    @commands.command(slash_command=True, help="Shows a list of prime numbers up to a 1000.", aliases=["primes"])
+    @commands.command(slash_command=True, help="Shows a list of prime numbers up to a 1000", aliases=["primes"])
     async def prime_numbers(self, ctx):
         prime_numbers = list(self.bot.utils.primes(1, 1000))
         chunked_primes = self.bot.utils.chunks(prime_numbers, 8)
         table = tabulate(chunked_primes, tablefmt='psql', numalign="left")
-        e = discord.Embed(description="```py\n"+table+"\n```", color=0x0000ff)
+        e = CEmbed(description="```py\n"+table+"\n```", color=0x0000ff)
         e.set_author(name="Prime Numbers (in 1000)")
         await ctx.send(embed=e, ephemeral=True)
+
+    @commands.command(slash_command=True, help="Shows a list of light sources to achieve max light")
+    async def max_light(self, ctx):
+        e = CEmbed(color=discord.Color.random(), timestamp=datetime.utcfromtimestamp(1640361973))
+        links = {
+            "gem_forge": "https://trovesaurus.com/placeable/crafting/forge_gem",
+            "pearl": "https://trovesaurus.com/item/crafting/pearl",
+            "light": "https://trovesaurus.com/collection/effects/Light",
+            "geode": "",
+            "chaos_dragon": "https://trovesaurus.com/collections/mount/dragon_chaos",
+            "corruxion": "https://trovesaurus.com/corruxion",
+            "chaos_fragments": "https://trovesaurus.com/item/dragon/egg/chaos_notrade_fragment",
+            "ring_box": "https://trovesaurus.com/search/Golden%20Sign/items",
+            "ifera": "https://trovesaurus.com/npc/rampage/jellyfish_shadow",
+            "upgraded_torch": r"https://trovesaurus.com/search/Torch%20of%20the/styles",
+            "sunseekers": "https://trovesaurus.com/placeable/crafting/geode/workbench_geode_adventure",
+            "freerange": "https://trovesaurus.com/item/food/delve/tier_03",
+            "berserk": "https://trovesaurus.com/item/gem/large/opal_battle_frenzy_t109",
+            "delves": "https://trovesaurus.com/delves",
+            "topside": "https://trovesaurus.com/biome=37/geode-topside"
+        }
+        data = [
+            ["<:hat:834512699585069086>", "Hat", 845, f"Crystal 4 | 5 <:Star:841018551087530024> with 8 [<:pearl:923919738768330752> pearls]({links['pearl']})"],
+            ["<:sword:834512699593064518>", "Weapon", 1690, f"Crystal 4 | 5 <:Star:841018551087530024> with 8 [<:pearl:923919738768330752> pearls]({links['pearl']})"],
+            ["<:face:834512699441938442>", "Face", 845, f"Crystal 4 | 5 <:Star:841018551087530024> with 8 [<:pearl:923919738768330752> pearls]({links['pearl']})"],
+            ["<:cosmic_emp:923920434045521920>", "Cosmic Empowered Gem", 1249, f"3 <:boost:873291316447047761> in Light stat, check <:gem_forge:923919985875759114>[Gem Forge]({links['gem_forge']})"],
+            ["<:cosmic_lesser:923920433894531102>", "Cosmic Lesser Gem 1", 985, f"3 <:boost:873291316447047761> in Light stat, check <:gem_forge:923919985875759114>[Gem Forge]({links['gem_forge']})"],
+            ["<:cosmic_lesser:923920433894531102>", "Cosmic Lesser Gem 2", 985, f"3 <:boost:873291316447047761> in Light stat, check <:gem_forge:923919985875759114>[Gem Forge]({links['gem_forge']})"],
+            ["<:qubesly:834512699361853530>", "Ally", 400, f"[Allies List]({links['pearl']})"],
+            ["<:geodemr:844624767210487808>", "Geode Mastery", 1000, f"[Geode mastery]({links['geode']}) gives 10 light per level [Max: 100]"],
+            ["<:dragon_coin:858061506074378276>", f"Dragon", 50, f"[Chaos Dragon]({links['chaos_dragon']}) through the purchase of [<:chaos_frag:923960128498204682> 50 Fragments]({links['chaos_fragments']}) in [<:charl:923960128288489482> Corruxion]({links['corruxion']})"],
+            ["<:ring:923960128401719337>", "Ring", 325, f"Crystal 4, obtained through [Golden Signatory Box]({links['ring_box']})"],
+            ["<:torch:923967418756370533>", "Banner", 900, f"[Upgraded Legendary Torch]({links['upgraded_torch']}) from leviathans in [Geode Topside U10]({links['topside']}) or [Delves]({links['delves']}) ([Ifera Boss]({links['ifera']})) check [Sunseeker's Crystalforge]({links['sunseekers']}))"],
+            ["<:food:834512699424505886>", "Food", 300, f"[Freerange Electrolytic Crystals]({links['freerange']})"],
+            ["<:cosmic_emp:923920434045521920>", "Gem Ability", -750, f"[Berserk Battler]({links['berserk']}) when attacking enemies light temporarily increases."]
+        ]
+        data.sort(key=lambda x: -x[2])
+        e.description = "Also available at [**Trovesaurus**](https://trovesaurus.com/light)\n\n" + "\n\n".join([f"{i[0]} `{abs(i[2])}` **{i[1]}** → {i[3]}" for i in data])
+        e.set_author(name=f"Max Light | {sum([i[2] for i in data if i[2] > 0])}", icon_url="https://i.imgur.com/zxVjBzO.png")
+        e.set_footer(text="Last updated")
+        await ctx.reply(embed=e)
 
 def setup(bot):
     bot.add_cog(Information(bot))

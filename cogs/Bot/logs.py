@@ -7,6 +7,7 @@ import magic
 from discord.ext import commands
 
 from utils.buttons import Traceback
+from utils.CustomObjects import CEmbed
 
 
 class Logs(commands.Cog):
@@ -17,7 +18,7 @@ class Logs(commands.Cog):
     async def guild_join(self, guild):
         await self.bot.db.database_check(guild.id)
         server = guild
-        e=discord.Embed(description="{} is in {:,} servers and connected to {:,} users.".format(self.bot.user.name, len(self.bot.guilds), len(self.bot.users)), colour=0x00aa00, timestamp=datetime.utcnow())
+        e=CEmbed(description="{} is in {:,} servers and connected to {:,} users.".format(self.bot.user.name, len(self.bot.guilds), len(self.bot.users)), colour=0x00aa00, timestamp=datetime.utcnow())
         e.set_author(name="Joined a server!", icon_url=self.bot.user.avatar)
         e.add_field(name="Server Name", value=server.name, inline=False)
         e.add_field(name="Server ID", value=server.id, inline=False)
@@ -62,7 +63,7 @@ class Logs(commands.Cog):
     @commands.Cog.listener("on_guild_remove")
     async def guild_leave(self, guild):
         server = guild
-        e=discord.Embed(description="{} is in {:,} servers and connected to {:,} users.".format(self.bot.user.name, len(self.bot.guilds), len(self.bot.users)), colour=0xaa0000, timestamp=datetime.utcnow())
+        e=CEmbed(description="{} is in {:,} servers and connected to {:,} users.".format(self.bot.user.name, len(self.bot.guilds), len(self.bot.users)), colour=0xaa0000, timestamp=datetime.utcnow())
         e.set_author(name="Left a server!", icon_url=self.bot.user.avatar)
         e.add_field(name="Server Name", value=server.name, inline=False)
         e.add_field(name="Server ID", value=server.id, inline=False)
@@ -121,7 +122,7 @@ class Logs(commands.Cog):
             else:
                 command_db  = await self.bot.db.db_help.find_one({"_id": command_name})
             if not command_db:
-                e = discord.Embed()
+                e = CEmbed()
                 e.description = "That's not the correct usage for that command, but it seems the developer forgot to make a help entry for this one, contact `Sly#0511`"
                 return await ctx.send(embed=e)
             if len(subcommands) == 1:
@@ -145,7 +146,7 @@ class Logs(commands.Cog):
                 command_path = command_db["subcommands"][subcommands[1]]["subcommands"][subcommands[2]]["subcommands"][subcommands[3]]
                 description = command_path["description"]
                 example = command_path["example"].replace("{prefix}", prefix).replace("\n", "`\n`")
-            embed=discord.Embed(title=str(command_name).capitalize(), colour=discord.Color.random())
+            embed=CEmbed(title=str(command_name).capitalize(), colour=discord.Color.random())
             embed.add_field(name="Description", value=description, inline=False)
             if command_name.usage:
                 embed.add_field(name="Usage", value=command_name.usage, inline=False)
@@ -180,7 +181,7 @@ class Logs(commands.Cog):
                 except:
                     pass
             #print("".join(traceback.format_exception(type(error), error, error.__traceback__)))
-            c=discord.Embed(description=str(error), colour=0x080808)
+            c=CEmbed(description=str(error), colour=0x080808)
             c.set_author(name="Errors")
             c.add_field(name="Server", value=ctx.message.guild, inline=False)
             c.add_field(name="Command", value=ctx.command, inline=False)
@@ -222,7 +223,7 @@ class Logs(commands.Cog):
     async def command_logging(self, ctx, kwargs):
         try:
             prefix = ctx.prefix if not ctx.interaction else "/"
-            embed1 = discord.Embed(title="Command Executed!", url=ctx.message.jump_url, colour=ctx.guild.owner.color, timestamp=datetime.utcnow())
+            embed1 = CEmbed(title="Command Executed!", url=ctx.message.jump_url, colour=ctx.guild.owner.color, timestamp=datetime.utcnow())
             embed1.set_author(name=f"{ctx.guild.name} [{ctx.guild.id}]", icon_url=self.bot.user.avatar)
             if ctx.guild.icon:
                 embed1.set_thumbnail(url=ctx.guild.icon)
@@ -238,10 +239,10 @@ class Logs(commands.Cog):
                 for attach in ctx.message.attachments:
                     file_type = magic.from_buffer(await attach.read(), mime=True)
                     if file_type in image_types:
-                        if embed1.image.url == discord.Embed.Empty:
+                        if embed1.image.url == CEmbed.Empty:
                             embed1.set_image(url=attach.url)
                             continue
-                        embed = discord.Embed(url=ctx.message.jump_url)
+                        embed = CEmbed(url=ctx.message.jump_url)
                         embed.set_image(url=attach.url)
                         embeds.append(embed)
                     else:

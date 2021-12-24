@@ -11,7 +11,7 @@ from discord.ext import commands, tasks
 from openpyxl import load_workbook
 
 import websockets
-from utils.objects import MetricsConverter
+from utils.CustomObjects import CEmbed, MetricsConverter
 
 
 class WebSockets(commands.Cog):
@@ -98,7 +98,7 @@ class WebSockets(commands.Cog):
         for ban in await guild.bans():
             if ban.user.id == user.id:
                 break
-        e = discord.Embed(description="**Appeal Message:** " + odata["appeal"] + f"\n\n**Reason:** {ban.reason}", color=0x0000ff, timestamp=datetime.utcnow())
+        e = CEmbed(description="**Appeal Message:** " + odata["appeal"] + f"\n\n**Reason:** {ban.reason}", color=0x0000ff, timestamp=datetime.utcnow())
         e.set_author(name=user, icon_url=user.avatar)
         e.set_footer(text=str(user.id))
         await self.bot.appeal_logger.send(embed=e, username="Blacklist Appeals", avatar_url=self.bot.user.avatar)
@@ -114,7 +114,7 @@ class WebSockets(commands.Cog):
             data["text"] = "User ID is incorrect."
             return await websocket.send(str(json.dumps(data)))
         if user.id in self.bot.blacklist:
-            e = discord.Embed(description=f"{user} tried to submit a profile on web.")
+            e = CEmbed(description=f"{user} tried to submit a profile on web.")
             e.set_author(name="Blacklist", icon_url=user.avatar)
             await self.bot.blacklist_logger.send(embed=e)
             data["text"] = "You are blacklisted, you can't create a profile."
@@ -268,7 +268,7 @@ class WebSockets(commands.Cog):
 
     async def issues(self, websocket, data):
         channel = self.bot.get_channel(812354696320647238)
-        e = discord.Embed(color=discord.Color.random())
+        e = CEmbed(color=discord.Color.random())
         reduce_size = ["Expected", "Context", "Reproduce"]
         cap_text = "...\n\n**Text Exceeds maximum size, view in web**"
         for field in reduce_size:
@@ -329,7 +329,7 @@ class WebSockets(commands.Cog):
         return await websocket.send(str(json.dumps(self.guild_data)))
 
     async def log(self, ctx, text):
-        e = discord.Embed()
+        e = CEmbed()
         e.color = discord.Color.random()
         e.timestamp = datetime.utcnow()
         e.description = text

@@ -1,7 +1,7 @@
 # Priority: 9
-import io
 import json
 import os
+import traceback
 from datetime import datetime
 
 import discord
@@ -10,7 +10,9 @@ from discord.ext import commands
 from discord.utils import find
 
 import utils.checks as perms
+from utils.CustomObjects import CEmbed
 from utils.modules import get_loaded_modules
+from utils.buttons import Traceback
 
 
 class Owner(commands.Cog):
@@ -202,9 +204,10 @@ class Owner(commands.Cog):
                 exec(code, {**globals(), **additional}, locals())
 
                 await locals()["__eval_function__"]()
-            except Exception as e:
-                embed = discord.Embed(description=str(e), colour=self.bot.error)
-                await ctx.send(embed=embed)
+            except Exception as error:
+                built_error = "".join(traceback.format_exception(type(error), error, error.__traceback__))
+                view = Traceback(ctx, built_error)
+                await ctx.send(view=view)
 
     @commands.command(name="exception", aliases=["error", "lasterror"], hidden=True)
     @perms.admins()
@@ -238,7 +241,7 @@ class Owner(commands.Cog):
                 else:
                     modulesi += "📤 **" + module.name.capitalize() + f"** {size}KB\n"
         modulesi += f"\nTotal: {round(total_size/1024, 2)}KB"
-        embed=discord.Embed(colour=self.bot.comment, title=f"Modules - {len(modules)}", description=modulesi)
+        embed=CEmbed(colour=self.bot.comment, title=f"Modules - {len(modules)}", description=modulesi)
         await ctx.reply(embed=embed)
 
     @commands.command(aliases=["ul"], hidden=True)

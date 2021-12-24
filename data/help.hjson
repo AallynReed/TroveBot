@@ -442,6 +442,14 @@
         ],
         "hidden": false
     },
+    "max_light": {
+        "module": "information",
+        "description": "Shows a list of light sources to achieve max light.",
+        "example": "{prefix}max_light",
+        "subcommands": {},
+        "aliases": [],
+        "hidden": false
+    },
     "playing_trove": {
         "module": "information",
         "description": "Shows all people playing trove in the server. **Depends on Discord Activity**",
@@ -745,9 +753,15 @@
         "aliases": [],
         "hidden": false,
         "subcommands": {
+            "list": {
+                "module": "settings",
+                "description": "List prefixes for server and yourself.",
+                "example": "{prefix}prefix list",
+                "aliases": []
+            },
             "server": {
                 "module": "settings",
-                "description": "Shows how to submit a profile into Trove bot.",
+                "description": "Change server's prefix on the bot.",
                 "example": "{prefix}prefix server MyPrefix",
                 "aliases": []
             },

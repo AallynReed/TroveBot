@@ -11,6 +11,7 @@ import requests
 import utils.checks as perms
 from discord.ext import commands
 from utils.buttons import Paginator
+from utils.CustomObjects import CEmbed
 
 
 class General(commands.Cog):
@@ -36,7 +37,7 @@ class General(commands.Cog):
 
     @commands.command()
     async def slash(self, ctx):
-        e = discord.Embed()
+        e = CEmbed()
         e.description = "You can now have slash commands in your server by clicking in this "
         e.description += "[link](https://discord.com/oauth2/authorize?client_id=425403525661458432&scope=applications.commands)"
         e.description += "\nOnly use this link if the bot is already in your server but doesn't have slash commands, **you do not need to remove bot and readd**"
@@ -44,7 +45,7 @@ class General(commands.Cog):
 
     @commands.command(slash_command=True, help="Display informtion about the bot", aliases=["bot_info"])
     async def botinfo(self, ctx):
-        e = discord.Embed()
+        e = CEmbed()
         e.color = discord.Color.random()
         e.timestamp = datetime.utcfromtimestamp(self.bot.uptime)
         e.set_footer(text=f"UUID: {self.bot.user.id} | Bot online since")
@@ -66,7 +67,7 @@ class General(commands.Cog):
         user = user or ctx.author
         members = sorted([g.get_member(user.id) for g in self.bot.guilds], key=lambda x: x.joined_at.timestamp() if x else 0)
         servers = [f"`[{m.guild.id}]` Joined <t:{int(m.joined_at.timestamp())}:R> | **{m.guild.name}**" for m in members if m]
-        e = discord.Embed()
+        e = CEmbed()
         e.color = discord.Color.random()
         e.description = "\n".join(servers)
         e.set_author(name=f"Mutual servers with {user}", icon_url=user.avatar)
@@ -76,7 +77,7 @@ class General(commands.Cog):
     @commands.bot_has_permissions(embed_links=1)
     async def giveaway(self, ctx):
         return await ctx.reply("There's no giveaway currently going on.", delete_after=8)
-        e = discord.Embed()
+        e = CEmbed()
         e.color = discord.Color.random()
         e.set_author(name="Action Pan Ally giveaway.", icon_url=self.bot.user.avatar)
         e.set_thumbnail(url="https://slynx.xyz/downloads/0511/images/pan.png")
@@ -128,7 +129,7 @@ class General(commands.Cog):
                         break
                 if isinstance(user, discord.Member):
                     break
-        e = discord.Embed()
+        e = CEmbed()
         e.color = user.color
         e.set_author(name=str(user) + (" 🤖" if user.bot else ""), icon_url=user.avatar)
         e.set_footer(text=f"UUID: {user.id}")
@@ -180,7 +181,7 @@ class General(commands.Cog):
     @commands.bot_has_permissions(embed_links=1)
     @commands.cooldown(1, 60, commands.BucketType.user)
     async def feedback(self, ctx, *, feedback):
-        e = discord.Embed(description=feedback)
+        e = CEmbed(description=feedback)
         e.set_author(name=ctx.author, icon_url=ctx.author.avatar)
         e.timestamp = datetime.utcnow()
         await self.bot.get_channel(859433409016496128).send(embed=e)
@@ -196,7 +197,7 @@ class General(commands.Cog):
         if user == None:
             user = ctx.author
         now = datetime.utcnow()
-        e = discord.Embed(description="Some in-depth info about user.")
+        e = CEmbed(description="Some in-depth info about user.")
         e.set_author(name=f"{user.name}#{user.discriminator}", icon_url=user.avatar)
         e.add_field(name="Created on", value=f"{user.created_at.year}/{user.created_at.month}/{user.created_at.day} {user.created_at.hour}:{user.created_at.minute} - `{self.bot.utils.time_str(now.timestamp() - user.created_at.timestamp(), abbr=True)[1]}` ago", inline=False)
         e.add_field(name="Joined on", value=f"{user.joined_at.year}/{user.joined_at.month}/{user.joined_at.day} {user.joined_at.hour}:{user.joined_at.minute} - `{self.bot.utils.time_str(now.timestamp() - user.joined_at.timestamp(), abbr=True)[1]}` ago", inline=False)
@@ -218,7 +219,7 @@ class General(commands.Cog):
             await ctx.send("There are no users.")
             return
         page_no = 0
-        x=discord.Embed(title=f"Join info list - Users who joined within {text} of account creation.", description=rank[page_no], colour=discord.Color.random())
+        x=CEmbed(title=f"Join info list - Users who joined within {text} of account creation.", description=rank[page_no], colour=discord.Color.random())
         x.set_footer(text="Page No: {}/{}".format(page_no + 1, len(rank)), icon_url=ctx.author.avatar)
         sent = await ctx.send(embed=x)
         if len(rank) == 1:
@@ -244,7 +245,7 @@ class General(commands.Cog):
                 page_no += 1
                 if page_no > len(rank) - 1:
                     page_no = 0
-            x=discord.Embed(title=f"Join info list - Users who joined within {text} of account creation.", description=rank[page_no], colour=discord.Color.random())
+            x=CEmbed(title=f"Join info list - Users who joined within {text} of account creation.", description=rank[page_no], colour=discord.Color.random())
             x.set_footer(text="Page No: {}/{}".format(page_no + 1, len(rank)), icon_url=ctx.author.avatar)
             try:
                 await sent.edit(embed=x)
@@ -288,7 +289,7 @@ class General(commands.Cog):
         #             msg += f"{guild.id} - "
         #     msg += f"`{self.bot.utils.time_str(datetime.utcnow().timestamp()-guild.me.joined_at.timestamp(), abbr=True)[1]}` -> **{guild.name}**\n"
         #     i += 1
-        # e=discord.Embed(title=f"**Communities you can find Trove bot in** ({i})",description=msg, color=self.comment)
+        # e=CEmbed(title=f"**Communities you can find Trove bot in** ({i})",description=msg, color=self.comment)
         await ctx.send("https://slynx.xyz/trove/communities")#embed=e)
 
     @commands.command(aliases=["iu"])
@@ -320,7 +321,7 @@ class General(commands.Cog):
                 except:
                     pass
                 linkerino = response.json()["data"]["link"]
-                e=discord.Embed(description=f"You imgur link: {linkerino}", color=ctx.author.color)
+                e=CEmbed(description=f"You imgur link: {linkerino}", color=ctx.author.color)
                 message = await ctx.send(embed=e)
                 await message.add_reaction("👁")
                 while datetime.utcnow().timestamp() < ctx.message.created_at.timestamp() + 60:
@@ -330,7 +331,7 @@ class General(commands.Cog):
                         await self.bot.wait_for('reaction_add', check=check, timeout=60)
                     except:
                         return
-                    e=discord.Embed(description=f"You imgur link: {linkerino}", color=ctx.author.color)
+                    e=CEmbed(description=f"You imgur link: {linkerino}", color=ctx.author.color)
                     e.set_image(url=linkerino)
                     await message.edit(embed=e)
                     def _check(reaction, user):
@@ -339,7 +340,7 @@ class General(commands.Cog):
                         await self.bot.wait_for('reaction_remove', check=_check, timeout=60)
                     except:
                         return
-                    e=discord.Embed(description=f"You imgur link: {linkerino}", color=ctx.author.color)
+                    e=CEmbed(description=f"You imgur link: {linkerino}", color=ctx.author.color)
                     await message.edit(embed=e)
         except Exception as e:
             await ctx.send(f"{e}\nAn error ocurred, try again please!")
@@ -351,7 +352,7 @@ class General(commands.Cog):
         CPU_Usage = psutil.cpu_percent()
         RAM_Usage = psutil.virtual_memory().percent
         Disk_Usage = psutil.disk_usage("/").percent
-        e=discord.Embed(title="Host Stats", description="Shows some stats about the bot's host.", color=0xff4500)
+        e=CEmbed(title="Host Stats", description="Shows some stats about the bot's host.", color=0xff4500)
         e.add_field(name="CPU Usage", value=f"{CPU_Usage}%")
         e.add_field(name="RAM Usage", value=f"{RAM_Usage}%")
         e.add_field(name="Disk Usage", value=f"{Disk_Usage}%")
@@ -369,7 +370,7 @@ class General(commands.Cog):
     async def invite(self, ctx):
         await ctx.send(f"You can invite me with this link <https://discordapp.com/oauth2/authorize?client_id={self.bot.user.id}&permissions=2146959103&scope=bot%20applications.commands>")
 
-    @commands.group()
+    @commands.group(slash_command=True)
     async def prefix(self, ctx):
         if not ctx.invoked_subcommand:
             ns = await self.bot.db.db_bot.find_one({"_id": "0511"}, {"prefixes": 1})
@@ -382,7 +383,7 @@ class General(commands.Cog):
             prefixes = ns["prefixes"]
             server_prefix = prefixes["servers"].get(str(ctx.guild.id))
             user_prefix = prefixes["users"].get(str(ctx.author.id))
-            e = discord.Embed()
+            e = CEmbed()
             e.color = discord.Color.random()
             e.set_author(name="List of Prefixes", icon_url=ctx.guild.icon)
             e.description = f"Use `{ctx.prefix}prefix server MyPrefix` to edit server prefix.\n"
@@ -391,17 +392,39 @@ class General(commands.Cog):
             e.add_field(name="User Prefix", value=f"`{user_prefix}`")
             await ctx.reply(embed=e)
 
-    @prefix.command(name="self")
-    async def _self(self, ctx, *, args=None):
+    @prefix.command(name="list", slash_command=True, help="Check out prefixes")
+    async def __list(self, ctx):
+        ns = await self.bot.db.db_bot.find_one({"_id": "0511"}, {"prefixes": 1})
+        if str(ctx.author.id) not in ns["prefixes"]["users"].keys():
+            await self.bot.db.db_bot.update_one({"_id": "0511"}, {"$set":{"prefixes.users." + str(ctx.author.id): None}})
+            ns = await self.bot.db.db_bot.find_one({"_id": "0511"})
+        if str(ctx.guild.id) not in ns["prefixes"]["servers"].keys():
+            await self.bot.db.db_bot.update_one({"_id": "0511"}, {"$set":{"prefixes.servers." + str(ctx.guild.id): None}})
+            ns = await self.bot.db.db_bot.find_one({"_id": "0511"})
+        prefixes = ns["prefixes"]
+        server_prefix = prefixes["servers"].get(str(ctx.guild.id))
+        user_prefix = prefixes["users"].get(str(ctx.author.id))
+        e = CEmbed()
+        e.color = discord.Color.random()
+        e.set_author(name="List of Prefixes", icon_url=ctx.guild.icon)
+        e.description = f"Use `{ctx.prefix}prefix server MyPrefix` to edit server prefix.\n"
+        e.description += f"Use `{ctx.prefix}prefix self MyPrefix` to edit your prefix.\n"
+        e.add_field(name="Server Prefix", value=f"`{server_prefix}`")
+        e.add_field(name="User Prefix", value=f"`{user_prefix}`")
+        await ctx.reply(embed=e)
+
+    @prefix.command(name="self", slash_command=True, help="Set a prefix for yourself")
+    async def _self(self, ctx, *, args=commands.Option(name="prefix", default=None, description="Select a prefix")):
         await self.bot.db.db_bot.update_one({"_id": "0511"}, {"$set":{"prefixes.users." + str(ctx.author.id): args}})
         if args:
             await ctx.reply(f"Your self prefix is now set to `{args}`")
         else:
             await ctx.reply(f"Your self prefix has been reset.")
             
-    @prefix.command(name="server")
+    @prefix.command(name="server", slash_command=True, help="Set a prefix for your server")
     @perms.has_permissions("manage_guild")
-    async def _server(self, ctx, *, args=None):
+    async def _server(self, ctx, *, args=commands.Option(name="prefix", default=None, description="Select a prefix")):
+        await ctx.send(f"`{args}`")
         await self.bot.db.db_bot.update_one({"_id": "0511"}, {"$set":{"prefixes.servers." + str(ctx.guild.id): args}})
         if args:
             await ctx.reply(f"Server prefix is now set to `{args}`")
@@ -423,7 +446,7 @@ class General(commands.Cog):
         page = 0
         msg = None
         while True:
-            e = discord.Embed()
+            e = CEmbed()
             e.color = discord.Color.random()
             e.description = "\n".join([f"`{b.user.id}` **{b.user}**" for b in bans[page]])
             e.set_author(name="Bot Blacklist", icon_url=self.bot.user.avatar)
@@ -474,7 +497,7 @@ class General(commands.Cog):
             ban = await guild.fetch_ban(user)
         except:
             return await ctx.reply(f"{user.mention} is not blacklisted.", allowed_mentions=discord.AllowedMentions.none())
-        e = discord.Embed()
+        e = CEmbed()
         e.color = discord.Color.random()
         e.description = f"**Reason:**\n{ban.reason}"
         #e.timestamp = ban.created_at
@@ -493,7 +516,7 @@ class General(commands.Cog):
         data = await self.bot.db.db_servers.find_one({"_id": ctx.guild.id})
         channels = channels or [c for c in ctx.guild.channels if isinstance(c, (discord.TextChannel, discord.VoiceChannel)) and c.permissions_for(bot).read_messages]
         channels.sort(key=lambda x: (x.category.position if x.category else -1, x.position))
-        e = discord.Embed()
+        e = CEmbed()
         e.set_author(name="Permission Diagnostic Tool", icon_url=bot.avatar)
         e.color = self.bot.progress
         loading = self.bot.utils.emotes["loading"]
@@ -560,14 +583,14 @@ class General(commands.Cog):
     def translate_perms(self, bot, summary, admin=False):
         full_summary = []
         channels_summary = []
-        e = discord.Embed()
+        e = CEmbed()
         e.set_author(name="Permission Diagnostic Tool - Summary", icon_url=bot.avatar)
         e.set_footer(text="❌ Won't behave correctly | ⚠️ Will work but not fully | ✅ All good")
         e.color = discord.Color.random()
         e.description = "You don't need to debug anything, bot is administrator and so it can do all it needs.\n\n" if admin else ""
         emojis = ["❌", "✅", "⚠️"]
         for _, channel in summary.items():
-            ce = discord.Embed()
+            ce = CEmbed()
             ce.set_author(name="Permission Diagnostic Tool - Summary", icon_url=bot.avatar)
             ce.color = discord.Color.random()
             ce.description = f"**{channel['channel'].mention}**\n\n"

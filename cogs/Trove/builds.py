@@ -9,6 +9,7 @@ from discord.ext import commands
 from openpyxl import Workbook, utils
 from openpyxl.styles import Alignment, Font, PatternFill
 from utils.buttons import BuildsPickView, GemBuildsView
+from utils.CustomObjects import CEmbed
 from utils.objects import BuildType, GameClass, Values
 
 
@@ -72,14 +73,14 @@ class Builds(commands.Cog):
                 build = "Farming"
             trovesaurus = f"https://trovesaurus.com/builds/{_class.name.replace(' ', '%20')}/{build_type}"
             #tiers = ["<:Star5:841015868930523176>", "<:Star4:841015868863283240>", "<:Star3:841015868716220447>", "<:Star2:841015868854501376>", "<:Star1:841015868993175592>"]
-            e = discord.Embed(description=f"**Check on [Trovesaurus]({trovesaurus})**",color=discord.Color.random(), timestamp=datetime.utcfromtimestamp(self.bot.Trove.last_updated))
+            e = CEmbed(description=f"**Check on [Trovesaurus]({trovesaurus})**",color=discord.Color.random(), timestamp=datetime.utcfromtimestamp(self.bot.Trove.last_updated))
             e.description += f"\n\nRating: " + '<:Star:841018551087530024>' * (6-class_build['tier']) + '<:StarOutline:841018551418880010>' * (class_build['tier'] - 1)
             e.set_author(name=f"In depth {build_type} build for {_class.name}", icon_url=_class.image)
             e.add_field(name="<:hat:834512699585069086>Hat", value=self.readable_stats(class_build["hat"]))
             e.add_field(name="<:sword:834512699593064518>Weapon", value=self.readable_stats(class_build["weapon"]))
             e.add_field(name="<:face:834512699441938442>Face", value=self.readable_stats(class_build["face"]))
             e.add_field(name="<:banner:834512699391475742>Banner", value=self.readable_stats(class_build["banner"], False))
-            e.add_field(name="<:ring:834512699383218226>Ring", value=self.readable_stats(class_build["ring"], False))
+            e.add_field(name="<:ring:923960128401719337>Ring", value=self.readable_stats(class_build["ring"], False))
             e.add_field(name="<:food:834512699424505886>Food", value=self.readable_stats(class_build["food"], False))
             e.add_field(name="<:flask:834512699479687228>Flask", value=self.readable_stats(class_build["flask"], False, or_split=True))
             e.add_field(name="<:emblem:834512699332755536>Emblems", value=self.readable_stats(class_build["emblem"], False))

@@ -1,5 +1,6 @@
 import asyncio
 import json
+import logging
 import os
 import re
 from datetime import datetime
@@ -9,9 +10,18 @@ from aiohttp import ClientSession
 from discord.ext import commands, tasks
 
 from base.DBAPI import Database
+from utils.CustomObjects import TroveTime
 from utils.modules import get_modules
-from utils.objects import TroveTime, Values
+from utils.objects import Values
 
+#Logging
+log_time = datetime.utcnow()
+log_time = f"{log_time.year}_{log_time.month}_{log_time.day} - {log_time.hour}-{log_time.minute}-{log_time.second}"
+logger = logging.getLogger('discord')
+logger.setLevel(logging.INFO)
+handler = logging.FileHandler(filename=f'logs/{log_time}_discord.log', encoding='utf-8', mode='w')
+handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
+logger.addHandler(handler)
 
 keys = json.load(open("keys.json"))
 
@@ -43,7 +53,7 @@ class TroveContext(commands.Context):
 class Trove(commands.AutoShardedBot):
     def __init__(self):
         super().__init__(
-            command_prefix=self.get_prefix,
+            command_prefix=self.prefix,
             case_insensitive=True,
             intents=self._get_intents(),
             description="Trove",
@@ -61,12 +71,11 @@ class Trove(commands.AutoShardedBot):
     async def get_context(self, message, *, cls=None):
         return await super().get_context(message, cls=cls or TroveContext)
 
-    async def get_prefix(self, message):
+    async def prefix(self, bot, message):
         ns = await self.db.db_bot.find_one({"_id": "0511"}, {"prefixes": 1})
         user_prefixes = ns["prefixes"]["users"].get(str(message.author.id)) or []
         server_prefixes = (ns["prefixes"]["servers"].get(str(message.guild.id)) if message.guild else None) or []
-        return commands.when_mentioned_or(*(list(server_prefixes) + list(user_prefixes)) or "n!")(self, message)
-
+        return commands.when_mentioned_or(*([server_prefixes] + [user_prefixes]) or "n!")(self, message)
 
     async def on_ready(self):
         print("Bot connected as " + self.user.name + "#" + self.user.discriminator)
@@ -122,6 +131,8 @@ class Trove(commands.AutoShardedBot):
         setattr(self.Trove, "values", Values())
         setattr(self.Trove, "time", TroveTime())
         setattr(self.Trove, "sheets", {})
+        setattr(self.Trove, "daily_data", json.load(open("/home/sly/nucleo/data/daily_buffs.json")))
+        setattr(self.Trove, "weekly_data", json.load(open("/home/sly/nucleo/data/weekly_buffs.json")))
 
     async def _set_constants(self):
         authors = [
@@ -143,7 +154,7 @@ class Trove(commands.AutoShardedBot):
         self.success = 0x008000
         self.error = 0x800000
         self.progress = 0xf9d71c
-        self.botversion = "3.1.66"
+        self.botversion = "3.1.76"
         self.time = TroveTime()
         self.uptime = datetime.utcnow().timestamp()
         self._last_exception = None

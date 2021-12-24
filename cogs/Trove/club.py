@@ -7,6 +7,7 @@ import discord
 import utils.checks as perms
 from discord.ext import commands, tasks
 from utils.buttons import Paginator
+from utils.CustomObjects import CEmbed
 from utils.objects import TimeConvert, TimeConverter, TrovePlayer
 
 
@@ -124,8 +125,8 @@ class Club(commands.Cog):
         raw_pages = self.bot.utils.chunks(blacklisted, 20)
         for raw_page in raw_pages:
             i += 1
-            e = discord.Embed(color=discord.Color.random())
-            e.set_author(name=f"{ctx.guild.name}'s Player Blacklist | {i}/{len(raw_pages)}", icon_url=ctx.guild.icon or discord.Embed.Empty)
+            e = CEmbed(color=discord.Color.random())
+            e.set_author(name=f"{ctx.guild.name}'s Player Blacklist | {i}/{len(raw_pages)}", icon_url=ctx.guild.icon)
             text = ""
             for bl in raw_page:
                 if bl["timeout"]:
@@ -162,16 +163,16 @@ class Club(commands.Cog):
             await ctx.reply("That player is not blacklisted.")
             return
         added_by = await self.bot.fetch_user(bl["added_by"])
-        e = discord.Embed(description=bl["reason"], timestamp=datetime.utcfromtimestamp(bl["added_at"]), color=self.bot.comment)
+        e = CEmbed(description=bl["reason"], timestamp=datetime.utcfromtimestamp(bl["added_at"]), color=self.bot.comment)
         e.set_author(name=bl["name"])
         if bl["discord"] is not None:
             blu = await self.bot.fetch_user(bl["discord"])
-            e.set_author(name=f"{blu} | IGN: {bl['name']}", icon_url=blu.avatar or discord.Embed.Empty)
+            e.set_author(name=f"{blu} | IGN: {bl['name']}", icon_url=blu.avatar)
         if bl["timeout"] is not None:
             timeout = TimeConverter(bl["timeout"])
             e.add_field(name="Timeout Duration", value=str(timeout))
             e.add_field(name="Timeout End", value=self.bot.utils.format_dt(datetime.utcnow()+timeout.delta, "F"))
-        e.set_footer(text=f"Blacklisted by {added_by.display_name} on", icon_url=added_by.avatar or discord.Embed.Empty)
+        e.set_footer(text=f"Blacklisted by {added_by.display_name} on", icon_url=added_by.avatar)
         await ctx.send(embed=e)
 
     @blacklist.command(slash_command=True, help="Link a discord user to a blacklisted player", name="discord")
@@ -248,7 +249,7 @@ class Club(commands.Cog):
 
     @commands.command(slash_command=True, help="Display list of commands usable for club management", aliases=["ccmd"])
     async def club_commands(self, ctx):
-        e = discord.Embed(description="Some in-game club commands", color=self.bot.comment)
+        e = CEmbed(description="Some in-game club commands", color=self.bot.comment)
         e.add_field(name="Rename World", value="`/renameworld <new name>`", inline=False)
         e.add_field(name="Promote/Demote members", value="`/club [pro|de]mote <playername> <clubname>`", inline=False)
         e.add_field(name="Zone Restrict", value="`/zonerestrict <basic/modify/expert/nobody>`", inline=False)

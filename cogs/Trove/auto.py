@@ -5,6 +5,7 @@ from datetime import datetime
 import discord
 import utils.checks as perms
 from discord.ext import commands, tasks
+from utils.CustomObjects import CEmbed
 
 
 class Automation(commands.Cog):
@@ -98,7 +99,7 @@ class Automation(commands.Cog):
         }
         data = await ctx.get_guild_data(**data)
         auto = data["automation"]
-        e = discord.Embed()
+        e = CEmbed()
         e.set_author(name=await ctx.locale("auto_settings_embed_author_name"), icon_url=self.bot.user.avatar)
         e.add_field(name="\u200b", value=await ctx.locale("auto_settings_embed_dailies_field_title"),inline=False)
         channel = self.bot.get_channel(auto["daily"]["text"]["channel"])
@@ -327,7 +328,7 @@ class Automation(commands.Cog):
     async def repost(self, ctx, post_id: int, channel: discord.TextChannel=commands.Option(name="text_channel", default=None, description="Select a channel to send to")):
         forum_post = await self.bot.db.db_forums.find_one({"_id": post_id})
         channel = channel or ctx.channel
-        e = discord.Embed()
+        e = CEmbed()
         e.color = discord.Color.random()
         e.set_author(name=forum_post["author"])
         e.timestamp = datetime.utcfromtimestamp(forum_post["created_at"])

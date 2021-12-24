@@ -7,6 +7,7 @@ from datetime import datetime, timedelta
 import discord
 from discord.ext import commands
 from utils.buttons import Confirm, OptionPicker
+from utils.CustomObjects import CEmbed
 
 
 class Partner(commands.Cog):
@@ -47,9 +48,9 @@ class Partner(commands.Cog):
                 await m.delete()
             except:
                 pass
-        final_e = discord.Embed(color=discord.Color.random(), timestamp=datetime.utcnow())
+        final_e = CEmbed(color=discord.Color.random(), timestamp=datetime.utcnow())
         final_e.set_author(name=f"Bug report by {ctx.author}", icon_url=ctx.author.avatar)
-        e = discord.Embed(title="Bug Report Form", description="Welcome to the bug report form!\n\nThis allows for better reporting of static formats for devs.\n\nIf you intend to share any media (images/videos) please use YouTube (videos) and Imgur (Images), media is extremely important for devs, despite it being optional try to give most of the time some sort of media to better picture your report.\n\nAlways remember that bugs that may be caused by mods should be attempted to repro with mods disabled. IE:`My UI doesn't show something that it should.` disable UI mods and make sure it still happens.\n\nYou'll be asked some questions, some are optionals others are required.\n\nDo you wish to proceed with the report?", color=discord.Color.random())
+        e = CEmbed(title="Bug Report Form", description="Welcome to the bug report form!\n\nThis allows for better reporting of static formats for devs.\n\nIf you intend to share any media (images/videos) please use YouTube (videos) and Imgur (Images), media is extremely important for devs, despite it being optional try to give most of the time some sort of media to better picture your report.\n\nAlways remember that bugs that may be caused by mods should be attempted to repro with mods disabled. IE:`My UI doesn't show something that it should.` disable UI mods and make sure it still happens.\n\nYou'll be asked some questions, some are optionals others are required.\n\nDo you wish to proceed with the report?", color=discord.Color.random())
         e.set_author(name=ctx.author, icon_url=ctx.author.avatar)
         confirmation = Confirm(ctx, 30)
         msg = await ctx.send(embed=e, view=confirmation)
@@ -226,7 +227,7 @@ class Partner(commands.Cog):
         except:
             pass
         reporti = await ctx.send(embed=final_e)
-        conf_e = discord.Embed(description="This is the final look at your bug report, do you want to submit?\n\nThis action can't be undone.", color=discord.Color.random())
+        conf_e = CEmbed(description="This is the final look at your bug report, do you want to submit?\n\nThis action can't be undone.", color=discord.Color.random())
         conf_e.set_author(name=ctx.author, icon_url=ctx.author.avatar)
         confirmation = Confirm(ctx, 90)
         msg = await ctx.send(embed=conf_e, view=confirmation)

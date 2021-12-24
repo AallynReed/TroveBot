@@ -15,7 +15,7 @@ from discord.ext import commands, tasks
 from openpyxl import load_workbook
 from pushbullet import Pushbullet
 
-from utils.objects import TroveTime
+from utils.CustomObjects import CEmbed
 
 
 class Tasks(commands.Cog):
@@ -23,8 +23,6 @@ class Tasks(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.pb = Pushbullet("o.b2ourOOHZtVViSoF8dXnZuFpZz2Zznsl")
-        self._preload()
-        self.time = TroveTime()
         self.session = aiohttp.ClientSession()
         self.forums = [
             ["PTS Patches", "pts", "forumdisplay.php?50-Limited-Time-PTS-Discussion", "stickies"], # PTS Patch notes
@@ -53,10 +51,6 @@ class Tasks(commands.Cog):
         self.weekly_voice_channels.start()
         print("|--> Running Automation tasks")
 
-    def _preload(self):
-        self.daily_data = json.load(open("/home/sly/nucleo/data/daily_buffs.json"))
-        self.weekly_data = json.load(open("/home/sly/nucleo/data/weekly_buffs.json"))
-
     def cog_unload(self):
         self.sheet_timer.cancel()
         self.forum_retriever.cancel()
@@ -77,7 +71,7 @@ class Tasks(commands.Cog):
         await self.session.close()
 
     async def wait_midnight(self):
-        now = self.time.now
+        now = self.bot.Trove.time.now
         time = (23 - now.hour) * 3600 + (3540 - now.minute * 60) + (60 - now.second)
         await asyncio.sleep(time)
 
@@ -142,7 +136,7 @@ class Tasks(commands.Cog):
             for forum_post in forums_posts:
                 # if forum_post["created_at"] < channel.created_at.timestamp():
                 #     continue
-                e = discord.Embed()
+                e = CEmbed()
                 e.title = forum_post["title"]
                 e.url = forum_post["url"]
                 e.description = forum_post["description"][:2041]
@@ -150,7 +144,7 @@ class Tasks(commands.Cog):
                 e.set_author(name="r/Trove", url="https://www.reddit.com/r/Trove", icon_url=forum_post["icon"])
                 e.timestamp = datetime.utcfromtimestamp(forum_post["created_at"])
                 e.set_footer(text="Post by "+forum_post["author"])
-                e.set_image(url=forum_post["image"] or discord.Embed.Empty)
+                e.set_image(url=forum_post["image"])
                 if len(e.description) == 2041:
                     e.description += "**...**"
                 if forum_post["_id"] in g["forums_posts"]["reddit"]["posted"]:
@@ -351,7 +345,7 @@ class Tasks(commands.Cog):
                 if not channel:
                     continue
                 for forum_post in forums_posts:
-                    e = discord.Embed()
+                    e = CEmbed()
                     e.color = discord.Color.random()
                     e.set_author(name=forum_post["author"])
                     e.timestamp = datetime.utcfromtimestamp(forum_post["created_at"])
@@ -400,7 +394,7 @@ class Tasks(commands.Cog):
     @tasks.loop(seconds=5)
     async def bot_stats(self):
         await self.bot.wait_until_ready()
-        time = self.time.now
+        time = self.bot.Trove.time.now
         if time.minute%10:
             return
         channels = [
@@ -427,7 +421,7 @@ class Tasks(commands.Cog):
 
     @tasks.loop(seconds=5)
     async def clock(self):
-        time = self.time.now
+        time = self.bot.Trove.time.now
         data = await self.bot.db.db_servers.find({"clock.channel": {"$ne": None}}, {"clock": 1}).to_list(length=99999)
         if not data:
             return
@@ -471,9 +465,9 @@ class Tasks(commands.Cog):
     async def dragon_merchant_voice(self):
         data = await self.bot.db.db_servers.find({"automation.dragon_merchant.voice.channel": {"$ne": None}}, {"automation": 1}).to_list(length=99999)
         text = "🐲"
-        if self.time.is_luxion:
+        if self.bot.Trove.time.is_luxion:
             text += "Luxion in Hub"
-        elif self.time.is_corruxion:
+        elif self.bot.Trove.time.is_corruxion:
             text += "Corruxion in Hub"
         else:
             text += "No Dragon Merchant"
@@ -493,19 +487,19 @@ class Tasks(commands.Cog):
 
     @tasks.loop(seconds=5)
     async def dragon_merchant_text(self):
-        now = self.time.now
+        now = self.bot.Trove.time.now
         if not (now.hour == 0 and now.minute == 0):
             return
         data = await self.bot.db.db_servers.find({"automation.dragon_merchant.text.channel": {"$ne": None}}, {"automation": 1}).to_list(length=99999)
         if not data:
             return
-        e = discord.Embed()
-        if self.time.luxion_start.day == now.day:
+        e = CEmbed()
+        if self.bot.Trove.time.luxion_start.day == now.day:
             dragon = "Luxion"
             avatar = "https://i.imgur.com/9eOV0JD.png"
             e.color = 0xc8ad18
             e.set_image(url="https://i.imgur.com/zWkZ9Xd.png")
-        elif self.time.corruxion_start.day == now.day:
+        elif self.bot.Trove.time.corruxion_start.day == now.day:
             dragon = "Corruxion"
             avatar = "https://i.imgur.com/BPNdE1w.png"
             e.color = 0x850eff
@@ -528,13 +522,13 @@ class Tasks(commands.Cog):
 
     @tasks.loop(seconds=5)
     async def daily_text_channels(self):
-        if not (self.time.now.hour == 0 and self.time.now.minute == 0):
+        if not (self.bot.Trove.time.now.hour == 0 and self.bot.Trove.time.now.minute == 0):
             return
         data = await self.bot.db.db_servers.find({"automation.daily.text.channel": {"$ne": None}}, {"automation": 1}).to_list(length=99999)
         if not data:
             return
-        weekday = self.daily_data[str(self.time.now.weekday())]
-        e = discord.Embed()
+        weekday = self.bot.Trove.daily_data[str(self.bot.Trove.time.now.weekday())]
+        e = CEmbed()
         e.color = discord.Color(int(weekday["color"], 16))
         e.set_author(name=weekday["name"], icon_url=self.bot.user.avatar)
         e.title = "Server Daily Reset"
@@ -561,7 +555,7 @@ class Tasks(commands.Cog):
         for server in data:
             dailies = ["🏹Delve Day", "🐟Gathering Day", "💎Gem Day", "🌀Adventure Day", "🐉Dragon Day", "💉XP Day", "💰Loot Day"]
             channel = self.bot.get_channel(server["automation"]["daily"]["voice"]["channel"])
-            daily = dailies[self.time.now.weekday()]
+            daily = dailies[self.bot.Trove.time.now.weekday()]
             if channel and channel.name != daily:
                 try:
                     await channel.edit(name=daily)
@@ -571,13 +565,13 @@ class Tasks(commands.Cog):
 
     @tasks.loop(seconds=5)
     async def weekly_text_channels(self):
-        if not (self.time.now.hour == 0 and self.time.now.minute == 0 and self.time.now.weekday() == 0):
+        if not (self.bot.Trove.time.now.hour == 0 and self.bot.Trove.time.now.minute == 0 and self.bot.Trove.time.now.weekday() == 0):
             return
         data = await self.bot.db.db_servers.find({"automation.weekly.text.channel": {"$ne": None}}, {"automation": 1}).to_list(length=99999)
         if not data:
             return
-        weekly = self.weekly_data[str(self.time.weekly_time)]
-        e = discord.Embed()
+        weekly = self.bot.Trove.weekly_data[str(self.bot.Trove.time.weekly_time)]
+        e = CEmbed()
         e.color = discord.Color(int(weekly["color"], 16))
         e.set_author(name=weekly["name"], icon_url=self.bot.user.avatar)
         e.title = "Server Weekly Reset"
@@ -599,7 +593,7 @@ class Tasks(commands.Cog):
     async def weekly_voice_channels(self):
         data = await self.bot.db.db_servers.find({"automation.weekly.voice.channel": {"$ne": None}}, {"automation": 1}).to_list(length=99999)
         if data:
-            weekly = self.weekly_data[str(self.time.weekly_time)]
+            weekly = self.bot.Trove.weekly_data[str(self.bot.Trove.time.weekly_time)]
             buff = f"{weekly['emoji']}{weekly['name']}"
             for server in data:
                 channel = self.bot.get_channel(server["automation"]["weekly"]["voice"]["channel"])

@@ -11,6 +11,8 @@ import discord
 from discord.ext import commands
 from PIL import Image
 
+from utils.CustomObjects import CEmbed
+
 
 class MD(dict):
     def __str__(self):
@@ -217,7 +219,7 @@ class Utilities(commands.Cog):
             command_path = command_db["subcommands"][subcommands[1]]["subcommands"][subcommands[2]]["subcommands"][subcommands[3]]
             description = command_path["description"]
             example = command_path["example"].replace("{prefix}", prefix)
-        e=discord.Embed(description=description, colour=discord.Color.random())
+        e=CEmbed(description=description, colour=discord.Color.random())
         e.set_author(name=f"{str(command_name).capitalize()} Commands", icon_url=ctx.guild.icon)
         if "subcommands" in command_path and command_path["subcommands"]:
             for subcommand in command_path["subcommands"]:

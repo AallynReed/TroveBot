@@ -7,6 +7,7 @@ import re
 import discord
 import pandas as pd
 from discord.ext import commands, tasks
+from utils.CustomObjects import CEmbed
 from utils.objects import Values
 
 
@@ -80,7 +81,7 @@ class Leaderboards(commands.Cog):
 
     @commands.group(invoke_without_command=True, aliases=["lb"], hidden=True)
     async def leaderboard(self, ctx, leaderboard=None):
-        e = discord.Embed()
+        e = CEmbed()
         e.color = discord.Color.random()
         e.description = "```\n"
         e.description += str(self.test_lb())

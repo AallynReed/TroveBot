@@ -11,7 +11,9 @@ import discord
 from aiohttp import ClientSession, MultipartWriter
 from discord.ext import commands
 from utils.buttons import Confirm, Paginator, ProfileView
-from utils.objects import Class, GameClass, MetricsConverter, TrovePlayer
+from utils.CustomObjects import CEmbed
+from utils.objects import GameClass, TrovePlayer, TroveClass
+from utils.CustomObjects import MetricsConverter
 
 
 class Profiles(commands.Cog):
@@ -132,13 +134,13 @@ class Profiles(commands.Cog):
         return
 
     async def log(self, message, text):
-        e = discord.Embed()
+        e = CEmbed()
         e.color = discord.Color.random()
         e.timestamp = message.created_at
         e.description = text
         if message.id != 511:
             e.set_author(name=message.author, icon_url=message.author.avatar)
-        e.set_thumbnail(url=message.guild.icon or discord.Embed.Empty)
+        e.set_thumbnail(url=message.guild.icon)
         e.set_footer(text=f"{message.guild.name} - {message.guild.id}")
         await self.bot.profiles_logger.send(embed=e, username="Profiles")
 
@@ -252,7 +254,7 @@ class Profiles(commands.Cog):
 
     async def _profile(self, ctx, user, _class, server=1):
         await ctx.trigger_typing()
-        if isinstance(user, Class):
+        if isinstance(user, TroveClass):
             _class = user
             user = None
         user = user or ctx.author
@@ -340,7 +342,7 @@ class Profiles(commands.Cog):
         await self.__request(ctx)
 
     async def __request(self, ctx):
-        e = discord.Embed()
+        e = CEmbed()
         e.color = discord.Color.random()
         e.set_author(name="How to submit a profile?")
         e.description = "The method to submit has changed.\n\nNow you go in-game and use `/exportmetrics` then grab file called `exportMetrics.txt` and just send it on discord."
@@ -386,7 +388,7 @@ class Profiles(commands.Cog):
             return await ctx.send(f"No profile found for **{user}**\nUse `{ctx.prefix}profile request` to learn how to submit one.")
         if isinstance(user, str):
             user = self.bot.get_user(data["discord_id"]) or await self.bot.fetch_user(data["discord_id"])
-        e = discord.Embed()
+        e = CEmbed()
         e.color = discord.Color.random()
         e.set_author(name="Classes submitted to profile.", icon_url=user.avatar)
         primary = GameClass().cconvert(data["Bot Settings"]["Primary"])
@@ -504,7 +506,7 @@ class Profiles(commands.Cog):
         pages = []
         for i in range(len(stats)):
             stat_page = stats[i]
-            e = discord.Embed()
+            e = CEmbed()
             e.color = discord.Color.random()
             e.set_author(name=f"{t} for {user} | Page {i+1} of {len(stats)}", icon_url=user.avatar)
             e.description = "```py\n"

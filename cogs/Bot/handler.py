@@ -1,8 +1,9 @@
 # Priority: 1
 import asyncio
 
-import discord
 from discord.ext import commands
+
+from utils.CustomObjects import CEmbed
 
 
 class CommandHandler(commands.Cog):
@@ -13,7 +14,7 @@ class CommandHandler(commands.Cog):
     async def blacklist_addition(self, guild, member):
         if guild.id != 834505270075457627:
             return
-        e = discord.Embed(description=f"{member} was added to blacklist.")
+        e = CEmbed(description=f"{member} was added to blacklist.")
         e.set_footer(text=guild)
         e.set_author(name="Blacklist", icon_url=member.avatar)
         await self.bot.blacklist_logger.send(embed=e)
@@ -30,7 +31,7 @@ class CommandHandler(commands.Cog):
                 await member.send("You have been unbanned from using bot.")
             except:
                 ...
-            e = discord.Embed(description=f"{member} was removed from blacklist.")
+            e = CEmbed(description=f"{member} was removed from blacklist.")
             e.set_footer(text=guild)
             e.set_author(name="Blacklist", icon_url=member.avatar)
             await self.bot.blacklist_logger.send(embed=e)
@@ -79,7 +80,7 @@ class CommandHandler(commands.Cog):
             return await ctx.send(f"Your prefix is `{prefix[0]}`\nUse `{prefix[0]}prefix self <prefix>` to change your prefix.")
         if ctx.valid:
             if message.author.id in self.bot.blacklist:
-                e = discord.Embed(description=f"{ctx.author} tried to use a command `{message.content}`\n{ctx.message.jump_url}")
+                e = CEmbed(description=f"{ctx.author} tried to use a command `{message.content}`\n{ctx.message.jump_url}")
                 e.set_footer(text=ctx.guild)
                 e.set_author(name="Blacklist", icon_url=ctx.author.avatar)
                 await self.bot.blacklist_logger.send(embed=e)
@@ -133,7 +134,7 @@ class CommandHandler(commands.Cog):
             return await ctx.send(f"Your prefix is `{prefix[0]}`\nUse `{prefix[0]}prefix self <prefix>` to change your prefix.")
         if ctx.valid:
             if ctx.author.id in self.bot.blacklist:
-                e = discord.Embed(description=f"{ctx.author} tried to use a command `{after.content}`")
+                e = CEmbed(description=f"{ctx.author} tried to use a command `{after.content}`")
                 e.set_author(name="Blacklist", icon_url=ctx.author.avatar)
                 await self.bot.blacklist_logger.send(embed=e)
                 try:

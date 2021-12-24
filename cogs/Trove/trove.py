@@ -9,6 +9,7 @@ import utils.checks as perms
 from bs4 import BeautifulSoup
 from discord.ext import commands
 from utils.buttons import Paginator
+from utils.CustomObjects import CEmbed
 
 
 class Trove(commands.Cog):
@@ -99,7 +100,7 @@ class Trove(commands.Cog):
         pages = []
         paged_results = self.bot.utils.chunks(allies, 6)
         for raw_page in paged_results:
-            e = discord.Embed()
+            e = CEmbed()
             e.set_author(name=f"Page {paged_results.index(raw_page)+1} of {len(paged_results)}")
             e.description = ""
             e.color = discord.Color.random()
@@ -121,7 +122,7 @@ class Trove(commands.Cog):
 
     @commands.command(name="betterdiscord", aliases=["bbd"])
     async def _better_discord(self, ctx):
-        e = discord.Embed(description="Go to Custom CSS tab in your settings and then paste the following line onto it.```css\n@import url('https://slynx.xyz/trovegametags');```**Hit update and save.**", color=discord.Color.random())
+        e = CEmbed(description="Go to Custom CSS tab in your settings and then paste the following line onto it.```css\n@import url('https://slynx.xyz/trovegametags');```**Hit update and save.**", color=discord.Color.random())
         e.set_author(name="Better Discord Trove Tags", icon_url=self.bot.user.avatar)
         await ctx.send(embed=e)
 
@@ -130,7 +131,7 @@ class Trove(commands.Cog):
         today = self.bot.Trove.time.now
         time = today.isoformat().split('T')[1][:5]
         reset = int((today + timedelta(days=1, hours=-today.hour+11, minutes=-today.minute, seconds=-today.second, microseconds=today.microsecond)).timestamp())
-        await ctx.send(embed=discord.Embed(description=f"🕐 Server Time {time}\nNext reset <t:{reset}:R> <t:{reset}:F>", color=self.bot.comment))
+        await ctx.send(embed=CEmbed(description=f"🕐 Server Time {time}\nNext reset <t:{reset}:R> <t:{reset}:F>", color=self.bot.comment))
 
     @commands.command(slash_command=True, help="Display maximum Trove Mastery in PC Trove.", aliases=["m"])
     async def mastery(
@@ -140,7 +141,7 @@ class Trove(commands.Cog):
         update=commands.Option(name="value", default=None, description="Amount to update mastery with.")
     ):
         if mode == None:
-            e=discord.Embed(color=self.bot.comment, timestamp=datetime.utcfromtimestamp((await self.bot.db.db_bot.find_one({"_id": "0511"}))["mastery"]["mastery_update"]))
+            e=CEmbed(color=self.bot.comment, timestamp=datetime.utcfromtimestamp((await self.bot.db.db_bot.find_one({"_id": "0511"}))["mastery"]["mastery_update"]))
             e.set_author(name="Trove Max Mastery", icon_url="https://i.imgur.com/t5aCX3u.png")
             live_level, live_points, live_level_points = self.bot.utils.points_to_mr(self.bot.Trove.max_live_mastery)
             pts_level, pts_points, pts_level_points = self.bot.utils.points_to_mr(self.bot.Trove.max_pts_mastery)
@@ -215,7 +216,7 @@ class Trove(commands.Cog):
         update=commands.Option(name="value", default=None, description="Amount to update mastery with.")
     ):
         if mode == None:
-            e=discord.Embed(color=self.bot.comment, timestamp=datetime.utcfromtimestamp((await self.bot.db.db_bot.find_one({"_id": "0511"}))["mastery"]["geode_mastery_update"]))
+            e=CEmbed(color=self.bot.comment, timestamp=datetime.utcfromtimestamp((await self.bot.db.db_bot.find_one({"_id": "0511"}))["mastery"]["geode_mastery_update"]))
             e.set_author(name="Geode Max Mastery", icon_url="https://i.imgur.com/mJRDFtT.png")
             live_level, live_points, live_level_points = self.bot.utils.points_to_mr(self.bot.Trove.max_live_mastery_geode)
             pts_level, pts_points, pts_level_points = self.bot.utils.points_to_mr(self.bot.Trove.max_pts_mastery_geode)
@@ -314,7 +315,7 @@ class Trove(commands.Cog):
         tomorrow_add = timedelta(days=1) - timedelta(hours=now.hour+1, minutes=now.minute, seconds=now.second)
         tomorrow = now + tomorrow_add
         timestamp = int(tomorrow.timestamp())
-        e = discord.Embed()
+        e = CEmbed()
         e.color = 0xB11E31
         e.set_author(name="Advent Calendar 2021", icon_url=self.bot.user.avatar.url)
         e.description = "[**What is Advent's Calendar?**](http://forums.trovegame.com/showthread.php?150131)"
@@ -366,7 +367,7 @@ class Trove(commands.Cog):
                     #item["tradeable"] = -bool(soup.findAll("strong", text="Cannot be traded"))
                     items.append(item)
                 self.bot.Trove.luxion_inventory[str(initial_id)] = items
-            e = discord.Embed(description=f"Luxion is available. It will be gone {self.bot.Trove.time.luxion_end_rwts('R')}\nItem's info was fetched from **[Trovesaurus](https://trovesaurus.com/luxion)** made by **Etaew**", color=self.bot.comment)
+            e = CEmbed(description=f"Luxion is available. It will be gone {self.bot.Trove.time.luxion_end_rwts('R')}\nItem's info was fetched from **[Trovesaurus](https://trovesaurus.com/luxion)** made by **Etaew**", color=self.bot.comment)
             e.set_author(name="Current Luxion's Inventory", icon_url="https://i.imgur.com/9eOV0JD.png")
             for item in self.bot.Trove.luxion_inventory[str(initial_id)]:
                 text = ""
@@ -380,7 +381,7 @@ class Trove(commands.Cog):
             e.timestamp = self.bot.Trove.time.rw_time(self.bot.Trove.time.luxion_start)
             await ctx.send(embed=e)
         else:
-            e = discord.Embed(
+            e = CEmbed(
                 description=f"It will be available on **{self.bot.Trove.time.luxion_start_rwts('F')}** until **{self.bot.Trove.time.luxion_end_rwts('F')}** **{self.bot.Trove.time.luxion_start_rwts('R')}**",
                 color=self.bot.comment)
             e.set_author(name="Luxion is not available.", icon_url="https://i.imgur.com/0N0PYdp.png")
@@ -389,7 +390,7 @@ class Trove(commands.Cog):
     @commands.command(slash_command=True, help="Shows when corruxion is around.", aliases=["nlux"])
     async def corruxion(self, ctx):
         if self.bot.Trove.time.is_corruxion:
-            e = discord.Embed(description=f"Corruxion is available. It will be gone {self.bot.Trove.time.corruxion_end_rwts('R')}", color=self.bot.comment)
+            e = CEmbed(description=f"Corruxion is available. It will be gone {self.bot.Trove.time.corruxion_end_rwts('R')}", color=self.bot.comment)
             e.description += "\n\nCorruxion items have a global purchase limit of 10 per visit."
             items = {
                 "Empowered Water Gem Box": [15, "https://trovesaurus.com/item/lootbox/gems/empowered_blue"],
@@ -409,7 +410,7 @@ class Trove(commands.Cog):
             e.set_author(name="Corruxion", icon_url="https://i.imgur.com/BPNdE1w.png")
             await ctx.send(embed=e)
         else:
-            e = discord.Embed(
+            e = CEmbed(
                 description=f"It will be available on **{self.bot.Trove.time.corruxion_start_rwts('F')}** until **{self.bot.Trove.time.corruxion_end_rwts('F')}** **{self.bot.Trove.time.corruxion_start_rwts('R')}**",
                 color=self.bot.comment)
             e.set_author(name="Corruxion is not available.", icon_url="https://i.imgur.com/BPNdE1w.png")
@@ -432,7 +433,7 @@ class Trove(commands.Cog):
         if not sigil:
             await ctx.send("That sigil is not in my database.")
             return
-        e = discord.Embed(color=self.bot.comment)
+        e = CEmbed(color=self.bot.comment)
         e.set_image(url=f"attachment://sigil.png")
         await ctx.send(file=discord.File(sigil, filename="sigil.png"), embed=e)
 

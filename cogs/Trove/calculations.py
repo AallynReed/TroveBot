@@ -3,9 +3,9 @@ import re
 import typing
 from datetime import datetime
 
-import discord
 from discord.ext import commands
 from simpleeval import simple_eval
+from utils.CustomObjects import CEmbed
 from utils.objects import AugmentationStats
 
 
@@ -40,7 +40,7 @@ class Calculations(commands.Cog):
                     gem_cost[str(i)] = None
             return gem_cost, completion
         gems = [get_gem_cost(gem) for gem in augmentation["gems"]]
-        e = discord.Embed(description=f"Prefered: **{augmentation['focus'].capitalize()}**", color=self.bot.comment)
+        e = CEmbed(description=f"Prefered: **{augmentation['focus'].capitalize()}**", color=self.bot.comment)
         e.set_author(name="Gem Augmentation", icon_url="https://i.imgur.com/st2CWEz.png")
         e.set_image(url="https://i.imgur.com/M5rAxEM.png")
         e.set_footer(text=r"Game UI rounds values, so costs might not be 100% correct but it's a pretty accurate estimate")
@@ -102,7 +102,7 @@ class Calculations(commands.Cog):
             res = f"{result:.2e}"
         else:
             res = f"{result}" if no_commas else f"{result:,}"
-        e = discord.Embed(title="Result", description=f"**{res}**", color=self.bot.comment)
+        e = CEmbed(title="Result", description=f"**{res}**", color=self.bot.comment)
         if debug:
             e.description += f"\n\nInput Expression: `{args}`" + (f"\nFixed Expression: `{curated_args}`" if args != curated_args else "")
         await ctx.send(embed=e)
@@ -123,7 +123,7 @@ class Calculations(commands.Cog):
         if critchance > 100:
             critchance = 100.0
         coeff = round((100 - critchance) * damage / 100 + critchance * (damage * (1 + crit / 100)) / 100)
-        e = discord.Embed(color=self.bot.comment)
+        e = CEmbed(color=self.bot.comment)
         e.set_author(name="Coefficient Calculation", icon_url="https://i.imgur.com/sCIbgLX.png")
         e.add_field(name="Damage", value=damage)
         e.add_field(name="Critical Damage", value=f"{crit}%")
@@ -176,7 +176,7 @@ class Calculations(commands.Cog):
 
     @commands.command(slash_command=True, help="Display maximum Magic Find in Trove PC.", aliases=["mf"])
     async def magic_find(self, ctx):
-        e=discord.Embed(color=self.bot.comment, timestamp=datetime.utcfromtimestamp((await self.bot.db.db_bot.find_one({"_id": "0511"}))["mastery"]["mastery_update"]))
+        e=CEmbed(color=self.bot.comment, timestamp=datetime.utcfromtimestamp((await self.bot.db.db_bot.find_one({"_id": "0511"}))["mastery"]["mastery_update"]))
         e.set_author(name="Max Magic Find", icon_url="https://i.imgur.com/sCIbgLX.png")
         live_level, _, _ = self.bot.utils.points_to_mr(self.bot.Trove.max_live_mastery)
         pts_level, _, _ = self.bot.utils.points_to_mr(self.bot.Trove.max_pts_mastery)

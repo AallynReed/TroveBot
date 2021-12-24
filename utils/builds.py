@@ -2,8 +2,8 @@ import itertools
 import re
 from datetime import datetime
 
-import discord
 
+from utils.CustomObjects import CEmbed
 from utils.objects import GameClass
 
 
@@ -125,11 +125,12 @@ class BuildsMaker():
         builds.sort(key=lambda x: [abs(x[2]-self.arguments.light),-x[0]])
         return builds
 
-    def _run_builder(self):
+    def _run_builder(self, arguments):
+        self._add_arguments(arguments)
         return self._get_builds()
 
     def get_pages(self, arguments):
-        self._add_arguments(arguments)
+        builds = self._run_builder(arguments)
         _class = self.arguments._class
         build_type = self.arguments.build_type
         cd_count = self.arguments.cd_count
@@ -143,8 +144,7 @@ class BuildsMaker():
         food = self.arguments.food
         deface = self.arguments.deface
         filt = self.build_part(self.arguments.filter)[1] if self.arguments.filter else self.arguments.filter
-        last_updated = datetime.utcfromtimestamp(1639596498)
-        builds = self._run_builder()
+        last_updated = datetime.utcfromtimestamp(1640180877)
         if self.arguments.build:
             for build in builds:
                 if build[1] != self.arguments.build:
@@ -157,7 +157,7 @@ class BuildsMaker():
                 if not light and build_type not in ["coeff", "health"]:
                     boosts = boosts[:4]
                 build_text = "/".join([str(i) for i in boosts][:4]) + (" + " + "/".join([str(i) for i in boosts][4:]) if len(boosts) > 4 else "")
-                e = discord.Embed(description=f"Detailed info about **{build_text}**\nWant more stats? **Use this [tool](https://slynx.xyz/trove/class_builder)**", color=0x008000, timestamp=last_updated)
+                e = CEmbed(description=f"Detailed info about **{build_text}**\nWant more stats? **Use this [tool](https://slynx.xyz/trove/class_builder)**", color=0x008000, timestamp=last_updated)
                 e.set_author(name=f"Rank #{builds.index(build) + 1}", icon_url=_class.image)
                 for stat, value in build[4].items():
                     e.add_field(name=stat, value=value)
@@ -171,7 +171,7 @@ class BuildsMaker():
         i = 0
         builds = self.chunks(builds[:100], 10)
         for page in builds:
-            e = discord.Embed(color=0x008000, timestamp=last_updated)
+            e = CEmbed(color=0x008000, timestamp=last_updated)
             e.set_footer(text="Values on masterchat's spreadsheet and coefficient mod lack accuracy due to the use of rounded values, bot is more accurate since it doesn't use rounding. | Last updated on")
             e.description = (
                 ("\n**Class** " + _class.name) + 
