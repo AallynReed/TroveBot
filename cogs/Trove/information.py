@@ -7,11 +7,61 @@ import discord
 from discord.ext import commands
 from tabulate import tabulate
 from utils.CustomObjects import CEmbed
+from bs4 import BeautifulSoup
 
 
 class Information(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+
+    @commands.command(message_command=False, slash_command=False, help="Get time information about Advent's Calendar 2021 event on forums")
+    async def advent_calendar(self, ctx):
+        days = {
+            1: "http://forums.trovegame.com/showthread.php?150105-Advent-Calendar-2021-Day-1",
+            2: "http://forums.trovegame.com/showthread.php?150104-Advent-Calendar-2021-Day-2",
+            3: "http://forums.trovegame.com/showthread.php?150103-Advent-Calendar-2021-Day-3",
+            4: "http://forums.trovegame.com/showthread.php?150102-Advent-Calendar-2021-Day-4",
+            5: "http://forums.trovegame.com/showthread.php?150101-Advent-Calendar-2021-Day-5",
+            6: "http://forums.trovegame.com/showthread.php?150100-Advent-Calendar-2021-Day-6",
+            7: "http://forums.trovegame.com/showthread.php?150099-Advent-Calendar-2021-Day-7",
+            8: "http://forums.trovegame.com/showthread.php?150098-Advent-Calendar-2021-Day-8",
+            9: "http://forums.trovegame.com/showthread.php?150097-Advent-Calendar-2021-Day-9",
+            10: "http://forums.trovegame.com/showthread.php?150096-Advent-Calendar-2021-Day-10",
+            11: "http://forums.trovegame.com/showthread.php?150095-Advent-Calendar-2021-Day-11",
+            12: "http://forums.trovegame.com/showthread.php?150094-Advent-Calendar-2021-Day-12",
+            13: "http://forums.trovegame.com/showthread.php?150093-Advent-Calendar-2021-Day-13",
+            14: "http://forums.trovegame.com/showthread.php?150092-Advent-Calendar-2021-Day-14",
+            15: "http://forums.trovegame.com/showthread.php?150091-Advent-Calendar-2021-Day-15",
+            16: "http://forums.trovegame.com/showthread.php?150090-Advent-Calendar-2021-Day-16",
+            17: "http://forums.trovegame.com/showthread.php?150089-Advent-Calendar-2021-Day-17",
+            18: "http://forums.trovegame.com/showthread.php?150088-Advent-Calendar-2021-Day-18",
+            19: "http://forums.trovegame.com/showthread.php?150087-Advent-Calendar-2021-Day-19",
+            20: "http://forums.trovegame.com/showthread.php?150086-Advent-Calendar-2021-Day-20",
+            21: "http://forums.trovegame.com/showthread.php?150085-Advent-Calendar-2021-Day-21",
+            22: "http://forums.trovegame.com/showthread.php?150084-Advent-Calendar-2021-Day-22",
+            23: "http://forums.trovegame.com/showthread.php?150083-Advent-Calendar-2021-Day-23",
+            24: "http://forums.trovegame.com/showthread.php?150082-Advent-Calendar-2021-Day-24",
+        }
+        now = datetime.utcnow().replace(microsecond=0) + timedelta(hours=1) # Forum Event time
+        tomorrow_add = timedelta(days=1) - timedelta(hours=now.hour+1, minutes=now.minute, seconds=now.second)
+        tomorrow = now + tomorrow_add
+        timestamp = int(tomorrow.timestamp())
+        e = CEmbed()
+        e.color = 0xB11E31
+        e.set_author(name="Advent Calendar 2021", icon_url=self.bot.user.avatar.url)
+        e.description = "[**What is Advent's Calendar?**](http://forums.trovegame.com/showthread.php?150131)"
+        e.description += "\n[**Check the calendar**](http://forums.trovegame.com/showthread.php?150130)"
+        e.description += f"\n\nNext day <t:{timestamp}:R> | <t:{timestamp}:D>"
+        e.set_footer(text="Times represent event time and not real world.")
+        if now.day in days:
+            today = days.get(now.day)
+            e.description += f"\n\nToday's image <t:{int(now.timestamp()-3600)}:f> [**Go To Forums**]({today})"
+            response = await (await self.bot.AIOSession.get(today)).text()
+            soup = BeautifulSoup(response, "html.parser")
+            htmlpost = soup.findAll("div", {"class" : "content"})[0]
+            image = htmlpost.find_all('img', {"border": "0"})[1]
+            e.set_image(url=image.get("src"))
+        await ctx.send(embed=e, ephemeral=True)
 
     @commands.command(aliases=["chatcmd"])
     async def chats(self, ctx):
@@ -233,8 +283,8 @@ class Information(commands.Cog):
             ["<:cosmic_emp:923920434045521920>", "Cosmic Empowered Gem", 1249, f"3 <:boost:873291316447047761> in Light stat, check <:gem_forge:923919985875759114>[Gem Forge]({links['gem_forge']})"],
             ["<:cosmic_lesser:923920433894531102>", "Cosmic Lesser Gem 1", 985, f"3 <:boost:873291316447047761> in Light stat, check <:gem_forge:923919985875759114>[Gem Forge]({links['gem_forge']})"],
             ["<:cosmic_lesser:923920433894531102>", "Cosmic Lesser Gem 2", 985, f"3 <:boost:873291316447047761> in Light stat, check <:gem_forge:923919985875759114>[Gem Forge]({links['gem_forge']})"],
-            ["<:qubesly:834512699361853530>", "Ally", 400, f"[Allies List]({links['pearl']})"],
-            ["<:geodemr:844624767210487808>", "Geode Mastery", 1000, f"[Geode mastery]({links['geode']}) gives 10 light per level [Max: 100]"],
+            ["<:qubesly:834512699361853530>", "Ally", 400, f"[Allies List]({links['light']})"],
+            ["<:geodemr:844624767210487808>", "Geode Mastery", 1000, f"[Geode mastery]({links['geode']}) gives 10 light per level [Max Lvl: 100]"],
             ["<:dragon_coin:858061506074378276>", f"Dragon", 50, f"[Chaos Dragon]({links['chaos_dragon']}) through the purchase of [<:chaos_frag:923960128498204682> 50 Fragments]({links['chaos_fragments']}) in [<:charl:923960128288489482> Corruxion]({links['corruxion']})"],
             ["<:ring:923960128401719337>", "Ring", 325, f"Crystal 4, obtained through [Golden Signatory Box]({links['ring_box']})"],
             ["<:torch:923967418756370533>", "Banner", 900, f"[Upgraded Legendary Torch]({links['upgraded_torch']}) from leviathans in [Geode Topside U10]({links['topside']}) or [Delves]({links['delves']}) ([Ifera Boss]({links['ifera']})) check [Sunseeker's Crystalforge]({links['sunseekers']}))"],

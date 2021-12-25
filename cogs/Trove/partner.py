@@ -63,7 +63,7 @@ class Partner(commands.Cog):
        # Platform
         servers = [
             {"text":"PC", "emoji": "<:windows:839445248517079050>"}, 
-            {"text":"PTS", "emoji": "<:windows:839445248517079050>"}, 
+            {"text":"PTS", "emoji": "<:sageclown:923956528434794496>"}, 
             {"text":"PS4", "emoji": "<:playstation:921080331782737990>"}, 
             {"text":"Xbox", "emoji": "<:xbox:839439645359603713>"}, 
             {"text":"Switch", "emoji": "<:switch:921081085083926569>"}

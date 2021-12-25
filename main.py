@@ -126,13 +126,17 @@ class Trove(commands.AutoShardedBot):
                     data = dict(re.findall(r"(?i)\$([a-z0-9_]+):([^$]*)", text, re.MULTILINE))
                     self.locale[language] = data
 
-    def _set_trove_constants(self):
+    async def _set_trove_constants(self):
         setattr(self, "Trove", Dummy())
         setattr(self.Trove, "values", Values())
         setattr(self.Trove, "time", TroveTime())
         setattr(self.Trove, "sheets", {})
         setattr(self.Trove, "daily_data", json.load(open("/home/sly/nucleo/data/daily_buffs.json")))
         setattr(self.Trove, "weekly_data", json.load(open("/home/sly/nucleo/data/weekly_buffs.json")))
+        db_bot = (await self.db.db_bot.find_one({"_id": "0511"}, {"mastery": 1}))["mastery"]
+        for key, value in db_bot.items():
+            if key.startswith("max"):
+                setattr(self.Trove, key, value)
 
     async def _set_constants(self):
         authors = [
@@ -154,14 +158,14 @@ class Trove(commands.AutoShardedBot):
         self.success = 0x008000
         self.error = 0x800000
         self.progress = 0xf9d71c
-        self.botversion = "3.1.76"
+        self.botversion = "3.1.80"
         self.time = TroveTime()
         self.uptime = datetime.utcnow().timestamp()
         self._last_exception = None
         all_perms = discord.Permissions.all().value
         self.invite = f"https://discord.com/oauth2/authorize?client_id=425403525661458432&permissions={all_perms}&scope=bot%20applications.commands"
         self.keys = keys
-        self._set_trove_constants()
+        await self._set_trove_constants()
      
     async def _load_webhooks(self):
         self.AIOSession = ClientSession()

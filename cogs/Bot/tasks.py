@@ -356,7 +356,7 @@ class Tasks(commands.Cog):
                     e.title = forum_post["title"]
                     e.url = forum_post["link"]
                     e.set_footer(text=forum_post["_id"])
-                    add = f"[Dark Mode Page](https://slynx.xyz/trove/posts/{forum_post['_id']})"
+                    add = f"[Dark Mode Page](https://trove.slynx.xyz/posts/{forum_post['_id']})"
                     e.description = forum_post["content"].strip() + f"\n\n{add}"
                     if len(e.description) > 2048:
                         e.description = f"Post is too big to show in discord, check it out at {add}"

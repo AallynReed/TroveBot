@@ -45,7 +45,7 @@ class Help(commands.Cog):
             command = await self.get_command(commandname)
             if command:
                 embed=CEmbed(title=command.full_name.capitalize(), colour=discord.Color.random())
-                #embed.description += "\n\nNeed help? Want to discuss something about the bot? [`Join support server`](https://slynx.xyz/trovebot/support)"
+                #embed.description += "\n\nNeed help? Want to discuss something about the bot? [`Join support server`](https://trove.slynx.xyz/support)"
                 embed.add_field(name="Description", value=command.description, inline=False)
                 if commandname in self.bot.all_commands:
                     if self.bot.all_commands[commandname].usage:
@@ -64,7 +64,7 @@ class Help(commands.Cog):
             command = await self.get_command(commandname, subcommands)
             if command:
                 embed=CEmbed(title=command.full_name.capitalize(), colour=discord.Color.random())
-                #embed.description += "\n\nNeed help? Want to discuss something about the bot? [`Join support server`](https://slynx.xyz/trovebot/support)"
+                #embed.description += "\n\nNeed help? Want to discuss something about the bot? [`Join support server`](https://trove.slynx.xyz/support)"
                 embed.add_field(name="Description", value=command.description, inline=False)
                 embed.add_field(name="Example", value=f'`{command.example.replace("{prefix}", prefix)}`')
                 if command.extra_text:
@@ -96,7 +96,7 @@ class Help(commands.Cog):
                         msg += f'`{command.name}` - {command.description}\n\n'
                     embed=CEmbed(title=f"Page: {i}/{len(commands_list[module])}",description=msg, colour=discord.Color.random())
                     embed.set_author(name=f"{module.capitalize()} Commands", icon_url=self.bot.user.avatar)
-                    embed.description += f"**Want to add the bot to your own server feel free to do so [here]({self.bot.invite})**\nNeed help? Want to discuss something about the bot? [`Join support server`](https://slynx.xyz/trovebot/support) you can also get help through bot DM's"
+                    embed.description += f"**Want to add the bot to your own server feel free to do so [here]({self.bot.invite})**\nNeed help? Want to discuss something about the bot? [`Join support server`](https://trove.slynx.xyz/support) you can also get help through bot DM's"
                     embed.set_footer(text=f"{prefix}help <command>/<subcommand> for more info on the command.")
                     page = {
                         "content": None,
@@ -122,7 +122,7 @@ class Help(commands.Cog):
             e.description = "" if ctx.guild.id not in [118027756075220992] else "**Trovesaurus has a limited feature set.** To access other features, add the bot to your own server.\n\n"
             e.description += "**Modules:**\n\n"
             e.description += "\n".join(sorted([f"`{m.capitalize()}`\n{module_descriptions[m]}\n" for m in commands_list.keys()]))
-            e.description += f"\n**Want to add the bot to your own server feel free to do so [here]({self.bot.invite})**\nNeed help? Want to discuss something about the bot? [`Join support server`](https://slynx.xyz/trovebot/support) you can also get help through bot DM's"
+            e.description += f"\n**Want to add the bot to your own server feel free to do so [here]({self.bot.invite})**\nNeed help? Want to discuss something about the bot? [`Join support server`](https://trove.slynx.xyz/support) you can also get help through bot DM's"
             e.set_footer(text=f"{prefix}help <command>/<subcommand> for more info on the command.")
             commands_list["embed"] = e
             view = HelpView(ctx, commands_list)

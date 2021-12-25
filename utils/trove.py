@@ -81,7 +81,10 @@ class Ally():
 
 class Tooltip():
     def __init__(self, data: dict):
-        self.data = Ally(data)
+        if not isinstance(data, Ally):
+            self.data = Ally(data)
+        else:
+            self.data = data
         self._setup_fonts()
         self._setup_ratios()
         self.output = Image.new("RGBA", (self.width, self.height), (0,0,0,int(255*0.8)))

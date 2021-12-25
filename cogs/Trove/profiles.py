@@ -326,7 +326,7 @@ class Profiles(commands.Cog):
         except:
             return await ctx.send(f"Your profile for **{_class.name}** is outdated", delete_after=10, ephemeral=True)
         try:
-            request = await self.session.post("http://0.0.0.0:10511/trove/profiles/image", data=str(json.dumps(data)))
+            request = await self.session.post("https://trove.slynx.xyz/profiles/image", data=str(json.dumps(data)))
         except:
             return await ctx.send("Can't get profile right now, try again later.")
         img = BytesIO(await request.read())

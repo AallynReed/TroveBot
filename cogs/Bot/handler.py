@@ -85,7 +85,7 @@ class CommandHandler(commands.Cog):
                 e.set_author(name="Blacklist", icon_url=ctx.author.avatar)
                 await self.bot.blacklist_logger.send(embed=e)
                 try:
-                    await ctx.author.send(f"You've been banned from using bot :) You can appeal at <https://slynx.xyz/trove/appeal>\nThe server is not associated with the bot so do not complain there about a bot blacklist as it won't make a better case futurely in an appeal attempt.\nHere's your ID: `{ctx.author.id}`")
+                    await ctx.author.send(f"You've been banned from using bot :) You can appeal at <https://trove.slynx.xyz/appeal>\nThe server is not associated with the bot so do not complain there about a bot blacklist as it won't make a better case futurely in an appeal attempt.\nHere's your ID: `{ctx.author.id}`")
                 except:
                     ...
                 return await ctx.send("An error occured!", delete_after=15)
@@ -139,7 +139,7 @@ class CommandHandler(commands.Cog):
                 await self.bot.blacklist_logger.send(embed=e)
                 try:
                     ...
-                    await ctx.author.send(f"You've been banned from using bot :) You can appeal at <https://slynx.xyz/trove/appeal>\nHere's your ID: `{ctx.author.id}`")
+                    await ctx.author.send(f"You've been banned from using bot :) You can appeal at <https://trove.slynx.xyz/appeal>\nHere's your ID: `{ctx.author.id}`")
                 except:
                     ...
                 return await ctx.send("An error occured!", delete_after=15)

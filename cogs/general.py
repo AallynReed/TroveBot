@@ -1,9 +1,9 @@
 # Priority: 1
 import base64
-import json
+import os
 import typing
 from datetime import datetime
-from io import BytesIO
+from zipfile import ZipFile
 
 import discord
 import psutil
@@ -12,6 +12,7 @@ import utils.checks as perms
 from discord.ext import commands
 from utils.buttons import Paginator
 from utils.CustomObjects import CEmbed
+from utils.trove import Tooltip
 
 
 class General(commands.Cog):
@@ -20,20 +21,17 @@ class General(commands.Cog):
         self.bot = bot
 
     @commands.command(hidden=True)
+    @perms.owners()
     async def tooltip(self, ctx):
-        response = await self.bot.AIOSession.get("https://trovesaurus.com/collections/pet/delve_hermitcrab_volcano.json")
-        data = await response.text()
-        data = json.loads(data)
-        self.bot.Trove.values.allies[data["name"]] = data
-        with open("data/allies.json") as f:
-            f.write(json.dumps(self.bot.Trove.values.allies))
-        data["token"] = "TkT8qs9lviaI3wyCQdTD"
-        try:
-            request = await self.bot.AIOSession.post("http://0.0.0.0:10511/trove/tooltip", data=str(json.dumps(data)))
-        except:
-            return await ctx.send("Can't get tooltip right now, try again later.")
-        img = BytesIO(await request.read())
-        await ctx.reply(file=discord.File(img, filename="image.png"))
+        with ZipFile('/home/sly/website_files/tooltips/tooltips.zip', 'w') as zip:
+            for ally in self.bot.Trove.values.allies:
+                _file = f"/home/sly/website_files/tooltips/{ally.qualified_name}.png"
+                image = Tooltip(ally).generate_image()
+                with open(_file, "wb") as f:
+                    f.write(image.getbuffer())
+                zip.write(_file, arcname=f"{ally.qualified_name}.png")
+                os.remove(_file)
+        await ctx.reply("Done - https://cdn.slynx.xyz/tooltips/tooltips.zip")
 
     @commands.command()
     async def slash(self, ctx):
@@ -58,7 +56,7 @@ class General(commands.Cog):
         e.add_field(name="Servers", value=len(self.bot.guilds))
         e.add_field(name="Users", value=len(self.bot.users))
         e.add_field(name="Ping", value=f"{round(self.bot.latency*1000):,}ms")
-        e.add_field(name="Webpage", value="[Here](https://slynx.xyz/trove)")
+        e.add_field(name="Webpage", value="[Here](https://trove.slynx.xyz)")
         e.add_field(name="Invite me", value=f"[Here]({self.bot.invite})")
         await ctx.reply(embed=e)
 
@@ -80,7 +78,7 @@ class General(commands.Cog):
         e = CEmbed()
         e.color = discord.Color.random()
         e.set_author(name="Action Pan Ally giveaway.", icon_url=self.bot.user.avatar)
-        e.set_thumbnail(url="https://slynx.xyz/downloads/0511/images/pan.png")
+        e.set_thumbnail(url="https://cdn.slynx.xyz/images/pan.png")
         e.description = "Trove Developer Dan has given Trove bot some unlock codes for the dev ally `Action Pan`"
         e.description += "\n\n**To join the giveaway all you have to do is send the keyword** `DevAlly`\n\n"
         e.description += "Only a few rules to enter the giveaway:\n"
@@ -88,7 +86,7 @@ class General(commands.Cog):
         e.description += " -> Bot must be able to DM you the code in case you win, otherwise it will be rerolled.\n"
         e.description += " -> You may only enter once the giveaway.\n\n"
         e.description += "This giveaway will end at <t:1628852400:F> <t:1628852400:R>"
-        e.description += "\n**3 winners** will be announced in [Trove Bot Server](https://slynx.xyz/trove/support) and automatically sent the codes through DM's"
+        e.description += "\n**3 winners** will be announced in [Trove Bot Server](https://trove.slynx.xyz/support) and automatically sent the codes through DM's"
         entries = (await self.bot.db.db_bot.find_one({"_id": "0511"}, {"giveaway": 1}))["giveaway"]
         e.set_footer(text=f"{len(entries)} people have joined the giveaway.")
         await ctx.reply(embed=e, delete_after=300)
@@ -290,7 +288,7 @@ class General(commands.Cog):
         #     msg += f"`{self.bot.utils.time_str(datetime.utcnow().timestamp()-guild.me.joined_at.timestamp(), abbr=True)[1]}` -> **{guild.name}**\n"
         #     i += 1
         # e=CEmbed(title=f"**Communities you can find Trove bot in** ({i})",description=msg, color=self.comment)
-        await ctx.send("https://slynx.xyz/trove/communities")#embed=e)
+        await ctx.send("https://trove.slynx.xyz/communities")#embed=e)
 
     @commands.command(aliases=["iu"])
     @commands.bot_has_permissions(embed_links=1)
