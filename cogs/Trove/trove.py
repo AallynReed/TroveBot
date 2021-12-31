@@ -109,7 +109,7 @@ class Trove(commands.Cog):
 
     @commands.command(name="betterdiscord", aliases=["bbd"])
     async def _better_discord(self, ctx):
-        e = CEmbed(description="Go to Custom CSS tab in your settings and then paste the following line onto it.```css\n@import url('https://trove.slynx.xyzgametags');```**Hit update and save.**", color=discord.Color.random())
+        e = CEmbed(description="Go to Custom CSS tab in your settings and then paste the following line onto it.```css\n@import url('https://trove.slynx.xyz/gametags');```**Hit update and save.**", color=discord.Color.random())
         e.set_author(name="Better Discord Trove Tags", icon_url=self.bot.user.avatar)
         await ctx.send(embed=e)
 
@@ -149,7 +149,7 @@ class Trove(commands.Cog):
             return
         if ctx.author.id in [562659821476773942] and mode == "console":
             ...
-        elif ctx.author.id in [237634733264207872, 565097923025567755, 209712946534809600]:
+        elif ctx.author.id in [237634733264207872, 565097923025567755, 209712946534809600, 254602899038928897]:
             ...
         else:
             return
@@ -223,7 +223,7 @@ class Trove(commands.Cog):
             return
         if ctx.author.id in [562659821476773942] and mode == "console":
             ...
-        elif ctx.author.id in [237634733264207872, 565097923025567755, 209712946534809600]:
+        elif ctx.author.id in [237634733264207872, 565097923025567755, 209712946534809600, 254602899038928897]:
             ...
         else:
             return

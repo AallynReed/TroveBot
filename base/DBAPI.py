@@ -36,18 +36,27 @@ class Database(DB):
                 break
             await asyncio.sleep(1)
 
-    async def database_check(self, server_id=None):
+    async def database_check(self, server_id=None, user_id=None):
+        if user_id:
+            data = await self.db_users.find_one({"_id": user_id})
+            new_data = self._default_user(user_id)
+            if not data:
+                await self.db_users.insert_one(new_data)
+            else:
+                new_data = Dict(deepcopy(data)).fix(new_data)
+                if new_data != data:
+                    await self.db_users.update_one({"_id": user_id}, {"$set": new_data})
         if server_id:
             data = await self.db_servers.find_one({"_id": server_id})
+            new_data = self._default_server(server_id)
             if not data:
-                new_data = self._default_server(server_id)
-                await self.db_servers.insert_one(self._default_server(server_id))
+                await self.db_servers.insert_one(new_data)
             else:
-                new_data = Dict(deepcopy(data)).fix(self._default_server(server_id))
+                new_data = Dict(deepcopy(data)).fix(new_data)
                 if new_data != data:
                     await self.db_servers.update_one({"_id": server_id}, {"$set": new_data})
             return new_data
-
+        
     async def stats_list(self):
         stats = []
         async for doc in self.db_profiles.find({}, {"Bot Settings": 0, "Collected Mastery": 0, "Clubs": 0, "_id": 0}):
@@ -91,9 +100,12 @@ class Database(DB):
             "server_status": {}
         }
 
-    def _default_server(self, server_id):
+    def _default_server(self, server_id: int):
         return {
             "_id": server_id,
+            "settings": {
+                "prefixes": []
+            },
             "locale": "en",
             "PTS mode": False,
             "self_cleanup": False,
@@ -159,6 +171,14 @@ class Database(DB):
             },
             "blacklist": {
                 "channel": None
+            }
+        }
+
+    def _default_user(self, user_id: int):
+        return {
+            "_id": user_id,
+            "settings": {
+                "prefixes": []
             }
         }
 

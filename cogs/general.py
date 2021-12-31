@@ -371,49 +371,34 @@ class General(commands.Cog):
     @commands.group(slash_command=True)
     async def prefix(self, ctx):
         if not ctx.invoked_subcommand:
-            ns = await self.bot.db.db_bot.find_one({"_id": "0511"}, {"prefixes": 1})
-            if str(ctx.author.id) not in ns["prefixes"]["users"].keys():
-                await self.bot.db.db_bot.update_one({"_id": "0511"}, {"$set":{"prefixes.users." + str(ctx.author.id): None}})
-                ns = await self.bot.db.db_bot.find_one({"_id": "0511"})
-            if str(ctx.guild.id) not in ns["prefixes"]["servers"].keys():
-                await self.bot.db.db_bot.update_one({"_id": "0511"}, {"$set":{"prefixes.servers." + str(ctx.guild.id): None}})
-                ns = await self.bot.db.db_bot.find_one({"_id": "0511"})
-            prefixes = ns["prefixes"]
-            server_prefix = prefixes["servers"].get(str(ctx.guild.id))
-            user_prefix = prefixes["users"].get(str(ctx.author.id))
+            server_prefix = (await self.bot.db.db_servers.find_one({"_id": ctx.guild.id}, {"settings.prefixes": 1}))["settings"]["prefixes"]
+            user_prefix = (await self.bot.db.db_users.find_one({"_id": ctx.author.id}, {"settings.prefixes": 1}))["settings"]["prefixes"]
             e = CEmbed()
             e.color = discord.Color.random()
             e.set_author(name="List of Prefixes", icon_url=ctx.guild.icon)
             e.description = f"Use `{ctx.prefix}prefix server MyPrefix` to edit server prefix.\n"
             e.description += f"Use `{ctx.prefix}prefix self MyPrefix` to edit your prefix.\n"
-            e.add_field(name="Server Prefix", value=f"`{server_prefix}`")
-            e.add_field(name="User Prefix", value=f"`{user_prefix}`")
+            e.add_field(name="Server Prefix", value=f"`{'`, `'.join(server_prefix) if server_prefix else None}`")
+            e.add_field(name="User Prefix", value=f"`{'`, `'.join(user_prefix) if user_prefix else None}`")
             await ctx.reply(embed=e)
 
     @prefix.command(name="list", slash_command=True, help="Check out prefixes")
     async def __list(self, ctx):
-        ns = await self.bot.db.db_bot.find_one({"_id": "0511"}, {"prefixes": 1})
-        if str(ctx.author.id) not in ns["prefixes"]["users"].keys():
-            await self.bot.db.db_bot.update_one({"_id": "0511"}, {"$set":{"prefixes.users." + str(ctx.author.id): None}})
-            ns = await self.bot.db.db_bot.find_one({"_id": "0511"})
-        if str(ctx.guild.id) not in ns["prefixes"]["servers"].keys():
-            await self.bot.db.db_bot.update_one({"_id": "0511"}, {"$set":{"prefixes.servers." + str(ctx.guild.id): None}})
-            ns = await self.bot.db.db_bot.find_one({"_id": "0511"})
-        prefixes = ns["prefixes"]
-        server_prefix = prefixes["servers"].get(str(ctx.guild.id))
-        user_prefix = prefixes["users"].get(str(ctx.author.id))
+        server_prefix = (await self.bot.db.db_servers.find_one({"_id": ctx.guild.id}, {"settings.prefixes": 1}))["settings"]["prefixes"]
+        user_prefix = (await self.bot.db.db_users.find_one({"_id": ctx.author.id}, {"settings.prefixes": 1}))["settings"]["prefixes"]
         e = CEmbed()
         e.color = discord.Color.random()
         e.set_author(name="List of Prefixes", icon_url=ctx.guild.icon)
         e.description = f"Use `{ctx.prefix}prefix server MyPrefix` to edit server prefix.\n"
         e.description += f"Use `{ctx.prefix}prefix self MyPrefix` to edit your prefix.\n"
-        e.add_field(name="Server Prefix", value=f"`{server_prefix}`")
-        e.add_field(name="User Prefix", value=f"`{user_prefix}`")
+        e.add_field(name="Server Prefix", value=f"`{'`, `'.join(server_prefix) if server_prefix else None}`")
+        e.add_field(name="User Prefix", value=f"`{'`, `'.join(user_prefix) if user_prefix else None}`")
         await ctx.reply(embed=e)
 
     @prefix.command(name="self", slash_command=True, help="Set a prefix for yourself")
     async def _self(self, ctx, *, args=commands.Option(name="prefix", default=None, description="Select a prefix")):
-        await self.bot.db.db_bot.update_one({"_id": "0511"}, {"$set":{"prefixes.users." + str(ctx.author.id): args}})
+        args = args or []
+        await self.bot.db.db_users.update_one({"_id": ctx.author.id}, {"$set": {"settings.prefixes": [args]}})
         if args:
             await ctx.reply(f"Your self prefix is now set to `{args}`")
         else:
@@ -422,8 +407,8 @@ class General(commands.Cog):
     @prefix.command(name="server", slash_command=True, help="Set a prefix for your server")
     @perms.has_permissions("manage_guild")
     async def _server(self, ctx, *, args=commands.Option(name="prefix", default=None, description="Select a prefix")):
-        await ctx.send(f"`{args}`")
-        await self.bot.db.db_bot.update_one({"_id": "0511"}, {"$set":{"prefixes.servers." + str(ctx.guild.id): args}})
+        args = args or []
+        await self.bot.db.db_servers.update_one({"_id": ctx.guild.id}, {"$set": {"settings.prefixes": [args]}})
         if args:
             await ctx.reply(f"Server prefix is now set to `{args}`")
         else:

@@ -1,0 +1,140 @@
+{
+    "Stats": {
+        "Light": {
+            "Hat": 845,
+            "Weapon": 1690,
+            "Face": 845,
+            "Banner": 900,
+            "Food": 300,
+            "Mastery": 1000,
+            "Dragons": 50,
+            "Ally": 300,
+            "Ring": 325
+        },
+        "Damage": {
+            "Weapon": 14300,
+            "Face": 4719,
+            "Ring": 14300,
+            "Banner": 500,
+            "Dragons": {
+                "Physical": 6400,
+                "Magic": 5900
+            }
+        },
+        "Critical Damage": {
+            "Hat": 44.2,
+            "Weapon": 44.2,
+            "Face": 44.2,
+            "Club": 100,
+            "Dragons": 80
+        },
+        "Magic Find": {
+            "Dragons": 2500,
+            "Dragon Badges": 450,
+            "Hat": 260,
+            "Weapon": 260,
+            "Face": 260,
+            "Ring": 300,
+            "Pirate Captain Subclass": 70,
+            "Ally": 150,
+            "Club": 200
+        },
+        "Maximum Health": {
+            "Hat": 28600,
+            "Weapon": 18876,
+            "Face": 28600,
+            "Ring": 14475,
+            "Dragons": 39000,
+            "Torch": 10000
+        },
+        "Maximum Health %": {
+            "Hat": 234,
+            "Face": 234,
+            "Dragons": 117,
+            "Ally": 15,
+            "Mastery": 300,
+            "Club": 100
+        }
+    },
+    "Gems": {
+        "Empowered": {
+            "Bases": {
+                "Damage": 6314,
+                "Critical Damage": 90.2,
+                "Maximum Health": 22550,
+                "Maximum Health %": 225.5,
+                "Light": 451
+            },
+            "Increments": {
+                "Damage": 3724,
+                "Critical Damage": 53.2,
+                "Maximum Health": 13300,
+                "Maximum Health %": 133,
+                "Light": 266
+            }
+        },
+        "Lesser": {
+            "Bases": {
+                "Damage": 5390,
+                "Critical Damage": 77,
+                "Maximum Health": 19250,
+                "Maximum Health %": 192.5,
+                "Light": 385
+            },
+            "Increments": {
+                "Damage": 2800,
+                "Critical Damage": 40,
+                "Maximum Health": 10000,
+                "Maximum Health %": 100,
+                "Light": 200
+            }
+        }
+    },
+    "Crystal 5": {
+        "Hat": {
+            "Maximum Health": 35100,
+            "Light": 1040,
+            "Attack Speed": 35.1,
+            "Critical Damage": 45.5,
+            "Health Regeneration": 16900,
+            "Movement Speed": 22.1,
+            "Jump": 24.7,
+            "Maximum Health %": 286,
+            "Magic Find": 377,
+            "Stability": 577,
+            "Lasermancy": 286
+        },
+        "Weapon": {
+            "Damage": 19500,
+            "Light": 2080,
+            "Attack Speed": 35.1,
+            "Critical Damage": 45.5,
+            "Energy Regeneration": 221,
+            "Maximum Health": 23166,
+            "Movement Speed": 22.1,
+            "Critical Hit": 6.89,
+            "Health Regeneration": 16900,
+            "Jump": 24.7,
+            "Magic Find": 377,
+            "Stability": 577
+        },
+        "Face": {
+            "Maximum Health": 35100,
+            "Light": 1040,
+            "Attack Speed": 35.1,
+            "Critical Damage": 45.5,
+            "Health Regeneration": 16900,
+            "Movement Speed": 22.1,
+            "Damage": 6435,
+            "Jump": 24.7,
+            "Maximum Health %": 286,
+            "Magic Find": 377,
+            "Stability": 577
+        },
+        "Costs": {
+            "Crystalline Cores": 1895,
+            "Forge Fragments": 8176,
+            "Nitro-Glitterine": null
+        }
+    }
+}

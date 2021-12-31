@@ -2,6 +2,7 @@
 import base64
 import json
 import math
+import os
 import re
 from datetime import datetime
 from io import BytesIO
@@ -138,6 +139,13 @@ class Utilities(commands.Cog):
         return increment, points
 
  # Other
+
+    async def to_file(self, channel, text, format):
+        _f = f"file.{format}"
+        with open(_f, "w+") as f:
+            f.write(text)
+        await channel.send(file=discord.File(_f))
+        os.remove(_f)
 
     async def give_roles(self, member, roles):
         if isinstance(roles, discord.Role):

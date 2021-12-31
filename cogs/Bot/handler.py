@@ -89,7 +89,6 @@ class CommandHandler(commands.Cog):
                 except:
                     ...
                 return await ctx.send("An error occured!", delete_after=15)
-            await self.bot.db.database_check(ctx.guild.id)
             commands = (await self.bot.db.db_servers.find_one({"_id": ctx.guild.id}, {"commands": 1}))["commands"]
             if not self.can_use_command(ctx, commands):
                 return
@@ -143,7 +142,6 @@ class CommandHandler(commands.Cog):
                 except:
                     ...
                 return await ctx.send("An error occured!", delete_after=15)
-            await self.bot.db.database_check(ctx.guild.id)
             commands = (await self.bot.db.db_servers.find_one({"_id": ctx.guild.id}, {"commands": 1}))["commands"]
             if not self.can_use_command(ctx, commands):
                 return

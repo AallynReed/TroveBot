@@ -3,6 +3,7 @@ import re
 from functools import partial
 
 import discord
+from utils.CustomObjects import CEmbed
 
 from utils.builds import BuildsMaker
 
@@ -30,6 +31,71 @@ class BaseView(discord.ui.View):
             await self.message.edit(view=None)
         except:
             pass
+
+class GemTutorial(BaseView):
+    def __init__(self, ctx, tabs, topics):
+        self.ctx = ctx
+        super().__init__(
+            timeout=600
+        )
+        self.initial_menu = tabs["embed"]
+        self.selected_tab = None
+        self.selected_topic = None
+        self.tabs = tabs["tabs"]
+        self.topics = topics
+        self._setup_buttons(start=True)
+
+    def _setup_buttons(self, start=False):
+        if self.children:
+            self.clear_items()
+        if not self.selected_tab:
+            e = self.initial_menu
+            for tab in self.tabs.keys():
+                self.add_item(GemTutorialButton(label=tab))
+        elif self.selected_tab:
+            if not self.selected_topic:
+                e = CEmbed(color=discord.Color(3092790))
+                e.set_author(name=f"Gem Tutorial - {self.selected_tab}")
+                e.description = "Select a topic to learn"
+            else:
+                e = CEmbed.from_dict(self.selected_topic.embed) 
+            tab_topics = [t for t in self.topics if t.tab == self.selected_tab]
+            self.add_item(GemTutorialTopics(self, tab_topics))
+            self.add_item(GemTutorialButton(label="Back"))
+            if e.footer.text:
+                e.footer.text += " | Last updated"
+            else:
+                e.set_footer(text="Last updated")
+            e.timestamp = self.initial_menu.timestamp
+        if not start:
+            asyncio.create_task(self.message.edit(embed=e, view=self))
+
+class GemTutorialButton(discord.ui.Button["GemTutorial"]):
+    def __init__(self, label):
+        super().__init__(style=discord.ButtonStyle.secondary, label=label)
+
+    async def callback(self, interaction: discord.Interaction):
+        await interaction.response.defer()
+        if self.label == "Back":
+            self.view.selected_topic = None
+            self.view.selected_tab = None
+        else:
+            self.view.selected_tab = self.label
+        self.view._setup_buttons()
+
+class GemTutorialTopics(discord.ui.Select):
+    def __init__(self, view, topics):
+        select = []
+        select.extend([
+            discord.SelectOption(label=t.name, default=t == view.selected_topic)
+            for t in topics
+        ])
+        super().__init__(placeholder=f"Pick a topic", options=select)
+    
+    async def callback(self, interaction: discord.Interaction):
+        await interaction.response.defer()
+        self.view.selected_topic = [t for t in self.view.topics if self.values[0] == t.name][0]
+        self.view._setup_buttons()
 
 # Static
 

@@ -421,13 +421,13 @@
         ],
         "hidden": false
     },
-    "prime_numbers": {
+    "gem_tutorial": {
         "module": "information",
-        "description": "Shows a list of prime numbers up to a 1000.",
-        "example": "{prefix}prime_numbers",
+        "description": "Shows the an almost full gem tutorial.",
+        "example": "{prefix}gem_tutorial",
         "subcommands": {},
         "aliases": [
-            "primes"
+            "gt"
         ],
         "hidden": false
     },
@@ -457,6 +457,16 @@
         "subcommands": {},
         "aliases": [
             "pltrove"
+        ],
+        "hidden": false
+    },
+    "prime_numbers": {
+        "module": "information",
+        "description": "Shows a list of prime numbers up to a 1000.",
+        "example": "{prefix}prime_numbers",
+        "subcommands": {},
+        "aliases": [
+            "primes"
         ],
         "hidden": false
     },

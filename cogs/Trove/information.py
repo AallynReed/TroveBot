@@ -1,13 +1,15 @@
 # Priority: 1
 import functools
+import json
 import typing
 from datetime import datetime, timedelta
 
 import discord
+from bs4 import BeautifulSoup
 from discord.ext import commands
 from tabulate import tabulate
+from utils.buttons import GemTutorial
 from utils.CustomObjects import CEmbed
-from bs4 import BeautifulSoup
 
 
 class Information(commands.Cog):
@@ -296,6 +298,32 @@ class Information(commands.Cog):
         e.set_author(name=f"Max Light | {sum([i[2] for i in data if i[2] > 0])}", icon_url="https://i.imgur.com/zxVjBzO.png")
         e.set_footer(text="Last updated")
         await ctx.reply(embed=e)
+
+    @commands.command(slash_command=True, aliases=["gt"], help="Learn how gems work, and learn how to best manage them.")
+    async def gem_tutorial(self, ctx):
+        tabs = {
+            "tabs": {
+                "Basic": "Learn all the basics of gems as a begginner.",
+                "Medium": "Learn what to do after getting your gem set sorted out.",
+                "Advanced": "Tryhard in a damn children's game nerd."
+            }
+        }
+        e = CEmbed(color=discord.Color(3092790), timestamp=datetime.utcfromtimestamp(1640702807))
+        e.set_author(name="Gem Tutorial", icon_url=self.bot.user.avatar)
+        e.description = "Welcome to the gem tutorial.\n\n"
+        e.description += "Pick one of the difficulties below:\n\n"
+        e.description += "\n".join([f"> **{tab}:** {text}" for tab, text in tabs["tabs"].items()])
+        e.set_footer(text="Last updated")
+        tabs["embed"] = e
+        raw_topics = json.loads(open("locales/en/gems.json").read())
+        class Topic():
+            def __init__(self, **args):
+                for name, embed in args.items():
+                    setattr(self, name, embed)
+        topics = [Topic(tab=k.split(" | ")[1], name=k.split(" | ")[0], embed=e) for k, e in raw_topics.items()]
+        view = GemTutorial(ctx, tabs, topics)
+        view.message = await ctx.reply(embed=e, view=view)
+
 
 def setup(bot):
     bot.add_cog(Information(bot))

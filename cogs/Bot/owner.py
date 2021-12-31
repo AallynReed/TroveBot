@@ -10,14 +10,21 @@ from discord.ext import commands
 from discord.utils import find
 
 import utils.checks as perms
-from utils.CustomObjects import CEmbed
-from utils.modules import get_loaded_modules
 from utils.buttons import Traceback
+from utils.CustomObjects import CEmbed, TimeConverter
+from utils.modules import get_loaded_modules
 
 
 class Owner(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+
+    @commands.command(hidden=True)
+    @perms.admins()
+    async def export_servers(self, ctx, stuff=None):
+        guilds = sorted(self.bot.guilds, key=lambda x: x.me.joined_at.timestamp() if not stuff else -len(x.members))
+        text = "\n".join([f"[{g.id:<18}] ({len(g.members):<5}) {str(TimeConverter(datetime.utcnow().timestamp()-g.me.joined_at.timestamp())):<32} > {g.name}" for g in guilds])
+        await self.bot.utils.to_file(ctx, text, "txt")
 
     @commands.command(hidden=True)
     @perms.admins()

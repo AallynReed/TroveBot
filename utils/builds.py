@@ -80,7 +80,7 @@ class BuildsMaker():
                     bonus_damage += self.arguments.ally["stats"]["Damage"]
             if self.arguments.crystal5:
                 base_damage += 6916
-                critical_damage += 3.75 - (1.25 * (3 - self.arguments.cd_count)) if self.arguments.build_type == "farm" else 3.75
+                critical_damage += 3.9 - (1.3 * (3 - self.arguments.cd_count)) if self.arguments.build_type == "farm" else 3.75
                 light += 780
             if self.arguments.food:
                 light += 300
@@ -184,7 +184,7 @@ class BuildsMaker():
                 (f"\n**No Damage on Face** ✅" if deface else "") + 
                 ("\n**Bard Battle Song** ✅" if bardcd else "") + 
                 ("\n**Cosmic Primordial** ✅" if primordial else "") + 
-                ("\n**Crystal 5** ✅" if crystal5 else "") +
+                ("\n**Crystal 4**" if crystal5 else "**Crystal 4**") +
                 (f"\n**Filter Builds** {filt}" if filt else "")
             )
             e.description += "\n\n`👍` Cheap\n`💸` Expensive"

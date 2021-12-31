@@ -72,10 +72,15 @@ class Trove(commands.AutoShardedBot):
         return await super().get_context(message, cls=cls or TroveContext)
 
     async def prefix(self, bot, message):
-        ns = await self.db.db_bot.find_one({"_id": "0511"}, {"prefixes": 1})
-        user_prefixes = ns["prefixes"]["users"].get(str(message.author.id)) or []
-        server_prefixes = (ns["prefixes"]["servers"].get(str(message.guild.id)) if message.guild else None) or []
-        return commands.when_mentioned_or(*([server_prefixes] + [user_prefixes]) or "n!")(self, message)
+        await bot.wait_until_ready()
+        await self.db.database_check(server_id=message.guild.id if message.guild else None, user_id=message.author.id)
+        prefixes = []
+        if message.guild:
+            server_prefixes = (await self.db.db_servers.find_one({"_id": message.guild.id}, {"settings.prefixes": 1}))["settings"]["prefixes"]
+            prefixes.extend(server_prefixes)
+        users_prefixes = (await self.db.db_users.find_one({"_id": message.author.id}, {"settings.prefixes": 1}))["settings"]["prefixes"]
+        prefixes.extend(users_prefixes)
+        return commands.when_mentioned_or(*(prefixes or ["n!"]))(self, message)
 
     async def on_ready(self):
         print("Bot connected as " + self.user.name + "#" + self.user.discriminator)
@@ -158,7 +163,7 @@ class Trove(commands.AutoShardedBot):
         self.success = 0x008000
         self.error = 0x800000
         self.progress = 0xf9d71c
-        self.botversion = "3.1.80"
+        self.botversion = "3.2.15"
         self.time = TroveTime()
         self.uptime = datetime.utcnow().timestamp()
         self._last_exception = None
@@ -214,7 +219,6 @@ class Trove(commands.AutoShardedBot):
     async def on_message(self, message):
         if not hasattr(self, "owners") or message.author.id not in self.owners:
             return
-        await self.db.database_check(message.guild.id)
         await self.process_commands(message)
 
 Trove().run(keys["Bot"]["Token"], reconnect=True)
