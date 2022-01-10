@@ -10,7 +10,7 @@ from discord.ext import commands
 from discord.utils import find
 
 import utils.checks as perms
-from utils.buttons import Traceback
+from utils.buttons import Paginator, Traceback
 from utils.CustomObjects import CEmbed, TimeConverter
 from utils.modules import get_loaded_modules
 
@@ -18,6 +18,23 @@ from utils.modules import get_loaded_modules
 class Owner(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+
+    @commands.command(slash_command=True, aliases=["changelog", "cl"], help="Check out the latest changes to the bot.")
+    async def change_log(self, ctx):
+        pages = []
+        async for message in self.bot.get_channel(922275962861801503).history(limit=10000):
+            e = CEmbed(description=message.content, color=discord.Color.random())
+            if self.bot.version in message.content:
+                e.set_author(name="Change Log - Latest", icon_url=self.bot.user.avatar)
+            else:
+                e.set_author(name="Change Log", icon_url=self.bot.user.avatar)
+            pages.append({
+                "content": None,
+                "embed": e
+            })
+        pages.reverse()
+        view = Paginator(ctx, pages, page=len(pages)-1, start_end=True, timeout=300)
+        view.message = await ctx.reply(embed=pages[-1]["embed"], view=view)
 
     @commands.command(hidden=True)
     @perms.admins()

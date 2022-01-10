@@ -481,6 +481,27 @@
         "hidden": false
     },
 # Miscellaneous
+    "betterdiscord": {
+        "module": "miscellaneous",
+        "description": "CSS for game tags based on profiles system.",
+        "example": "{prefix}betterdiscord",
+        "subcommands": {},
+        "aliases": [
+            "bbd"
+        ],
+        "hidden": false
+    },
+    "change_log": {
+        "module": "miscellaneous",
+        "description": "Check out the updates made to the bot.",
+        "example": "{prefix}change_log",
+        "subcommands": {},
+        "aliases": [
+            "changelog",
+            "cl"
+        ],
+        "hidden": false
+    },
     "communities": {
         "module": "miscellaneous",
         "description": "Know which communities bot is in.",

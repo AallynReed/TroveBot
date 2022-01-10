@@ -33,7 +33,7 @@ class General(commands.Cog):
                 os.remove(_file)
         await ctx.reply("Done - https://cdn.slynx.xyz/tooltips/tooltips.zip")
 
-    @commands.command()
+    @commands.command(hidden=True)
     async def slash(self, ctx):
         e = CEmbed()
         e.description = "You can now have slash commands in your server by clicking in this "

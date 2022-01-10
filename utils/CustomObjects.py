@@ -1,8 +1,10 @@
 import hashlib
 import re
 from datetime import datetime, timedelta
+from functools import partial
 from typing import Literal, Optional
 
+from colors import color
 from discord import Embed
 from discord.embeds import EmptyEmbed
 from pytz import UTC
@@ -239,3 +241,51 @@ class MetricsConverter():
             self._make_profile()
         return self._profile
 
+Colors = {
+    "0": "black",
+    "1": "red",
+    "2": "green",
+    "3": "yellow",
+    "4": "blue",
+    "5": "magenta",
+    "6": "cyan",
+    "7": "white",
+}
+
+CBRegex = r"(?i)(?s)(```.*?```)"
+PointerRegex = r"(§([ubi]*)?(?:\$([0-7]))?(?:\#([0-7]))?<(?:\+(.*?)\+|~(.*?)~)>)"
+
+class Colorize():
+    def __init__(self, text: str):
+        self.text = text
+        self.colorize()
+
+    def colorize(self):
+        codeblocks = re.findall(CBRegex, self.text)
+        if codeblocks:
+            for codeblock in codeblocks:
+                parsed = re.sub(PointerRegex, self.parsecolors, codeblock, re.IGNORECASE)
+                self.text = self.text.replace(codeblock, parsed)
+
+    def parsecolors(self, match):
+        groups = match.groups()
+        text = groups[4] or groups[5]
+        text = re.sub(PointerRegex, self.parsecolors, text, re.IGNORECASE).replace("[0m", "")
+        formats = groups[1].lower()
+        formatting = {
+            "underline": "u" in formats,
+           # Not supported by Discord
+            #"bold": "b" in formats,
+            #"italic": "i" in formats
+        }
+        style = None if not sum(formatting.values()) else "+".join([f for f, v in formatting.items() if v])
+        fgc = Colors[groups[2]] if groups[2] else None
+        bgc = Colors[groups[3]] if groups[3] else None
+        parsed_format = partial(color, fg=fgc, bg=bgc, style=style)
+        return parsed_format(text)
+
+    def __str__(self):
+        return self.text
+    
+    def __repr__(self):
+        return self.__str__()

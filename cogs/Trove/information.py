@@ -279,9 +279,9 @@ class Information(commands.Cog):
             "topside": "https://trovesaurus.com/biome=37/geode-topside"
         }
         data = [
-            ["<:hat:834512699585069086>", "Hat", 845, f"Crystal 4 | 5 <:Star:841018551087530024> with 8 [<:pearl:923919738768330752> pearls]({links['pearl']})"],
-            ["<:sword:834512699593064518>", "Weapon", 1690, f"Crystal 4 | 5 <:Star:841018551087530024> with 8 [<:pearl:923919738768330752> pearls]({links['pearl']})"],
-            ["<:face:834512699441938442>", "Face", 845, f"Crystal 4 | 5 <:Star:841018551087530024> with 8 [<:pearl:923919738768330752> pearls]({links['pearl']})"],
+            ["<:hat:834512699585069086>", "Hat", 845, f"Crystal 4 | 5 <:Star:841018551087530024> fully <:pearl:923919738768330752> [pearled]({links['pearl']})"],
+            ["<:sword:834512699593064518>", "Weapon", 1690, f"Crystal 4 | 5 <:Star:841018551087530024> fully <:pearl:923919738768330752> [pearled]({links['pearl']})"],
+            ["<:face:834512699441938442>", "Face", 845, f"Crystal 4 | 5 <:Star:841018551087530024> fully [<:pearl:923919738768330752> pearled]({links['pearl']})"],
             ["<:cosmic_emp:923920434045521920>", "Cosmic Empowered Gem", 1249, f"3 <:boost:873291316447047761> in Light stat, check <:gem_forge:923919985875759114>[Gem Forge]({links['gem_forge']})"],
             ["<:cosmic_lesser:923920433894531102>", "Cosmic Lesser Gem 1", 985, f"3 <:boost:873291316447047761> in Light stat, check <:gem_forge:923919985875759114>[Gem Forge]({links['gem_forge']})"],
             ["<:cosmic_lesser:923920433894531102>", "Cosmic Lesser Gem 2", 985, f"3 <:boost:873291316447047761> in Light stat, check <:gem_forge:923919985875759114>[Gem Forge]({links['gem_forge']})"],
