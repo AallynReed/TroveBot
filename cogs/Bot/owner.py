@@ -1,6 +1,8 @@
 # Priority: 9
+import asyncio
 import json
 import os
+import re
 import traceback
 from datetime import datetime
 
@@ -38,10 +40,42 @@ class Owner(commands.Cog):
 
     @commands.command(hidden=True)
     @perms.admins()
-    async def export_servers(self, ctx, stuff=None):
-        guilds = sorted(self.bot.guilds, key=lambda x: x.me.joined_at.timestamp() if not stuff else -len(x.members))
-        text = "\n".join([f"[{g.id:<18}] ({len(g.members):<5}) {str(TimeConverter(datetime.utcnow().timestamp()-g.me.joined_at.timestamp())):<32} > {g.name}" for g in guilds])
-        await self.bot.utils.to_file(ctx, text, "txt")
+    async def export_servers(self, ctx, stuff: int=0):
+        logs_guild = self.bot.get_guild(834505270075457627)
+        logs = {}
+        async for message in logs_guild.get_channel(860465862578274314).history(limit=999999):
+            if message.author.id == 860466099173457940 and message.embeds:
+                guild_id = re.findall(r".*\[([0-9]+)\]", message.embeds[0].author.name)[0]
+                if not self.bot.get_guild(int(guild_id)):
+                    asyncio.create_task(message.delete())
+                    continue
+                if guild_id not in logs.keys() or message.created_at > logs[guild_id]:
+                    logs[guild_id] = message.created_at
+        async for message in logs_guild.get_channel(891310035953655808).history(limit=999999):
+            if message.author.id == 860466099173457940 and message.embeds:
+                guild_id = re.findall(r".*\[([0-9]+)\]", message.embeds[0].author.name)[0]
+                if not self.bot.get_guild(int(guild_id)):
+                    asyncio.create_task(message.delete())
+                    continue
+                if guild_id not in logs.keys() or message.created_at > logs[guild_id]:
+                    logs[guild_id] = message.created_at
+        guilds = sorted(
+            self.bot.guilds, key=lambda x: (
+                x.me.joined_at.timestamp() if stuff==0 else 
+                -len(x.members) if stuff==1 else
+                -(logs.get(str(x.id)).timestamp() if logs.get(str(x.id)) else 0)
+            )
+        )
+        text = []
+        for guild in guilds:
+            add = f"[{guild.id:<18}] "
+            add += f"({len(guild.members):<5}) "
+            add += f"{str(TimeConverter(datetime.utcnow().timestamp()-guild.me.joined_at.timestamp())):<33} | "
+            log = logs.get(str(guild.id))
+            last_time = str(TimeConverter(datetime.utcnow().timestamp()-log.timestamp())) if log else "Never"
+            add += f"{last_time:<33} > {guild.name}"
+            text.append(add)
+        await self.bot.utils.to_file(ctx, "\n".join(text), "txt")
 
     @commands.command(hidden=True)
     @perms.admins()

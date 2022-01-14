@@ -3,7 +3,7 @@ import re
 from datetime import datetime
 
 
-from utils.CustomObjects import CEmbed
+from utils.CustomObjects import CEmbed, Colorize
 from utils.objects import GameClass
 
 
@@ -188,7 +188,7 @@ class BuildsMaker():
                 (f"\n**Filter Builds** {filt}" if filt else "")
             )
             e.description += "\n\n`👍` Cheap\n`💸` Expensive"
-            e.description += ("\n\nElemental Format: `DMG/CD/DMG/CD`\nCosmic Format: `DMG/CD/<LIGHT> DMG/CD/<LIGHT>`" if build_type != 'health' else "\n\nFormat: `HP/HP%/HP/HP%`") + "\n```"
+            e.description += ("\n\nElemental Format: `DMG/CD/DMG/CD`\nCosmic Format: `DMG/CD/<LIGHT> DMG/CD/<LIGHT>`" if build_type != 'health' else "\n\nFormat: `HP/HP%/HP/HP%`") + "\n```ansi\n"
             x = i * 10
             for b in page:
                 x += 1
@@ -199,7 +199,7 @@ class BuildsMaker():
                     del boosts[8]
                 if not light and build_type not in ["coeff", "health"]:
                     boosts = boosts[:4]
-                text = f"{str(x) + '.': <4}{self.build_text(boosts)} --> {b[0]}" + (f" [{b[3]}]" if build_type != "health" and mod else "") + (f" | {b[2]} Light" if build_type not in ["coeff", "health"] else "")
+                text = f"{str(x) + '.': <4}{self.build_text(boosts, True)} -> §$3#0<%{b[0]}%>" + (f" [{b[3]}]" if build_type != "health" and mod else "") + (f" | §$7#0<%{b[2]}%> Light" if build_type not in ["coeff", "health"] else "")
                 build_rolls = b[1]
                 if (3 <= build_rolls[0][0] <= 6 and
                     3 <= build_rolls[0][1] <= 6 and 
@@ -210,6 +210,7 @@ class BuildsMaker():
                     text += " 💸\n"
                 e.description += text
             e.description += f"```\nLearn more about builds with `{self.ctx.prefix}help build`"
+            e.description = str(Colorize(e.description, True))
             e.set_author(name=f"Top 100 Gem Builds for {_class.name} | Page {i+1} of {len(builds)}", icon_url=_class.image)
             page = {
                 "page": i,
@@ -303,13 +304,20 @@ class BuildsMaker():
             result.append(lst[i:i + n])
         return result
 
-    def build_text(self, build):
+    def build_text(self, build, with_ansi=False):
         text = ""
-        text += f"{'/'.join([str(i) for i in build][:4]): <8}"
-        if len(build) == 8:
-            text += " + " + "/".join([str(i) for i in build][4:])
-        elif len(build) == 10:
-            text += " + " + "/".join([str(i) for i in build][4:7]) + " " + "/".join([str(i) for i in build][7:10])
+        if with_ansi:
+            text += f"§$6#0<%{'/'.join([str(i) for i in build][:4]): <8}%>"
+            if len(build) == 8:
+                text += " + §$2#0<%" + "/".join([str(i) for i in build][4:]) + "%>"
+            elif len(build) == 10:
+                text += " + §$2#0<%" + "/".join([str(i) for i in build][4:7]) + "%> §$2#0<%" + "/".join([str(i) for i in build][7:10]) + "%>"
+        else:
+            text += f"{'/'.join([str(i) for i in build][:4]): <8}"
+            if len(build) == 8:
+                text += " + " + "/".join([str(i) for i in build][4:])
+            elif len(build) == 10:
+                text += " + " + "/".join([str(i) for i in build][4:7]) + " " + "/".join([str(i) for i in build][7:10])
         return text
 
     def build_part(self, text):

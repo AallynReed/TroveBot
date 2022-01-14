@@ -1,7 +1,6 @@
 import hashlib
 import re
 from datetime import datetime, timedelta
-from functools import partial
 from typing import Literal, Optional
 
 from colors import color
@@ -241,48 +240,52 @@ class MetricsConverter():
             self._make_profile()
         return self._profile
 
-Colors = {
-    "0": "black",
-    "1": "red",
-    "2": "green",
-    "3": "yellow",
-    "4": "blue",
-    "5": "magenta",
-    "6": "cyan",
-    "7": "white",
-}
-
-CBRegex = r"(?i)(?s)(```.*?```)"
-PointerRegex = r"(§([ubi]*)?(?:\$([0-7]))?(?:\#([0-7]))?<(?:\+(.*?)\+|~(.*?)~)>)"
-
 class Colorize():
-    def __init__(self, text: str):
+    def __init__(self, text: str, clean=False):
         self.text = text
+        self.clean = clean
+        self.CBRegex = r"(?i)(?s)(```.*?```)"
+        self.PointerRegex = r"(§([ubi]*)?(?:\$([0-7]))?(?:\#([0-7]))?<(?:%(.*?)%|~(.*?)~)>)"
         self.colorize()
 
+    @property
+    def Colors(self):
+        return {
+        "0": "black",
+        "1": "red",
+        "2": "green",
+        "3": "yellow",
+        "4": "blue",
+        "5": "magenta",
+        "6": "cyan",
+        "7": "white",
+    }
+
     def colorize(self):
-        codeblocks = re.findall(CBRegex, self.text)
+        codeblocks = re.findall(self.CBRegex, self.text)
         if codeblocks:
             for codeblock in codeblocks:
-                parsed = re.sub(PointerRegex, self.parsecolors, codeblock, re.IGNORECASE)
+                parsed = re.sub(self.PointerRegex, self.parsecolors if not self.clean else self.clean_formatting, codeblock, flags=re.MULTILINE)
                 self.text = self.text.replace(codeblock, parsed)
 
     def parsecolors(self, match):
         groups = match.groups()
         text = groups[4] or groups[5]
-        text = re.sub(PointerRegex, self.parsecolors, text, re.IGNORECASE).replace("[0m", "")
+        text = re.sub(self.PointerRegex, self.parsecolors, text, re.MULTILINE).replace("[0m", "")
         formats = groups[1].lower()
         formatting = {
             "underline": "u" in formats,
-           # Not supported by Discord
-            #"bold": "b" in formats,
-            #"italic": "i" in formats
+            "bold": "b" in formats,
+            "italic": "i" in formats # Not Supported by discord
         }
         style = None if not sum(formatting.values()) else "+".join([f for f, v in formatting.items() if v])
-        fgc = Colors[groups[2]] if groups[2] else None
-        bgc = Colors[groups[3]] if groups[3] else None
-        parsed_format = partial(color, fg=fgc, bg=bgc, style=style)
-        return parsed_format(text)
+        fgc = self.Colors[groups[2]] if groups[2] else None
+        bgc = self.Colors[groups[3]] if groups[3] else None
+        return color(text, fg=fgc, bg=bgc, style=style)
+
+    def clean_formatting(self, match):
+        groups = match.groups()
+        return groups[4] or groups[5]
 
     def __str__(self):
         return self.text
