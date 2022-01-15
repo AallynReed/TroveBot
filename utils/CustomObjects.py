@@ -34,6 +34,7 @@ class TimeConverter():
             self.seconds = result
         else:
             raise ValueError("Wrong Input")
+        self._seconds = self.seconds
         self.delta = timedelta(seconds=self.seconds)
 
     @property
@@ -52,7 +53,7 @@ class TimeConverter():
         regex = r"((?!0)[0-9]+) ?(?:(y(?:ears?)?)|(months?)|(w(?:eeks?)?)|(d(?:ays?)?)|(h(?:ours?)?)|(m(?:inutes?)?)|(s(?:econds?)?))"
         result = re.findall(regex, input, re.IGNORECASE)
         if not result:
-            raise ValueError("No time parts detected")
+            raise ValueError("No time parts detected.")
         return result
 
     def _parts_to_int(self, parts):
@@ -68,12 +69,12 @@ class TimeConverter():
         strings = []
         used_units = []
         for name, value in self._periods.items():
-            if self.seconds < value:
+            if self._seconds < value:
                 continue
             if len(used_units) == 3:
                 break
             used_units.append(name)
-            time, self.seconds = divmod(self.seconds, value)
+            time, self._seconds = divmod(self._seconds, value)
             strings.append(f"{time} {name}" + ("s" if time != 1 else ""))
         return strings
             
