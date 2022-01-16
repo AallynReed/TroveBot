@@ -479,8 +479,8 @@ class Utilities(commands.Cog):
 
     async def eedit(self, message, *args, **kwargs):
         try:
-            # if "delete_after" in kwargs:
-            #     del kwargs["delete_after"]
+            if "delete_after" in kwargs:
+                del kwargs["delete_after"]
             await message.edit(*args, **kwargs)
         except discord.errors.NotFound:
             return False

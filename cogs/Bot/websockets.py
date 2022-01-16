@@ -141,20 +141,9 @@ class WebSockets(commands.Cog):
         return await websocket.send(str(json.dumps(data)))
 
     async def websocket_trovesaurus_metrics(self, websocket, data):
-        msg = discord.Object(id=511)
-        user = discord.Object(id=511)
-        user.bot = True
-        msg.author = user
-        msg.guild = self.bot.get_guild(876845404837269555)
         request = await self.bot.AIOSession.get(data["url"])
         text = await request.text()
-        class string(str):
-            @property
-            def filename(self):
-                return "exportMetrics.txt"
-        text = await request.text()
-        msg.attachments = [string(text)]
-        self.bot.dispatch("message", msg)
+        self.bot.dispatch("profile_create", text, None)
         return await websocket.send("200")
 
     async def depth_list(self, websocket, data):

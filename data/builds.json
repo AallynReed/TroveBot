@@ -402,7 +402,8 @@
                 "Attack Speed"
             ],
             "subclass": [
-                "Gunslinger"
+                "Knight",
+                "Lunar Lancer"
             ],
             "flask": [
                 "Elysian Bandolier",
@@ -1992,7 +1993,7 @@
     "Lunar Lancer": {
         "light": {
             "enabled": true,
-            "tier": 5,
+            "tier": 2,
             "hat": [
                 "Maximum Health",
                 "Light",
@@ -2020,7 +2021,7 @@
                 "Preference"
             ],
             "ally": [
-                "Jingles"
+                "Earnie"
             ],
             "banner": [
                 "Physical Damage",
@@ -2036,7 +2037,7 @@
             ],
             "emblem": [
                 "Martial",
-                "Chronomantic"
+                "Beamer"
             ],
             "food": [
                 "Freerange Electrolytic Crystals"

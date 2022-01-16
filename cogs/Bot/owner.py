@@ -235,8 +235,10 @@ class Owner(commands.Cog):
     @perms.admins()
     async def parse(self, ctx):
         if ctx.author.id in self.bot.admin_ids:
-            code = ctx.message.content[8:]
-            code = "    " + code.replace("\n", "\n    ")
+            code = re.findall(r"(?i)(?s)```py\n(.*?)```", ctx.message.content)
+            if not code:
+                return await ctx.send("No code detected.", ephemeral=True)
+            code = "    " + code[0].replace("\n", "\n    ")
             code = "async def __eval_function__():\n" + code
             #Base Variables
             async def to_file(text, format="json"):
@@ -265,20 +267,17 @@ class Owner(commands.Cog):
             except Exception as error:
                 built_error = "".join(traceback.format_exception(type(error), error, error.__traceback__))
                 view = Traceback(ctx, built_error)
-                await ctx.send(view=view)
+                await ctx.send(content="An error occured.", view=view)
 
     @commands.command(name="exception", aliases=["error", "lasterror"], hidden=True)
     @perms.admins()
     async def last_exception(self, ctx):
-        if ctx.author.id not in self.bot.admin_ids:
-            return
         if self.bot._last_exception:
-            if len(self.bot._last_exception) > 2000:
-                await ctx.author.send(f"```py\n{self.bot._last_exception[:1990]}```")
-                await ctx.author.send(f"```py\n{self.bot._last_exception[1990:3980]}```")
-            else:
-                await ctx.author.send(f"```py\n{self.bot._last_exception}```")
+            view = Traceback(ctx, self.bot._last_exception)
+            await ctx.send(content="Last error...", view=view)
             await ctx.message.add_reaction("✅")
+        else:
+            await ctx.reply("No error.")
 
     @commands.command(aliases=["modules", "mods"], hidden=True)
     @perms.admins()

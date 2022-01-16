@@ -17,12 +17,9 @@ class Partner(commands.Cog):
     @commands.command(message_command=False, slash_command=True, slash_command_guilds=[118027756075220992], name="reportbug", help="Report an ingame bug to developers.")
     @commands.cooldown(1, 1800, commands.BucketType.guild)
     async def _report_a_bug(self, ctx):
-        if ctx.channel.id != 832582272011599902:
-            return
-        try:
-            await ctx.message.delete()
-        except:
-            pass
+        if ctx.channel.id not in [832582272011599902]:
+            return await ctx.reply("You can't use this command in this channel.", ephemeral=True)
+        await ctx.message.delete(silent=True)
         data = {
             "user": {
                 "id": ctx.author.id,
@@ -43,11 +40,6 @@ class Partner(commands.Cog):
             "message_id": 0,
             "message_jump": None
         }
-        async def delete_message(m):
-            try:
-                await m.delete()
-            except:
-                pass
         final_e = CEmbed(color=discord.Color.random(), timestamp=datetime.utcnow())
         final_e.set_author(name=f"Bug report by {ctx.author}", icon_url=ctx.author.avatar)
         e = CEmbed(title="Bug Report Form", description="Welcome to the bug report form!\n\nThis allows for better reporting of static formats for devs.\n\nIf you intend to share any media (images/videos) please use YouTube (videos) and Imgur (Images), media is extremely important for devs, despite it being optional try to give most of the time some sort of media to better picture your report.\n\nAlways remember that bugs that may be caused by mods should be attempted to repro with mods disabled. IE:`My UI doesn't show something that it should.` disable UI mods and make sure it still happens.\n\nYou'll be asked some questions, some are optionals others are required.\n\nDo you wish to proceed with the report?", color=discord.Color.random())
@@ -87,12 +79,14 @@ class Partner(commands.Cog):
             ctx.command.reset_cooldown(ctx)
             return await ctx.send("An error occured while reporting your bug please try again.", delete_after=15)
         def check4(m):
-            if not m.author.bot and m.channel.id == 832582272011599902 and (not [r.id for r in m.author.roles if r.id in [533024164039098371, 125277653199618048]] or m.author == ctx.author):
-                asyncio.create_task(delete_message(m))
+            if not m.author.bot and m.channel.id == ctx.channel.id and (not [r.id for r in m.author.roles if r.id in [533024164039098371, 125277653199618048]] or m.author == ctx.author):
+                asyncio.create_task(m.delete(silent=True))
             return m.channel == ctx.channel and m.author == ctx.author and (re.findall(r"^([a-zA-Z0-9_]{3,19})$", m.content) or m.content.lower() == "cancel")
         try:
             m = await self.bot.wait_for("message", check=check4, timeout=600)
-            await self.bot.utils.ddelete(m)
+            await m.delete(silent=True)
+            if m.content.lower() == "cancel":
+                return await self.bot.utils.eedit(msg, content="You've cancelled the bug report.", embed=None, view=None, delete_after=15)
         except:
             ctx.command.reset_cooldown(ctx)
             return await self.bot.utils.eedit(msg, content=f"Time Out {ctx.author.mention}, you didn't answer in time", embed=None, view=None, delete_after=15)
@@ -105,12 +99,12 @@ class Partner(commands.Cog):
             ctx.command.reset_cooldown(ctx)
             return await ctx.send("An error occured while reporting your bug please try again.", delete_after=15)
         def check3(m):
-            if not m.author.bot and m.channel.id == 832582272011599902 and (not [r.id for r in m.author.roles if r.id in [533024164039098371, 125277653199618048]] or m.author == ctx.author):
-                asyncio.create_task(delete_message(m))
+            if not m.author.bot and m.channel.id == ctx.channel.id and (not [r.id for r in m.author.roles if r.id in [533024164039098371, 125277653199618048]] or m.author == ctx.author):
+                asyncio.create_task(m.delete(silent=True))
             return m.channel == ctx.channel and ((m.author == ctx.author and self.bot.utils.time_str(m.content.lower())[0] and self.bot.utils.time_str(m.content.lower())[0] <= 604800) or m.content.lower() == "cancel")
         try:
             m = await self.bot.wait_for("message", check=check3, timeout=120)
-            await self.bot.utils.ddelete(m)
+            await m.delete(silent=True)
             if m.content.lower() == "cancel":
                 return await self.bot.utils.eedit(msg, content="You've cancelled the bug report.", embed=None, view=None, delete_after=15)
         except:
@@ -125,12 +119,12 @@ class Partner(commands.Cog):
         if not await self.bot.utils.eedit(msg, embed=e):
             return await ctx.send("An error occured while reporting your bug please try again.", delete_after=15)
         def check6(m):
-            if not m.author.bot and m.channel.id == 832582272011599902 and (not [r.id for r in m.author.roles if r.id in [533024164039098371, 125277653199618048]] or m.author == ctx.author):
-                asyncio.create_task(delete_message(m))
+            if not m.author.bot and m.channel.id == ctx.channel.id and (not [r.id for r in m.author.roles if r.id in [533024164039098371, 125277653199618048]] or m.author == ctx.author):
+                asyncio.create_task(m.delete(silent=True))
             return m.channel == ctx.channel and m.author == ctx.author
         try:
             m = await self.bot.wait_for("message", check=check6, timeout=600)
-            await self.bot.utils.ddelete(m)
+            await m.delete(silent=True)
             if m.content.lower() == "cancel":
                 return await self.bot.utils.eedit(msg, content="You've cancelled the bug report.", embed=None, view=None, delete_after=15)
         except:
@@ -145,7 +139,7 @@ class Partner(commands.Cog):
             return await ctx.send("An error occured while reporting your bug please try again.", delete_after=15)
         try:
             m = await self.bot.wait_for("message", check=check6, timeout=180)
-            await self.bot.utils.ddelete(m)
+            await m.delete(silent=True)
             if m.content.lower() == "cancel":
                 await self.bot.utils.ssend(ctx.author, content="This report was cancelled but here it is, in case you want to retry.", embed=final_e)
                 return await self.bot.utils.eedit(msg, content="You've cancelled the bug report.", embed=None, view=None, delete_after=15)
@@ -162,7 +156,7 @@ class Partner(commands.Cog):
             return await ctx.send("An error occured while reporting your bug please try again.", delete_after=15, ephemeral=True)
         try:
             m = await self.bot.wait_for("message", check=check6, timeout=180)
-            await self.bot.utils.ddelete(m)
+            await m.delete(silent=True)
             if m.content.lower() == "cancel":
                 await self.bot.utils.ssend(ctx.author, content="This report was cancelled but here it is, in case you want to retry.", embed=final_e)
                 return await self.bot.utils.eedit(msg, content="You've cancelled the bug report.", embed=None, view=None, delete_after=15)
@@ -179,7 +173,7 @@ class Partner(commands.Cog):
             return await ctx.send("An error occured while reporting your bug please try again.", delete_after=15)
         try:
             m = await self.bot.wait_for("message", check=check6, timeout=300)
-            await self.bot.utils.ddelete(m)
+            await m.delete(silent=True)
             if m.content.lower() == "cancel":
                 await self.bot.utils.ssend(ctx.author, content="This report was cancelled but here it is, in case you want to retry.", embed=final_e)
                 return await self.bot.utils.eedit(msg, content="You've cancelled the bug report.", embed=None, view=None, delete_after=15)
@@ -193,8 +187,8 @@ class Partner(commands.Cog):
         yt_regex = r"(?:https?://)?(?:www\.)?youtu(?:be\.com/watch\?(?:.*?&(?:amp;)?)?v=|\.be/)(?:[\w\-]+)(?:&(?:amp;)?[\w\?=]*)?"
         imgur_regex = r"(?:(?:http|https):\/\/)?(?:i\.)?imgur.com\/(?:(?:gallery\/)(?:\w+)|(?:a\/)(?:\w+)#?)?(?:\w*)"
         def check5(m):
-            if not m.author.bot and m.channel.id == 832582272011599902 and (not [r.id for r in m.author.roles if r.id in [533024164039098371, 125277653199618048]] or m.author == ctx.author):
-                asyncio.create_task(delete_message(m))
+            if not m.author.bot and m.channel.id == ctx.channel.id and (not [r.id for r in m.author.roles if r.id in [533024164039098371, 125277653199618048]] or m.author == ctx.author):
+                asyncio.create_task(m.delete(silent=True))
             return m.channel == ctx.channel and m.author == ctx.author and (re.findall(yt_regex, m.content) or re.findall(imgur_regex, m.content) or m.content.lower() in ["done", "cancel"])
         while True:
             if len(data["media_links"]) == 10:
@@ -205,7 +199,7 @@ class Partner(commands.Cog):
                 return await ctx.send("An error occured while reporting your bug please try again.", delete_after=15)
             try:
                 m = await self.bot.wait_for("message", check=check5, timeout=120)
-                await self.bot.utils.ddelete(m)
+                await m.delete(silent=True)
                 if m.content.lower() == "cancel":
                     await self.bot.utils.ssend(ctx.author, content="This report was cancelled but here it is, in case you want to retry.", embed=final_e)
                     return await self.bot.utils.eedit(msg, content="You've cancelled the bug report.", embed=None, view=None, delete_after=15)
@@ -222,10 +216,7 @@ class Partner(commands.Cog):
         if data["media_links"]:
             final_e.add_field(name="Media", value="\n".join(data["media_links"]), inline=False)
        # Finalization
-        try:
-            await msg.delete()
-        except:
-            pass
+        await msg.delete(silent=True)
         reporti = await ctx.send(embed=final_e)
         conf_e = CEmbed(description="This is the final look at your bug report, do you want to submit?\n\nThis action can't be undone.", color=discord.Color.random())
         conf_e.set_author(name=ctx.author, icon_url=ctx.author.avatar)
@@ -235,13 +226,13 @@ class Partner(commands.Cog):
         if not confirmation.value:
             ctx.command.reset_cooldown(ctx)
             await self.bot.utils.ssend(ctx.author, content="This report was cancelled but here it is, in case you want to retry.", embed=final_e)
-            await self.bot.utils.ddelete(reporti)
-            await self.bot.utils.ddelete(msg)
+            await reporti.delete(silent=True)
+            await msg.delete(silent=True)
             if confirmation.value is None:
                 return await self.bot.utils.eedit(msg, content=f"Time Out {ctx.author.mention}, you didn't answer in time", embed=None, view=None, delete_after=15)
             return await self.bot.utils.eedit(msg, content="You've cancelled the bug report.", embed=None, view=None, delete_after=15)
         final_e.set_footer(text="Reported via Bot")
-        report = await self.bot.get_channel(812354696320647238).send(embed=final_e)
+        report = await self.bot.get_channel(859440482195341323).send(embed=final_e)
         data["message_id"] = report.id
         data["message_jump"] = report.jump_url
         async with self.bot.AIOSession.post("https://trovesaurus.com/discord/issues", data={"payload": json.dumps(data), "Token": self.bot.keys["Trovesaurus"]["Token"]}) as request:
@@ -250,7 +241,7 @@ class Partner(commands.Cog):
                 final_e.add_field(name="\u200b", value=f"[View on Trovesaurus Issue Tracker]({await request.text()})")
                 await report.edit(embed=final_e)
             else:
-                await self.bot.utils.ddelete(report)
+                await report.delete(silent=True)
                 await self.bot.utils.ssend(ctx.author, content="This report failed to be sent to Trovesaurus, so here it is for you to retry.", embed=final_e)
                 await ctx.send(f"{ctx.author.mention} Bug report wasn't submitted, an error occured.")
         ctx.command.reset_cooldown(ctx)

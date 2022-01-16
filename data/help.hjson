@@ -133,7 +133,7 @@
         "module": "builds",
         "description": "Shows current top 10 gem boost rolls to have on a class. Modifiable by arguments.",
         "example": "{prefix}build",
-        "extra_text": "[Gem tutorial here](https://cdn.slynx.xyz/images/gem_tutorial.png)\n[Arguments tutorial here](https://cdn.slynx.xyz/images/argumentstrovetutorial.png)",
+        "extra_text": "`/gem_tutorial` or [Mini Gem tutorial here](https://cdn.slynx.xyz/images/gem_tutorial.png)",
         "subcommands": {},
         "aliases": [
             "builds",

@@ -39,11 +39,15 @@ class Calculations(commands.Cog):
                 else:
                     gem_cost[str(i)] = None
             return gem_cost, completion
-        gems = [get_gem_cost(gem) for gem in augmentation["gems"]]
+        gems = [
+            get_gem_cost(gem) for gem in augmentation["gems"]
+            if int(gem[0][1]) + int(gem[1][1]) + int(gem[2][1]) != 300
+        ]
+        print(gems)
         e = CEmbed(description=f"Prefered: **{augmentation['focus'].capitalize()}**", color=self.bot.comment)
         e.set_author(name="Gem Augmentation", icon_url="https://i.imgur.com/st2CWEz.png")
         e.set_image(url="https://i.imgur.com/M5rAxEM.png")
-        e.set_footer(text=r"Game UI rounds values, so costs might not be 100% correct but it's a pretty accurate estimate")
+        e.set_footer(text=r"Game UI rounds values, so costs might not be 100% correct, but it's a pretty accurate estimate.")
         total_costs = {}
         for i in range(len(gems)):
             gem = gems[i][0]
@@ -70,12 +74,14 @@ class Calculations(commands.Cog):
                 if cost > 0:
                     cost_text += f"{resource}: **{cost:,}**\n"
             e.add_field(name=f"**Gem {i+1} Cost** | **{round(gems[i][1]*100, 2)}% Augmented**", value=cost_text, inline=False)
-        if len(augmentation["gems"]) > 1:
+        if len(gems):
             cost_text = ""
             for resource, cost in total_costs.items():
                 if cost > 0:
                     cost_text += f"{resource}: **{cost:,}**\n"
             e.add_field(name=f"---------------------------------------------------\n**Total Cost**", value=cost_text, inline=False)
+        else:
+            e.add_field(name="No valid gems given.", value="\u200b")
         await ctx.send(embed=e)
 
     @commands.command(slash_command=True, help="Calculate a math expression", aliases=["calc"])
