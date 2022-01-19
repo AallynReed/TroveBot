@@ -17,7 +17,7 @@ class Builds(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.values = Values()
-        self.bot.Trove.last_updated = 1640180877
+        self.bot.Trove.last_updated = 1642340978
 
     @commands.command(slash_command=True, help="Show gear for a class")
     @commands.cooldown(1, 120, commands.BucketType.user)
@@ -29,6 +29,9 @@ class Builds(commands.Cog):
         *,
         build_type: BuildType=commands.Option(name="build_type", default=None, description="Input build type [Farm | DPS | Health]")
     ):
+        await ctx.defer()
+        if build_type and not _class:
+            return await ctx.reply("Class is not valid", ephemeral=True, delete_after=10)
         page = None
         all_gears = self.get_all_gear_pages(ctx)
         if build_type:

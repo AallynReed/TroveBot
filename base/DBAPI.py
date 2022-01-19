@@ -41,7 +41,10 @@ class Database(DB):
             data = await self.db_users.find_one({"_id": user_id})
             new_data = self._default_user(user_id)
             if not data:
-                await self.db_users.insert_one(new_data)
+                try:
+                    await self.db_users.insert_one(new_data)
+                except:
+                    ...
             else:
                 new_data = Dict(deepcopy(data)).fix(new_data)
                 if new_data != data:

@@ -117,8 +117,9 @@ class Trove(commands.Cog):
     async def server_time(self, ctx):
         today = self.bot.Trove.time.now
         time = today.isoformat().split('T')[1][:5]
-        reset = int((today + timedelta(days=1, hours=-today.hour+11, minutes=-today.minute, seconds=-today.second, microseconds=today.microsecond)).timestamp())
-        await ctx.send(embed=CEmbed(description=f"🕐 Server Time {time}\nNext reset <t:{reset}:R> <t:{reset}:F>", color=self.bot.comment))
+        dreset = int((today + timedelta(days=1, hours=-today.hour+11, minutes=-today.minute, seconds=-today.second, microseconds=today.microsecond)).timestamp())
+        wreset = int((today + timedelta(days=7-today.weekday(), hours=-today.hour+11, minutes=-today.minute, seconds=-today.second, microseconds=today.microsecond)).timestamp())
+        await ctx.send(embed=CEmbed(description=f"🕐 Server Time {time}\nNext daily reset <t:{dreset}:R> <t:{dreset}:F>\nNext weekly reset <t:{wreset}:R> <t:{wreset}:F>", color=self.bot.comment))
 
     @commands.command(slash_command=True, help="Display maximum Trove Mastery in PC Trove.", aliases=["m"])
     async def mastery(

@@ -131,7 +131,7 @@ class CommandHandler(commands.Cog):
         if not ctx.valid and len(ctx.message.mentions) == 1 and ctx.guild.me in ctx.message.mentions:
             prefix = await self.bot.prefix(bot=self.bot, message=after)
             return await ctx.send(f"Your prefix is `{prefix[0]}`\nUse `{prefix[0]}prefix self <prefix>` to change your prefix.")
-        if ctx.valid:
+        if ctx.valid and before.content != after.content:
             if ctx.author.id in self.bot.blacklist:
                 e = CEmbed(description=f"{ctx.author} tried to use a command `{after.content}`")
                 e.set_author(name="Blacklist", icon_url=ctx.author.avatar)

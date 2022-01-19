@@ -47,18 +47,22 @@ class Owner(commands.Cog):
             if message.author.id == 860466099173457940 and message.embeds:
                 guild_id = re.findall(r".*\[([0-9]+)\]", message.embeds[0].author.name)[0]
                 if not self.bot.get_guild(int(guild_id)):
-                    asyncio.create_task(message.delete())
+                    await message.delete(silent=True)
                     continue
                 if guild_id not in logs.keys() or message.created_at > logs[guild_id]:
                     logs[guild_id] = message.created_at
+                if ctx.message.created_at.timestamp() - message.created_at.timestamp() > 5184000:
+                    asyncio.create_task(message.delete())
         async for message in logs_guild.get_channel(891310035953655808).history(limit=999999):
-            if message.author.id == 860466099173457940 and message.embeds:
+            if message.author.id == 891310112071880755 and message.embeds:
                 guild_id = re.findall(r".*\[([0-9]+)\]", message.embeds[0].author.name)[0]
                 if not self.bot.get_guild(int(guild_id)):
-                    asyncio.create_task(message.delete())
+                    await message.delete(silent=True)
                     continue
                 if guild_id not in logs.keys() or message.created_at > logs[guild_id]:
                     logs[guild_id] = message.created_at
+                if ctx.message.created_at.timestamp() - message.created_at.timestamp() > 5184000:
+                    asyncio.create_task(message.delete())
         guilds = sorted(
             self.bot.guilds, key=lambda x: (
                 x.me.joined_at.timestamp() if stuff==0 else 
@@ -72,7 +76,7 @@ class Owner(commands.Cog):
             add += f"({len(guild.members):<5}) "
             add += f"{str(TimeConverter(datetime.utcnow().timestamp()-guild.me.joined_at.timestamp())):<33} | "
             log = logs.get(str(guild.id))
-            last_time = str(TimeConverter(datetime.utcnow().timestamp()-log.timestamp())) if log else "Never"
+            last_time = str(TimeConverter(datetime.utcnow().timestamp()-log.timestamp())) if log else "Over 2 months..."
             add += f"{last_time:<33} > {guild.name}"
             text.append(add)
         await self.bot.utils.to_file(ctx, "\n".join(text), "txt")
