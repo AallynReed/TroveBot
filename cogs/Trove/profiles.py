@@ -38,6 +38,8 @@ class Profiles(commands.Cog):
             await message.delete(silent=True)
         try:
             data = MetricsConverter(self.bot.keys["Bot"]["Profile Encryption"], metrics).get_profile()
+            if not data.get("Environment"):
+                return await channel.send("Please make sure your game is in english before submitting a profile.", delete_after=10)
             server = 0 if data["Environment"] == "PTS" else 1
             del data["Environment"]
         except Exception as e:

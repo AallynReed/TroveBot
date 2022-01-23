@@ -187,6 +187,15 @@ class Database(DB):
             },
             "blacklist": {
                 "channel": None
+            },
+            "anti_scam": {
+                "settings": {
+                    "toggle": True,
+                    "log_channel": None,
+                    "mode": -1,
+                },
+                "hit_count": 0,
+                "domains": {}
             }
         }
 
