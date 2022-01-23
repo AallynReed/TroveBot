@@ -23,3 +23,15 @@ def owners():
             return True
         return False
     return commands.check(predicate)
+
+class CloneCheckError(Exception):
+    ...
+
+def is_clone(f):
+    def check(*args):
+        if not args:
+            raise CloneCheckError("No Arguments Given")
+        if not isinstance(args[0], commands.Cog):
+            raise CloneCheckError("Argument is not a cog")
+        return f(*args)
+    return check

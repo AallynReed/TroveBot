@@ -25,7 +25,7 @@ class DictConvert(commands.Converter):
             dicti = json.loads(argument)
             return dicti
         except:
-            raise Exception("Not a valid json text")
+            raise commands.BadArgument("Not a valid json text")
 
 class TrovePlayer(commands.Converter):
     async def convert(self, ctx, argument):

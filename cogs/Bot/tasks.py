@@ -92,6 +92,9 @@ class Tasks(commands.Cog):
 
     @tasks.loop(seconds=300)
     async def reddit_retriever(self):
+        if self.bot.is_clone:
+            return
+        await self.bot.wait_until_ready()
         try:
             request = await self.bot.AIOSession.get("https://www.reddit.com/r/Trove/new.json")
             about = await self.bot.AIOSession.get("https://www.reddit.com/r/Trove/about.json")
@@ -162,6 +165,8 @@ class Tasks(commands.Cog):
 
     @tasks.loop(seconds=180)
     async def forum_retriever(self):
+        if self.bot.is_clone:
+            return
         await self.bot.wait_until_ready()
         htmlhandler = html2text.HTML2Text()
         htmlhandler.ignore_images = True
@@ -393,6 +398,8 @@ class Tasks(commands.Cog):
 
     @tasks.loop(seconds=5)
     async def bot_stats(self):
+        if self.bot.is_clone:
+            return
         await self.bot.wait_until_ready()
         time = self.bot.Trove.time.now
         if time.minute%10:
@@ -451,13 +458,15 @@ class Tasks(commands.Cog):
 
     @tasks.loop(seconds=60)
     async def sheet_timer(self):
+        await self.bot.wait_until_ready()
         def load_sheets():
-            urlget.urlretrieve("https://docs.google.com/spreadsheets/d/1hsz9Xhf52xjX0pcfb95Tm3-MvVh9lMfq4bGi5fo7zCs/export?format=xlsx&id=1hsz9Xhf52xjX0pcfb95Tm3-MvVh9lMfq4bGi5fo7zCs", 'data/sheets/luxion_sheet.xlsx')
+            if not self.bot.is_clone:
+                urlget.urlretrieve("https://docs.google.com/spreadsheets/d/1hsz9Xhf52xjX0pcfb95Tm3-MvVh9lMfq4bGi5fo7zCs/export?format=xlsx&id=1hsz9Xhf52xjX0pcfb95Tm3-MvVh9lMfq4bGi5fo7zCs", 'data/sheets/luxion_sheet.xlsx')
+                urlget.urlretrieve("https://docs.google.com/spreadsheets/d/1YBf3__CPCy9iL4HDEoF1_q88vaFtAR6mA4GZxIzOEG8/export?format=xlsx&id=1YBf3__CPCy9iL4HDEoF1_q88vaFtAR6mA4GZxIzOEG8", 'data/sheets/memento_list_sheet.xlsx')
             try:
                 self.bot.Trove.sheets["summer"] = load_workbook(filename="data/sheets/luxion_sheet.xlsx")
             except:
                 pass
-            urlget.urlretrieve("https://docs.google.com/spreadsheets/d/1YBf3__CPCy9iL4HDEoF1_q88vaFtAR6mA4GZxIzOEG8/export?format=xlsx&id=1YBf3__CPCy9iL4HDEoF1_q88vaFtAR6mA4GZxIzOEG8", 'data/sheets/memento_list_sheet.xlsx')
             self.bot.Trove.sheets["memento_list"] = load_workbook(filename="data/sheets/memento_list_sheet.xlsx", data_only=True)
         await self.bot.loop.run_in_executor(None, load_sheets)
 

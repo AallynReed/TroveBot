@@ -51,7 +51,8 @@ class TroveContext(commands.Context):
         return str(string)
 
 class Trove(commands.AutoShardedBot):
-    def __init__(self):
+    def __init__(self, is_clone=False):
+        self.is_clone = is_clone
         super().__init__(
             command_prefix=self.prefix,
             case_insensitive=True,
@@ -163,7 +164,7 @@ class Trove(commands.AutoShardedBot):
         self.success = 0x008000
         self.error = 0x800000
         self.progress = 0xf9d71c
-        self.version = "3.2.47"
+        self.version = "3.2.58"
         self.time = TroveTime()
         self.uptime = datetime.utcnow().timestamp()
         self._last_exception = None
@@ -221,4 +222,11 @@ class Trove(commands.AutoShardedBot):
             return
         await self.process_commands(message)
 
-Trove().run(keys["Bot"]["Token"], reconnect=True)
+loop = asyncio.get_event_loop()
+
+for i in range(len(keys["Bot"]["Tokens"])):
+    Token = keys["Bot"]["Tokens"][i]
+    loop.create_task(Trove(i!=0).start(keys["Bot"]["Tokens"][i], reconnect=True))
+    break
+
+loop.run_forever()

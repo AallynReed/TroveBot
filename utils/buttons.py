@@ -1,11 +1,12 @@
 import asyncio
+import json
 import re
 from functools import partial
 
 import discord
-from utils.CustomObjects import CEmbed
 
 from utils.builds import BuildsMaker
+from utils.CustomObjects import CEmbed
 
 
 class Dummy():
@@ -389,6 +390,9 @@ class GemBuildsButton(GemBaseButton):
         self.build_view = view
 
     async def callback(self, interaction: discord.Interaction):
+        if str(self.emoji) == "📤":
+            await self.view.ctx.send(f"```json\n{self.view.build_arguments.__dict__}```")
+            self.view.setup_buttons(True)
         if str(self.emoji) == "✏️":
             self.build_view.timeout = self.build_view.original_timeout
             await interaction.response.edit_message(view=self.build_view)
@@ -756,6 +760,8 @@ class GemBuildsView(BaseView):
             self.add_item(GemBuildsToggle(self, "crystal5", "Crystal 5", False, row=3))
             page_button = GemBuildsButton(self, "Page Mode", "📑", row=3)
             self.add_item(page_button)
+            # export = GemBuildsButton(self, "Export", "📤", row=4)
+            # self.add_item(export)
         if not just_started:
             asyncio.create_task(self.update_message(paginate, bool(self.build_arguments.build_type)))
         

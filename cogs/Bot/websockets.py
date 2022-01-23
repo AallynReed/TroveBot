@@ -17,6 +17,8 @@ from utils.CustomObjects import CEmbed, MetricsConverter
 class WebSockets(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        if self.bot.is_clone:
+            return
         self.session = ClientSession()
         self.ws = None
         self.guild_data = []

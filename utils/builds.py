@@ -84,6 +84,8 @@ class BuildsMaker():
                 light += 780
             if self.arguments.food:
                 light += 300
+            # base_damage += 4290
+            # light += 97
         filt = self.build_part(self.arguments.filter)[0] if self.arguments.filter else self.arguments.filter
         builds = []
         builder = self._generate_combinations(coeff=self.arguments.build_type in ["health", "coeff"], light=self.arguments.light)

@@ -57,6 +57,10 @@ class Logs(commands.Cog):
             except:
                 ...
         else:
+            try:
+                await dm.send("Thank you for adding Trove Bot, initial prefix is `n!` you can also use slash commands. Thank you again and join support through <https://trove.slynx.xyz/support>")
+            except:
+                ...
             return
         await guild.leave()
 

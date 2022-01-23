@@ -119,7 +119,16 @@ class Trove(commands.Cog):
         time = today.isoformat().split('T')[1][:5]
         dreset = int((today + timedelta(days=1, hours=-today.hour+11, minutes=-today.minute, seconds=-today.second, microseconds=today.microsecond)).timestamp())
         wreset = int((today + timedelta(days=7-today.weekday(), hours=-today.hour+11, minutes=-today.minute, seconds=-today.second, microseconds=today.microsecond)).timestamp())
-        await ctx.send(embed=CEmbed(description=f"🕐 Server Time {time}\nNext daily reset <t:{dreset}:R> <t:{dreset}:F>\nNext weekly reset <t:{wreset}:R> <t:{wreset}:F>", color=self.bot.comment))
+        text = f"🕐 Server Time {time}\nNext daily reset <t:{dreset}:R> <t:{dreset}:F>\nNext weekly reset <t:{wreset}:R> <t:{wreset}:F>"
+        daily = self.bot.Trove.daily_data[str(self.bot.Trove.time.now.weekday())]
+        weekly = self.bot.Trove.weekly_data[str(self.bot.Trove.time.weekly_time)]
+        e = CEmbed(description=text, color=self.bot.comment)
+        e.add_field(name="Daily Bonus", value=f"\\{daily['emoji']}{daily['name']}")
+        e.add_field(name="Weekly Bonus", value=f"\\{weekly['emoji']}{weekly['name']}")
+        if self.bot.Trove.time.is_luxion or self.bot.Trove.time.is_corruxion:
+            dragon = "Luxion is in hub" if self.bot.Trove.time.is_luxion else "Corruxion is in hub"
+            e.add_field(name="Dragon Merchant", value=dragon)
+        await ctx.send(embed=e)
 
     @commands.command(slash_command=True, help="Display maximum Trove Mastery in PC Trove.", aliases=["m"])
     async def mastery(

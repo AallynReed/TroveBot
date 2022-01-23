@@ -12,6 +12,8 @@ class CommandHandler(commands.Cog):
         
     @commands.Cog.listener("on_member_ban")
     async def blacklist_addition(self, guild, member):
+        if self.bot.is_clone:
+            return
         if guild.id != 834505270075457627:
             return
         e = CEmbed(description=f"{member} was added to blacklist.")
@@ -21,6 +23,8 @@ class CommandHandler(commands.Cog):
 
     @commands.Cog.listener("on_member_unban")
     async def blacklist_removal(self, guild, member):
+        if self.bot.is_clone:
+            return
         if guild.id != 834505270075457627:
             return
         await asyncio.sleep(300)
@@ -38,6 +42,7 @@ class CommandHandler(commands.Cog):
 
     @commands.Cog.listener("on_message")
     async def command_handler(self, message):
+        await self.bot.wait_until_ready()
         if message.author.bot:
             return
         ctx = await self.bot.get_context(message)
@@ -48,20 +53,9 @@ class CommandHandler(commands.Cog):
             return await self.bot.dm_logger.send(content=message.content, files=files, username=str(message.author) + f" [{message.author.id}]", avatar_url=message.author.avatar)
         if not message.guild:
             return
-        if "owners" not in dir(self.bot) or message.author.id in self.bot.owners:
+        if message.guild.get_member(425403525661458432):
             return
-        if ctx.valid:
-            ...
-            # if ctx.guild.id == 118027756075220992:
-            #     if ctx.command.name in ["search", "findmod"]:
-            #         pass
-            #     elif ctx.command.name in ["help", "build", "gear", "augment", "coeff", "invite", "communities"] and ctx.channel.id in [776238026921082911]:
-            #         pass
-            #     elif ctx.command.name in ["reportbug"] and ctx.channel.id in [832582272011599902]:
-            #         pass
-            #     else:
-            #         return
-        else:
+        if not ctx.valid:
             if ctx.channel.id == 832582272011599902 and not [r.id for r in ctx.author.roles if r.id in [533024164039098371, 125277653199618048,841729071854911568]]:
                 try:
                     await asyncio.sleep(2)
@@ -112,22 +106,14 @@ class CommandHandler(commands.Cog):
 
     @commands.Cog.listener("on_message_edit")
     async def command_edit_handler(self, before, after):
+        await self.bot.wait_until_ready()
         if after.author.bot:
             return
-        #if "owners" not in dir(self.bot) or message.author.id in self.bot.owners:
-        #    return
+        if not after.guild:
+            return
+        if after.guild.get_member(425403525661458432):
+            return
         ctx = await self.bot.get_context(after)
-        if ctx.valid:
-            ...
-            # if ctx.guild.id == 118027756075220992:
-            #     if ctx.command.name in ["search", "findmod"]:
-            #         pass
-            #     elif ctx.command.name in ["help", "build", "gear", "augment", "coeff", "invite", "communities"] and ctx.channel.id in [776238026921082911]:
-            #         pass
-            #     elif ctx.command.name in ["reportbug"] and ctx.channel.id in [832582272011599902]:
-            #         pass
-            #     else:
-            #         return
         if not ctx.valid and len(ctx.message.mentions) == 1 and ctx.guild.me in ctx.message.mentions:
             prefix = await self.bot.prefix(bot=self.bot, message=after)
             return await ctx.send(f"Your prefix is `{prefix[0]}`\nUse `{prefix[0]}prefix self <prefix>` to change your prefix.")

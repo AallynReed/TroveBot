@@ -1,8 +1,21 @@
 import asyncio
+from copy import deepcopy
+from random import Random, choices, seed
+from string import ascii_letters, digits
 
 from motor.motor_asyncio import AsyncIOMotorClient
-from copy import deepcopy
 
+
+class DatabaseID(Random):
+    def __init__(self, server_id=0, user_id=0):
+        super().__init__(server_id+user_id<<2)
+    
+    def __str__(self):
+        return self.GetID
+    
+    @property
+    def GetID(self):
+        return "".join(self.choices(ascii_letters+digits, k=32))
 
 class Profile():
     def __init__(self, data=None):
@@ -182,7 +195,8 @@ class Database(DB):
             "_id": user_id,
             "settings": {
                 "prefixes": []
-            }
+            },
+            "saved_builds": []
         }
 
 class Dict(dict):
