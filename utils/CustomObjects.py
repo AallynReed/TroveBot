@@ -81,6 +81,9 @@ class TimeConverter():
     def __str__(self):
         return ", ".join(self._naturaldelta())
 
+    def __int__(self):
+        return self.seconds
+
 class TroveTime():
     def __init__(self):
         self.first_weekly_ds = datetime(2020, 3, 23, tzinfo=UTC)

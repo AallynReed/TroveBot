@@ -69,12 +69,11 @@ class Information(commands.Cog):
     async def chats(self, ctx):
         chats = {
             "levi": "Join **Leviathan** farms in Geode Topside.",
-            "delve": "Join **Delve** farms in Delves.",
+            "delve|delves": "Join **Delve** farms in Delves.",
             "trade": "Trade your goodies or currency with other players.",
             "fivefarm": "Join **5 Star Dungeon** farms in Geode Topside.",
             "dragon": "Join **Dragon Fragment** farms.",
-            "nitro": "Join **Nitro Glitterine** farms in Geode Topside.",
-            "ganda": "Join **Nitro Glitterine** farms in Geode Topside.",
+            "nitro|ganda": "Join **Nitro Glitterine** farms in Geode Topside.",
             "egg": "Join **Egg** farms. __(During **Bunfest** event only)__"
         }
         e = CEmbed()

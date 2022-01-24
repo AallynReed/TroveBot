@@ -47,13 +47,14 @@ class ScamLogs(commands.Cog):
         elif mode == "0":
             await self.bot.db.db_servers.update_one({"_id": ctx.guild.id}, {"$set": {"anti_scam.settings.mode": 0}})
             await ctx.reply("Bot will delete messages containing scam links and ban senders.", ephemeral=True)
-        elif (timeout := TimeConverter(mode).seconds) > 0:
-            if timeout > 2419200:
-                return await ctx.reply("You can't timeout for more than 28 days.", ephemeral=True)
-            await self.bot.db.db_servers.update_one({"_id": ctx.guild.id}, {"$set": {"anti_scam.settings.mode": timeout}})
-            await ctx.reply(f"Bot will delete messages containing scam links and timeout senders for **{TimeConverter(mode)}**.", ephemeral=True)
-        else:
-            await ctx.reply("Input is not valid, -1, 0 or a time range like '1 day 3 hours'")
+        try:
+            timeout = TimeConverter(mode)
+        except:
+            return await ctx.reply("Input is not valid, -1, 0 or a time range like '1 day 3 hours'")
+        if not (0 < int(timeout) <= 2419200):
+            return await ctx.reply("Timeout range is 1 seconds - 28 days.", ephemeral=True)
+        await self.bot.db.db_servers.update_one({"_id": ctx.guild.id}, {"$set": {"anti_scam.settings.mode": int(timeout)}})
+        await ctx.reply(f"Bot will delete messages containing scam links and timeout senders for **{timeout}**.", ephemeral=True)
 
     @_anti_scam.command(slash_command=True, name="stats", help="Show stats on antiscam.")
     async def _show_stats(self, ctx):
@@ -69,6 +70,21 @@ class ScamLogs(commands.Cog):
             
     @commands.Cog.listener("on_message")
     async def _message_filter(self, message):
+        if message.author.id == self.bot.user.id:
+            return
+        if not message.guild:
+            return
+        ctx = await self.bot.get_context(message)
+        server_data = await ctx.get_guild_data(anti_scam=1)
+        settings = server_data["anti_scam"]["settings"]
+        if not settings["toggle"]:
+            return
+        results = re.findall(self.domain_regex, message.content, re.IGNORECASE)
+        if results:
+            self.bot.dispatch("link_post", settings, server_data["anti_scam"], message)
+
+    @commands.Cog.listener("on_message_edit")
+    async def _message_edit_filter(self, _, message):
         if message.author.id == self.bot.user.id:
             return
         if not message.guild:

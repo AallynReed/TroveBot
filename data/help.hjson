@@ -481,6 +481,41 @@
         "hidden": false
     },
 # Miscellaneous
+    "anti_scam": {
+        "module": "miscellaneous",
+        "description": "Antiscam roles base command.",
+        "example": "{prefix}anti_scam",
+        "subcommands": {
+            "toggle": {
+                "module": "miscellaneous",
+                "description": "Turn antiscam on or off.",
+                "example": "{prefix}anti_scam toggle",
+                "aliases": []
+            },
+            "log_channel": {
+                "module": "miscellaneous",
+                "description": "Set a log channel for antiscam.",
+                "example": "{prefix}anti_scam log_channel",
+                "aliases": []
+            },
+            "mode": {
+                "module": "miscellaneous",
+                "description": "Set mode for antiscam punishments.",
+                "example": "{prefix}anti_scam mode",
+                "aliases": []
+            },
+            "stats": {
+                "module": "miscellaneous",
+                "description": "Show stats on antiscam.",
+                "example": "{prefix}anti_scam stats",
+                "aliases": []
+            }
+        },
+        "aliases": [
+            "antiscam"
+        ],
+        "hidden": false
+    },
     "betterdiscord": {
         "module": "miscellaneous",
         "description": "CSS for game tags based on profiles system.",
