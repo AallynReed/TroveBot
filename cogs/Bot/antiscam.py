@@ -1,17 +1,19 @@
 #Priority: 1
 import re
+from copy import copy
 from datetime import datetime, timedelta
 from json import dumps
 
 import discord
 from discord.ext import commands
-from utils.CustomObjects import CEmbed, TimeConverter
+
+from utils.CustomObjects import CEmbed, Colorize, TimeConverter
 
 
 class ScamLogs(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.domain_regex = r"(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z0-9][a-z0-9-]{0,61}[a-z0-9]"
+        self.domain_regex = r"(?:[a-z0-9](?:[a-z0-9-]{0,63}[a-z0-9])?\.)+[a-z0-9][a-z0-9-]{0,63}[a-z0-9]"
 
     @commands.group(slash_command=True, name="anti_scam", aliases=["antiscam"], help="Main command for antiscam.")
     @commands.has_permissions(manage_guild=True)
@@ -67,7 +69,52 @@ class ScamLogs(commands.Cog):
         for domain, hits in sorted(server_data["anti_scam"]["domains"].items(), key=lambda x: (-x[1], x[0])):
             e.description += f"• **{hits}** > `{domain}`\n"
         await ctx.reply(embed=e, ephemeral=True)
-            
+
+    @_anti_scam.command(slash_command=True, name="blacklist", help="Blacklist a custom domain in your server.")
+    async def _toggle_blacklist(self, ctx, *, domain=commands.Option(description="")):
+        domains = re.findall(self.domain_regex, domain, re.IGNORECASE)
+        if not domains:
+            return await ctx.send("Add a valid URL or Domain Name", ephemeral=True)
+        server_data = await ctx.get_guild_data(anti_scam=1)
+        custom_domains = server_data["anti_scam"]["settings"]["custom_domains"]
+        removed = []
+        for domain in domains:
+            for custom_domain in copy(custom_domains):
+                if domain == custom_domain:
+                    custom_domains.remove(domain)
+                    removed.append(domain)
+        replaced = {}
+        for domain in domains:
+            for custom_domain in copy(custom_domains):
+                if self.match_domain(custom_domain, domain):
+                    custom_domains.remove(custom_domain)
+                    custom_domains.append(domain)
+                    replaced[custom_domain] = domain
+        added = []
+        for domain in domains:
+            if domain in removed:
+                continue
+            custom_domains.append(domain)
+            added.append(domain)
+        e = CEmbed(color=discord.Color.random())
+        e.set_author(name="Custom Domains Blacklist", icon_url=ctx.guild.icon)
+        e.description = "```ansi\n"
+        max_added = 0 if not added else max([len(d) for d in added])-5
+        max_removed = 0 if not removed else max([len(d) for d in removed])-7
+        max_replaced = 0 if not replaced.items() else max([len(d+c) for c, d in replaced.items()])-5
+        e.description += f"§$2<%Added%>{max_added*' '} | §$1<%Removed%>{max_removed*' '} | §$3<%Replaced%>{max_replaced*' '}"
+        for i in range(max([len(added), len(removed), len(replaced.items())])):
+            add = (added[i] if len(added) >= i+1 else "").ljust(max_added+5)
+            remove = (removed[i] if len(removed) >= i+1 else "").ljust(max_removed+7)
+            replacement = replaced.items()[i] if len(replaced.items()) >= i+1 else ""
+            if replacement:
+                replace = f"{replacement[0]} > {replacement[1]}".ljust(max_replaced+5)
+            else:
+                replace = "".ljust(max_replaced+8)
+            e.description += f"\n§$2<%{add}%> | §$1<%{remove}%> | §$3<%{replace}%>"
+        e.description = str(Colorize(e.description+"\n```"))
+        await ctx.reply(embed=e)
+
     @commands.Cog.listener("on_message")
     async def _message_filter(self, message):
         if message.author.id == self.bot.user.id:
@@ -81,7 +128,7 @@ class ScamLogs(commands.Cog):
             return
         results = re.findall(self.domain_regex, message.content, re.IGNORECASE)
         if results:
-            self.bot.dispatch("link_post", settings, server_data["anti_scam"], message)
+            self.bot.dispatch("link_post", settings, server_data["anti_scam"], message, results)
 
     @commands.Cog.listener("on_message_edit")
     async def _message_edit_filter(self, _, message):
@@ -96,22 +143,37 @@ class ScamLogs(commands.Cog):
             return
         results = re.findall(self.domain_regex, message.content, re.IGNORECASE)
         if results:
-            self.bot.dispatch("link_post", settings, server_data["anti_scam"], message)
+            self.bot.dispatch("link_post", settings, server_data["anti_scam"], message, results)
+
+    async def check_databases(self, domains):
+        data = self.bot.db.db_servers.find({}, {"anti_scam": 1})
+        async for server in data:
+            custom = server["anti_scam"]["settings"]["custom_domains"]
+            for custom_domain in custom:
+                for domain in domains:
+                    if not self.match_domain(custom_domain, domain):
+                        continue
+                    await self.bot.db.db_servers.update_one({"_id": server["_id"]}, {"$pull": {"anti_scam.settings.custom_domains": custom_domain}})
 
     @commands.Cog.listener("on_link_post")
-    async def _scam_link_detector(self, settings, keys, message):
+    async def _scam_link_detector(self, settings, keys, message, matches):
         req = await self.bot.AIOSession.post(
             "https://anti-fish.bitflow.dev/check", 
             data=dumps({"message": message.content}),
             headers={'content-type': 'application/json', "User-Agent": "Trove Bot (https://trove.slynx.xyz/)"}
         )
-        if req.status != 200:
-            return
         confirmed = []
-        response = await req.json()
-        for match in response["matches"]:
-            if match["trust_rating"] >= 0.95:
-                confirmed.append(match["domain"])
+        api_confirmed = []
+        if req.status == 200:
+            response = await req.json()
+            for match in response["matches"]:
+                if match["trust_rating"] >= 0.95:
+                    confirmed.append(match["domain"])
+                    api_confirmed.append(match["domain"])
+        for match in matches:
+            for custom_domain in settings["custom_domains"]:
+                if self.match_domain(match, custom_domain):
+                    confirmed.append(custom_domain)
         if not confirmed:
             return
         for domain in list(set(confirmed)):
@@ -141,11 +203,18 @@ class ScamLogs(commands.Cog):
         e.description += f"```ansi\n{scam_domains or 'None'}\n```"
         elapsed = int((datetime.utcnow().timestamp() - e.timestamp.timestamp()) * 1000)
         e.add_field(name="Time elapsed", value=f"{elapsed}ms")
-        await self.bot.get_channel(924623456291680296).send(embed=e)
+        await self.bot.get_channel(924623456291680296).send(content=f"Server: **{message.guild.name}**", embed=e)
         if not channel:
             #await message.channel.send(f"{message.author.mention} sent a scam link.\nEnable logs with `{(await self.bot.prefix(self.bot, message))[0]}anti_scam log_channel #Channel`", delete_after=15)
             return
         await channel.send(embed=e)
+        await self.check_databases(api_confirmed)
+
+    def match_domain(self, domain, match):
+        domain = domain.split(".")
+        match = match.split(".")
+        diff = len(domain) - len(match)
+        return domain[diff:] == match
 
 def setup(bot):
     bot.add_cog(ScamLogs(bot))
