@@ -51,7 +51,7 @@ class CommandHandler(commands.Cog):
             return self.bot.dispatch("dm_message", ctx, message)
         if self.bot.is_clone and ctx.guild.get_member(425403525661458432):
             return
-        if ctx.author.id in self.bot.blacklist:
+        if ctx.valid and ctx.author.id in self.bot.blacklist:
             e = CEmbed(description=f"{ctx.author} tried to use a command `{ctx.message.content}`\n{ctx.message.jump_url}")
             e.set_footer(text=ctx.guild)
             e.set_author(name="Blacklist", icon_url=ctx.author.avatar)
@@ -96,7 +96,7 @@ class CommandHandler(commands.Cog):
             return self.bot.dispatch("dm_message", ctx, message)
         if self.bot.is_clone and ctx.guild.get_member(425403525661458432):
             return
-        if ctx.author.id in self.bot.blacklist:
+        if ctx.valid and ctx.author.id in self.bot.blacklist:
             e = CEmbed(description=f"{ctx.author} tried to use a command `{ctx.message.content}`\n{ctx.message.jump_url}")
             e.set_footer(text=ctx.guild)
             e.set_author(name="Blacklist", icon_url=ctx.author.avatar)

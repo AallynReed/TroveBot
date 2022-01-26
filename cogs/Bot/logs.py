@@ -33,7 +33,7 @@ class Logs(commands.Cog):
             e.set_thumbnail(url=server.icon)
         else:
             e.set_thumbnail(url="https://cdn.discordapp.com/attachments/344091594972069888/396285725605363712/no_server_icon.png")
-        await self.bot.guild_logger.send(embed=e, username="Server Logs", avatar_url=self.bot.user.avatar)
+        await self.bot.guild_logger.send(embed=e, username="Join Logs", avatar_url=self.bot.user.avatar)
         if not server.chunked:
             await server.chunk()
             server = self.bot.get_guild(server.id)
@@ -51,11 +51,13 @@ class Logs(commands.Cog):
                 await dm.send(f"Unfortunately I am unable to join your server, **{limit}** members (non bots) are required for me to join.\nThis is due to Discord limiting bot to 100 servers, and me wainting bot to reach as many people as possible whilst not losing access to important data it relies on to work properly such as knowing what is in your message content to know whether you used or not a command and which one you used.\n\nApologies for the inconvenience.")
             except:
                 ...
+            await self.bot.guild_logger.send(content=f"**{guild.name}**: Number of non-bot users below {limit}", username="Auto Leave Logs", avatar_url=self.bot.user.avatar)
         elif 620784025518473226 in [m.id for m in guild.bots]:
             try:
                 await dm.send("Unfortunately <@620784025518473226> `TEA` bot is in your server, since I don't support naming and shaming of people who've broke ToS (which doing so is also breaking ToS) I also don't support Surge's crusade to shame people, thus Trove bot will not join a server that has TEA bot in it. You can participate in TEA which is a great concept (on paper) but sadly making a bot to blacklist and exclude people is where I draw the line, and change as to start somewhere.\nApologies and if you want to discuss about this matter privately feel free to do so by hitting me up in trove's support server where I'll create a channel for you 🙂")
             except:
                 ...
+            await self.bot.guild_logger.send(content=f"**{guild.name}**: TEA Bot detected", username="Auto Leave Logs", avatar_url=self.bot.user.avatar)
         else:
             try:
                 await dm.send("Thank you for adding Trove Bot, initial prefix is `n!` you can also use slash commands. Thank you again and join support through <https://trove.slynx.xyz/support>")
@@ -83,7 +85,7 @@ class Logs(commands.Cog):
             e.set_thumbnail(url=server.icon)
         else:
             e.set_thumbnail(url="https://cdn.discordapp.com/attachments/344091594972069888/396285725605363712/no_server_icon.png")
-        await self.bot.guild_logger.send(embed=e, username="Server Logs", avatar_url=self.bot.user.avatar)
+        await self.bot.guild_logger.send(embed=e, username="Leave Logs", avatar_url=self.bot.user.avatar)
 
     @commands.Cog.listener("on_command_error")
     async def error_handler(self, ctx, error, *args, **kwargs):

@@ -164,7 +164,7 @@ class Trove(commands.AutoShardedBot):
         self.success = 0x008000
         self.error = 0x800000
         self.progress = 0xf9d71c
-        self.version = "3.2.67"
+        self.version = "3.2.75"
         self.time = TroveTime()
         self.uptime = datetime.utcnow().timestamp()
         self._last_exception = None
@@ -218,6 +218,11 @@ class Trove(commands.AutoShardedBot):
             await asyncio.sleep(60)
 
     async def on_message(self, message):
+        if not hasattr(self, "owners") or message.author.id not in self.owners:
+            return
+        await self.process_commands(message)
+
+    async def on_message_edit(self, _, message):
         if not hasattr(self, "owners") or message.author.id not in self.owners:
             return
         await self.process_commands(message)

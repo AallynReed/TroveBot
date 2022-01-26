@@ -193,6 +193,7 @@ class Database(DB):
                     "toggle": True,
                     "log_channel": None,
                     "mode": -1,
+                    "custom_domains": []
                 },
                 "hit_count": 0,
                 "domains": {}
