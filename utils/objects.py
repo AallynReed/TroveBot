@@ -741,27 +741,20 @@ class Values():
 
 class AugmentationStats(commands.Converter):
     async def convert(self, ctx, argument):
-        gem_regex = r"(?:([0-3]):([0-9]{1,2}|100)(?:\W|$))"
-        focus_regex = r"rough|precise|superior"
-        find_focus = re.findall(focus_regex, argument)
-        focus = find_focus or "precise"
-        if isinstance(focus, list):
-            focus = focus[0]
-        gems_input = []
-        for gem in argument.split("+"):
-            gem = gem.strip()
-            gem = re.findall(gem_regex, gem)
-            if not len(gem):
-                continue
-            if len(gem) != 3:
+        augments = re.split(r"(?![\w: ]|$)", argument.lower())
+        output = {"gems": [], "focus": "precise"}
+        for raw_gem in augments:
+            gem = []
+            stats = re.findall(r"(([0-3]):(100|[0-9]{1,2})) ?(rough|precise|superior)?", raw_gem)
+            if len(stats) != 3:
                 raise Exception("Gems must have 3 stats.")
             boosts = 0
-            for boost, progress in gem:
-                boosts += int(boost)
-            if boosts > 3:
-                raise Exception("Gems can't have more than 3 boosts.")
-            gems_input.append(gem)
-        if not gems_input:
-            raise Exception("No valid Gem format found.")
-        data = {"gems": gems_input, "focus": focus}
-        return data
+            for stat in stats:
+                boosts += int(stat[1])
+                gem.append([int(stat[1]), int(stat[2])])
+                if stat[-1]:
+                    output["focus"] = stat[-1]
+            if boosts != 3:
+                raise Exception("Gems must have 3 boosts.")
+            output["gems"].append(gem)
+        return output

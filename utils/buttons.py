@@ -1,12 +1,15 @@
 import asyncio
-import json
 import re
+from copy import copy
+from datetime import datetime
 from functools import partial
+from random import choices
+from string import ascii_letters, digits
 
 import discord
 
 from utils.builds import BuildsMaker
-from utils.CustomObjects import CEmbed
+from utils.CustomObjects import CEmbed, Dict
 
 
 class Dummy():
@@ -389,11 +392,36 @@ class GemBuildsButton(GemBaseButton):
         super().__init__(label=text, disabled=disabled, emoji=emoji, row=row)
         self.build_view = view
 
+    def GenerateCode(self, length):
+        return "".join(choices(ascii_letters+digits, k=length))
+
     async def callback(self, interaction: discord.Interaction):
         if str(self.emoji) == "📤":
-            await self.view.ctx.send(f"```json\n{self.view.build_arguments.__dict__}```")
-            self.view.setup_buttons(True)
-        if str(self.emoji) == "✏️":
+            time = int(datetime.utcnow().timestamp())
+            args = self.view.build_arguments
+            data = {
+                "code":         self.GenerateCode(8),
+                "creator":      self.view.ctx.author.id,
+                "name":         None,
+                "description":  f"{args.build_type.capitalize()} build for {args._class}",
+                "public":       False,
+                "views":        0,
+                "likes":        [],
+                "created_at":   time,
+                "last_updated": time,
+                "config":       self.view.build_arguments.__dict__
+            }
+            await self.view.ctx.bot.db.db_users.update_one({"_id": data["creator"]}, {"$push": {"builds.saved": data}})
+            await interaction.response.send_message(f"Build was saved with ID -> **{data['code']}**\nCheck out `{self.view.ctx.prefix}builds list`", ephemeral=True)
+        elif str(self.emoji) == "📥":
+            time = int(datetime.utcnow().timestamp())
+            await self.view.ctx.bot.db.db_users.update_one({"_id": self.view.ctx.author.id}, {"$pull": {"builds.saved": self.view.build_data}})
+            self.view.build_data["config"] = copy(self.view.build_arguments.__dict__)
+            self.view.build_data["last_updated"] = time
+            await self.view.ctx.bot.db.db_users.update_one({"_id": self.view.ctx.author.id}, {"$push": {"builds.saved": self.view.build_data}})
+            await interaction.response.send_message(f"Build with ID **{self.view.build_data['code']}** was updated.", ephemeral=True)
+            self.view.setup_buttons()
+        elif str(self.emoji) == "✏️":
             self.build_view.timeout = self.build_view.original_timeout
             await interaction.response.edit_message(view=self.build_view)
             self.view.stop()
@@ -401,8 +429,8 @@ class GemBuildsButton(GemBaseButton):
             self.view.setup_buttons(True)
 
 class GemBuildsToggle(GemBaseButton):
-    def __init__(self, view, field, label, invert, disabled=False, row=0):
-        super().__init__(label=label, disabled=disabled, row=row)
+    def __init__(self, view, field, label, invert, emoji=None, disabled=False, row=0):
+        super().__init__(label=label, disabled=disabled, row=row, emoji=emoji)
         self.field = field
         self.raw_value = getattr(view.build_arguments, field)
         self.value = not self.raw_value if invert else self.raw_value
@@ -421,8 +449,8 @@ class GemBuildsToggle(GemBaseButton):
             self.view.setup_buttons()
 
 class GemBuildsInput(GemBaseButton):
-    def __init__(self, view, field, label, hint, disabled=False, row=0):
-        super().__init__(disabled=disabled, row=row)
+    def __init__(self, view, field, label, hint, emoji=None, disabled=False, row=0):
+        super().__init__(disabled=disabled, row=row, emoji=emoji)
         self.build_view = view
         self.field = field
         self.hint = hint + " or `cancel` to stop input."
@@ -692,17 +720,18 @@ class AllyOptions(GemBuildsOption):
             self.view.setup_buttons()
 
 class GemBuildsView(BaseView):
-    def __init__(self, ctx, timeout=300):
+    def __init__(self, ctx, build_data=None, timeout=300):
         super().__init__(
             timeout=timeout
         )
         self.original_timeout = timeout
         self.ctx = ctx
-        self._base_arguments()
+        self.build_data = build_data
+        self._base_arguments(build_data["config"] if build_data else None)
         self.builds_maker = BuildsMaker(ctx)
         self.waiting_input = False
         self.classes = ctx.bot.Trove.values.classes
-        self.setup_buttons(just_started=True)
+        self.setup_buttons(just_started=not bool(build_data))
 
     async def on_timeout(self):
         await super().on_timeout()
@@ -758,10 +787,12 @@ class GemBuildsView(BaseView):
             #self.add_item(GemBuildsToggle(self, "mod", "Mod Coeff", False, disabled=self.build_arguments.build_type=="health", row=3)) # Mod
             self.add_item(GemBuildsToggle(self, "primordial", "Cosmic Primordial", False, row=3))
             self.add_item(GemBuildsToggle(self, "crystal5", "Crystal 5", False, row=3))
-            page_button = GemBuildsButton(self, "Page Mode", "📑", row=3)
-            self.add_item(page_button)
-            # export = GemBuildsButton(self, "Export", "📤", row=4)
-            # self.add_item(export)
+            self.add_item(GemBuildsButton(self, "Page Mode", "📑", row=3))
+            if not getattr(self, "build_data"):
+                self.add_item(GemBuildsButton(self, "Save Build", "📤", row=4))
+            elif self.build_data and self.ctx.author.id == self.build_data["creator"]:
+                if self.build_arguments.__dict__ != self.build_data["config"]:
+                    self.add_item(GemBuildsButton(self, f"Update Build ({self.build_data['code']})", "📥", row=4))
         if not just_started:
             asyncio.create_task(self.update_message(paginate, bool(self.build_arguments.build_type)))
         
@@ -792,11 +823,13 @@ class GemBuildsView(BaseView):
                 func = partial(self.builds_maker.get_pages, arguments)
                 pages = await self.ctx.bot.loop.run_in_executor(None, func)
                 self.pages = pages
-                await self.message.edit(content=None, embed=self.pages[0]["embed"], view=self)
+                while not hasattr(self, "message"):
+                    await asyncio.sleep(0.1)
+                await self.message.edit(content=self.message.content if hasattr(self, "build_data") and self.build_data else None, embed=self.pages[0]["embed"], view=self)
             else:
                 await self.message.edit(view=self)
 
-    def _base_arguments(self):
+    def _base_arguments(self, arguments):
         build_arguments = {
             "_class": None,
             "build_type": None,
@@ -813,6 +846,8 @@ class GemBuildsView(BaseView):
             "food": True,
             "filter": None
         }
+        if arguments:
+            build_arguments = Dict(arguments).fix(build_arguments)
         self.build_arguments = Dummy()
         for k, v in build_arguments.items():
             setattr(self.build_arguments, k, v)

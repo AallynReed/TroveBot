@@ -63,7 +63,7 @@ class Profiles(commands.Cog):
                 except:
                     pass
                 if interaction.value is None:
-                    return await channel.send("Time out! Profile submission was cancelled because you took to much time to answer.", delete_after=10)
+                    return await channel.send("Time out! Profile submission was cancelled because you took too much time to answer.", delete_after=10)
                 elif not interaction.value:
                     return await channel.send("Profile submission was cancelled.", delete_after=10)
                 self.quick_request[str(message.author.id)] = int(datetime.utcnow().timestamp())

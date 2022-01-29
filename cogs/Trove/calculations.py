@@ -27,8 +27,8 @@ class Calculations(commands.Cog):
             gem_completions = []
             total_boosts = 0
             for boosts, percentage in gem:
-                total_boosts += int(boosts) + 1
-                gem_completions.append((100 - float(percentage)) * (int(boosts) + 1))
+                total_boosts += boosts + 1
+                gem_completions.append((100 - percentage) * (boosts + 1))
             total_weight = sum(gem_completions)
             completion = 1 - (total_weight / (total_boosts * 100))
             for i in range(len(gem)):
@@ -41,7 +41,7 @@ class Calculations(commands.Cog):
             return gem_cost, completion
         gems = [
             get_gem_cost(gem) for gem in augmentation["gems"]
-            if int(gem[0][1]) + int(gem[1][1]) + int(gem[2][1]) != 300
+            if gem[0][1] + gem[1][1] + gem[2][1] != 300
         ]
         print(gems)
         e = CEmbed(description=f"Prefered: **{augmentation['focus'].capitalize()}**", color=self.bot.comment)

@@ -136,9 +136,78 @@
         "extra_text": "`/gem_tutorial` or [Mini Gem tutorial here](https://cdn.slynx.xyz/images/gem_tutorial.png)",
         "subcommands": {},
         "aliases": [
-            "builds",
             "gem",
             "gems"
+        ],
+        "hidden": false
+    },
+    "build_list": {
+        "module": "builds",
+        "description": "Manage and show saved builds.",
+        "example": "{prefix}build_list",
+        "subcommands": {
+            "list": {
+                "module": "builds",
+                "description": "List of all your saved builds.",
+                "example": "{prefix}build_list list",
+                "aliases": []
+            },
+            "public": {
+                "module": "builds",
+                "description": "List of all public builds.",
+                "example": "{prefix}build_list public",
+                "aliases": []
+            },
+            "like": {
+                "module": "builds",
+                "description": "Like a public build.",
+                "example": "{prefix}build_list like",
+                "aliases": [
+                    "upvote"
+                ]
+            },
+            "delete": {
+                "module": "builds",
+                "description": "Delete one of your saved builds.",
+                "example": "{prefix}build_list delete <Build ID>",
+                "aliases": []
+            },
+            "set": {
+                "module": "builds",
+                "description": "Edit your build's Metadata.",
+                "example": "{prefix}build_list set",
+                "aliases": [
+                    "edit"
+                ],
+                "subcommands": {
+                    "name": {
+                        "module": "builds",
+                        "description": "Edit your build's name. Max: 32 Characters",
+                        "example": "{prefix}build_list set name <Build ID> My Build",
+                        "aliases": []
+                    },
+                    "description": {
+                        "module": "builds",
+                        "description": "Edit your build's description. Max: 180 Characters",
+                        "example": "{prefix}build_list set name <Build ID> This is my favourite build.",
+                        "aliases": [
+                            "about"
+                        ]
+                    },
+                    "public": {
+                        "module": "builds",
+                        "description": "Toggle build public state.",
+                        "example": "{prefix}build_list set public <Build ID>",
+                        "aliases": [
+                            "private"
+                        ]
+                    },
+                }
+            }
+        },
+        "aliases": [
+            "builds_list",
+            "builds"
         ],
         "hidden": false
     },

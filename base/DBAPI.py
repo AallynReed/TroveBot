@@ -2,6 +2,7 @@ import asyncio
 from copy import deepcopy
 from random import Random, choices, seed
 from string import ascii_letters, digits
+from utils.CustomObjects import Dict
 
 from motor.motor_asyncio import AsyncIOMotorClient
 
@@ -113,7 +114,9 @@ class Database(DB):
                 "max_pts_mastery_geode": 0
             },
             "giveaway": [],
-            "server_status": {}
+            "anti_scam": {
+                "domains": []
+            }
         }
 
     def _default_server(self, server_id: int):
@@ -206,70 +209,7 @@ class Database(DB):
             "settings": {
                 "prefixes": []
             },
-            "saved_builds": []
+            "builds": {
+                "saved": []
+            }
         }
-
-class Dict(dict):
-    def __init__(self, data: dict):
-        self._data = data
-        self._default = None
-
-    def fix(self, default: dict=None):
-        if not default and not self.default:
-            raise Exception("No defaut was set!")
-        elif default:
-            self._set_default(default)
-        default_keys, target_keys, diff = self._get_diff()
-        diff = diff.copy()
-        diff = self._remove_excess(diff, self._get_max_length(default_keys))
-        self._build_missing(diff)
-        return self._data
-
-    def _set_default(self, default: dict):
-        self._default = default
-
-    def _get_diff(self):
-        default = set(self._get_nested_keys(self._default))
-        target = set(self._get_nested_keys(self._data))
-        diff = list(default - target)
-        return default, target, diff
-
-    def _get_nested_keys(self, data: dict, nest=""):
-        if isinstance(data, dict):
-            for key, value in data.items():
-                yield nest + key if nest else key
-                for ret in self._get_nested_keys(value, nest=nest+key+"."):
-                    yield ret
-
-    def _get_max_length(self, default_keys):
-        i = 1
-        for x in default_keys:
-            split = len(x.split("."))
-            if split > i:
-                i = split
-        return i
-
-    def _build_missing(self, diff):
-        for i in diff:
-            split = i.split(".")
-            navigate = self._default
-            current = self._data
-            for key in split:
-                navigate = navigate[key]
-                if key == split[-1]:
-                    current[key] = navigate
-                elif key not in current:
-                    current[key] = {}
-                current = current[key]
-
-    def _remove_excess(self, diff, max): 
-        for x in range(max):
-            for i in diff:
-                try:
-                    split = i.split(".")
-                    _split = ".".join([split[y] for y in range(x)])
-                    if i != _split and "." in i and _split in diff and i in diff:
-                        diff.remove(i)
-                except:
-                    pass
-        return diff

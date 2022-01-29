@@ -5,16 +5,30 @@ from datetime import datetime, timedelta
 from json import dumps
 
 import discord
-from discord.ext import commands
+from discord.ext import commands, tasks
 
-from utils.CustomObjects import CEmbed, Colorize, TimeConverter
 from utils.buttons import Paginator
+from utils.CustomObjects import CEmbed, Colorize, TimeConverter
 
 
 class ScamLogs(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.domain_regex = r"(?:[a-z0-9](?:[a-z0-9-]{0,63}[a-z0-9])?\.)+[a-z0-9][a-z0-9-]{0,63}[a-z0-9]"
+        self.clear_cache.start()
+
+    def cog_unload(self):
+        self.clear_cache.cancel()
+
+ # Tasks
+    
+    @tasks.loop(seconds=3600)
+    async def clear_cache(self):
+        self.domain_database = []
+        bot_data = await self.bot.db.db_bot.find_one({"_id": "0511"}, {"anti_scam":1})
+        self.domain_database.extend(bot_data["anti_scam"]["domains"])
+
+ # Commands
 
     @commands.group(slash_command=True, name="anti_scam", aliases=["antiscam"], help="Main command for antiscam.")
     @commands.has_permissions(manage_guild=True)
@@ -145,7 +159,9 @@ class ScamLogs(commands.Cog):
             e.description += f"\n§$2<%{add}%> | §$1<%{remove}%> | §$3<%{replace}%> | §$4<%{not_add}%>"
         e.description = str(Colorize(e.description+"\n```", True))
         await self.bot.db.db_servers.update_one({"_id": ctx.guild.id}, {"$set": {"anti_scam.settings.custom_domains": custom_domains}})
-        await ctx.reply(embed=e)
+        await ctx.send(embed=e)
+
+ # Events
 
     @commands.Cog.listener("on_message")
     async def _message_filter(self, message):
@@ -176,30 +192,6 @@ class ScamLogs(commands.Cog):
         results = re.findall(self.domain_regex, message.content, re.IGNORECASE)
         if results:
             self.bot.dispatch("link_post", settings, server_data["anti_scam"], message, results)
-
-    async def check_databases(self, domains):
-        data = self.bot.db.db_servers.find({}, {"anti_scam": 1})
-        async for server in data:
-            custom = server["anti_scam"]["settings"]["custom_domains"]
-            for custom_domain in custom:
-                for domain in domains:
-                    if not self.match_domain(custom_domain, domain):
-                        continue
-                    await self.bot.db.db_servers.update_one({"_id": server["_id"]}, {"$pull": {"anti_scam.settings.custom_domains": custom_domain}})
-
-    async def check_domain(self, domain):
-        req = await self.bot.AIOSession.post(
-            "https://anti-fish.bitflow.dev/check", 
-            data=dumps({"message": domain}),
-            headers={'content-type': 'application/json', "User-Agent": "Trove Bot (https://trove.slynx.xyz/)"}
-        )
-        bad_domains = []
-        if req.status == 200:
-            response = await req.json()
-            for match in response["matches"]:
-                if match["trust_rating"] >= 0.95:
-                    bad_domains.append(match["domain"])
-        return bad_domains
 
     @commands.Cog.listener("on_link_post")
     async def _scam_link_detector(self, settings, keys, message, matches):
@@ -246,11 +238,52 @@ class ScamLogs(commands.Cog):
         await channel.send(embed=e)
         await self.check_databases(api_confirmed)
 
+ # Methods
+
+    async def check_databases(self, domains):
+        data = self.bot.db.db_servers.find({"anti_scam.settings.custom_domains": {"$ne": []}}, {"anti_scam": 1})
+        async for server in data:
+            custom = server["anti_scam"]["settings"]["custom_domains"]
+            for custom_domain in custom:
+                for domain in domains:
+                    if not self.match_domain(custom_domain, domain):
+                        continue
+                    await self.bot.db.db_servers.update_one({"_id": server["_id"]}, {"$pull": {"anti_scam.settings.custom_domains": custom_domain}})
+
+    async def check_domain(self, domain):
+        bad_domains = []
+        domains = re.findall(self.domain_regex, domain, re.IGNORECASE)
+        domains = list(domains)
+        for db_domain in self.domain_database:
+            for domain in copy(domains):
+                if self.match_domain(domain, db_domain):
+                    if db_domain in bad_domains:
+                        continue
+                    bad_domains.append(db_domain)
+                    while domain in domains:
+                        domains.remove(domain)
+        domains = "\n".join(domains)
+        if not bad_domains and domains:
+            req = await self.bot.AIOSession.post(
+                "https://anti-fish.bitflow.dev/check", 
+                data=dumps({"message": domains.lower()}),
+                headers={'content-type': 'application/json', "User-Agent": "Trove Bot (https://trove.slynx.xyz/)"}
+            )
+            if req.status == 200:
+                response = await req.json()
+                for match in response["matches"]:
+                    if match["trust_rating"] >= 0.95:
+                        if match["domain"] not in bad_domains:
+                            bad_domains.append(match["domain"])
+        for bad_domain in bad_domains:
+            if bad_domain not in self.domain_database:
+                self.domain_database.append(bad_domain)
+        return bad_domains
+
     def match_domain(self, domain, match):
-        domain = domain.split(".")
-        match = match.split(".")
-        diff = len(domain) - len(match)
-        return domain[diff:] == match
+        domain = domain.lower().split(".")
+        match = match.lower().split(".")
+        return domain[-len(match):] == match
 
 def setup(bot):
     bot.add_cog(ScamLogs(bot))
