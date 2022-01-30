@@ -11,9 +11,8 @@ import discord
 from aiohttp import ClientSession, MultipartWriter
 from discord.ext import commands
 from utils.buttons import Confirm, Paginator, ProfileView
-from utils.CustomObjects import CEmbed
-from utils.objects import GameClass, TrovePlayer, TroveClass
-from utils.CustomObjects import MetricsConverter
+from utils.CustomObjects import CEmbed, MetricsConverter
+from utils.objects import GameClass, TroveClass, TrovePlayer
 
 
 class Profiles(commands.Cog):

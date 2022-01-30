@@ -2,7 +2,6 @@
 import asyncio
 import os
 import string
-from copy import copy
 from datetime import datetime
 
 import discord
@@ -71,19 +70,19 @@ class Builds(commands.Cog):
         build_data = None
         if build_id:
             builds_data = await self.bot.db.db_users.find_one({"builds.saved": {"$elemMatch": {"code": build_id}}}, {"builds.saved": 1})
-            if not builds_data:
-                return await ctx.reply("Build ID doesn't correspond to any build in database.")
-            for build_data in builds_data["builds"]["saved"]:
-                if build_data["code"] != build_id:
-                    continue
-                if build_data["creator"] != ctx.author.id and not build_data["public"]:
-                    return await ctx.reply(f"This build is not public.")
-                build = build_data["config"]
-                break
-            await self.bot.db.db_users.update_one({"_id": ctx.author.id}, {"$pull": {"builds.saved": build_data}})
-            build_data["views"] += 1
-            await self.bot.db.db_users.update_one({"_id": ctx.author.id}, {"$push": {"builds.saved": build_data}})
-            creator = await self.bot.try_user(build_data['creator'])
+            if builds_data:
+                for build_data in builds_data["builds"]["saved"]:
+                    if build_data["code"] != build_id:
+                        continue
+                    if build_data["creator"] != ctx.author.id and not build_data["public"]:
+                        return await ctx.reply(f"This build is not public.")
+                    build = build_data["config"]
+                    break
+                build_data["views"] += 1
+                await self.bot.db.db_users.update_one({"_id": build_data["creator"], "builds.saved.code": build_id}, {f"$inc": {"builds.saved.$.views": 1}})
+                creator = await self.bot.try_user(build_data['creator'])
+            else:
+                await ctx.reply(f"Build ID doesn't correspond to any build in database.\nThis commands takes no arguments like class or type, it's just `{ctx.prefix}build`", delete_after=15, ephemeral=True)
         view = GemBuildsView(ctx, build_data=build_data)
         view.message = await ctx.reply(
             content="Builds will only be calculated once all **Required** fields are filled in." if not build else f"Loaded **{build_data['code']}** by {creator.mention}",
@@ -91,7 +90,7 @@ class Builds(commands.Cog):
             allowed_mentions=discord.AllowedMentions.none()    
         )
 
-    @commands.group(slash_command=True, aliases=["builds_list", "builds"], help="Manage and show saved builds.")
+    @commands.group(slash_command=True, aliases=["builds_list", "builds"], help="Manage and show saved builds")
     async def build_list(self, ctx):
         ...
 

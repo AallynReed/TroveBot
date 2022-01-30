@@ -470,6 +470,16 @@
         "hidden": false
     },
 # Information
+    "calendar": {
+        "module": "information",
+        "description": "Check out Trovesaurus calendar.",
+        "example": "{prefix}calendar",
+        "subcommands": {},
+        "aliases": [
+            "events"
+        ],
+        "hidden": false
+    },
     "chats": {
         "module": "information",
         "description": "List of commonly used chats in-game.",
@@ -536,6 +546,28 @@
         "subcommands": {},
         "aliases": [
             "primes"
+        ],
+        "hidden": false
+    },
+    "search": {
+        "module": "information",
+        "description": "Search for things in Trovesaurus database.",
+        "example": "{prefix}search Chaos Chest",
+        "subcommands": {},
+        "aliases": [],
+        "hidden": false
+    },
+    "search_mod": {
+        "module": "information",
+        "description": "Search for mods in Trovesaurus database.",
+        "example": "{prefix}findmod Sageosaurus",
+        "subcommands": {},
+        "aliases": [
+            "sm",
+            "find_mod",
+            "mod",
+            "searchmod",
+            "find_mod"
         ],
         "hidden": false
     },

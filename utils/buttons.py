@@ -36,6 +36,172 @@ class BaseView(discord.ui.View):
         except:
             pass
 
+## Static
+
+class Confirm(BaseView):
+    def __init__(self, ctx, timeout=180):
+        super().__init__(
+            timeout=timeout
+        )
+        self.ctx = ctx
+        self.value = None
+
+    @discord.ui.button(label='Confirm', style=discord.ButtonStyle.green)
+    async def confirm(self, button: discord.ui.Button, interaction: discord.Interaction):
+        self.value = True
+        self.stop()
+
+    @discord.ui.button(label='Cancel', style=discord.ButtonStyle.danger)
+    async def cancel(self, button: discord.ui.Button, interaction: discord.Interaction):
+        self.value = False
+        self.stop()
+
+class Traceback(discord.ui.View):
+    def __init__(self, ctx, exception, timeout=60):
+        super().__init__(
+            timeout=timeout
+        )
+        self.ctx = ctx
+        self.exception = exception
+
+    @discord.ui.button(label='Show Traceback', style=discord.ButtonStyle.grey)
+    async def show(self, button: discord.ui.Button, interaction: discord.Interaction):
+        if len(self.exception) > 2000:
+            await interaction.response.send_message(f"```py\n{self.exception[:1990]}```", ephemeral=True)
+            await interaction.followup.send(f"```py\n{self.exception[1990:3980]}```", ephemeral=True)
+        else:
+            await interaction.response.send_message(f"```py\n{self.exception}```", ephemeral=True)
+
+## Dynamic
+
+# Others
+
+class OptionPicker(BaseView):
+    def __init__(self, ctx, options):
+        super().__init__(
+            timeout=60
+        )
+        self.ctx = ctx
+        self.value = None
+        for option in options:
+            self.add_item(OptionPickerButton(emoji=option["emoji"], text=option["text"]))
+        
+class OptionPickerButton(discord.ui.Button["OptionPicker"]):
+    def __init__(self, emoji, text):
+        super().__init__(style=discord.ButtonStyle.secondary, emoji=emoji, label=text)
+
+    async def callback(self, interaction: discord.Interaction):
+        self.view.value = self.label
+        self.view.stop()
+
+class Paginator(BaseView):
+    def __init__(self, ctx, pages, page=0, start_end=False, step_10=False, timeout=120):
+        super().__init__(
+            timeout=timeout
+        )
+        self.ctx = ctx
+        self.page = page
+        self.pages = pages
+        self.count = len(pages)
+        self.start_end = start_end
+        self.step_10 = step_10
+        self.add_buttons()
+
+    def add_buttons(self):
+        non_page_buttons = [item for item in self.children if not isinstance(item, PaginatorButton)]
+        if self.children:
+            self.clear_items()
+        if not self.count or self.count == 1:
+            return
+        previous_page = self.page - 1
+        if previous_page < 0:
+            previous_page = self.count - 1
+        self.add_item(PaginatorButton("◀️", previous_page))
+        next_page = self.page + 1
+        if next_page > self.count - 1:
+            next_page = 0
+        self.add_item(PaginatorButton("▶️", next_page))
+        if self.start_end and self.count > 5:
+            if self.page != 0:
+                self.add_item(PaginatorButton("⏮️", 0))
+        if self.step_10 and self.count > 10:
+            previous_10 = self.page - 10
+            if previous_10 < 0:
+                previous_10 = self.count - (10 - self.page)
+            self.add_item(PaginatorButton("⏪", previous_10))
+        if self.step_10 and self.count > 10:
+            next_10 = self.page + 10
+            if next_10 > self.count - 1:
+                next_10 = 0 + next_10 - self.count
+            self.add_item(PaginatorButton("⏩", next_10))
+        if self.start_end and self.count > 5:
+            if self.page != self.count - 1:
+                self.add_item(PaginatorButton("⏭️", self.count - 1, row=1 if len(self.children) >= 5 else 0))
+        for item in non_page_buttons:
+            self.add_item(item)
+
+class PaginatorButton(discord.ui.Button["Paginator"]):
+    def __init__(self, emoji, page, row=0):
+        super().__init__(style=discord.ButtonStyle.secondary, emoji=emoji, row=row)
+        self.page = page
+
+    async def callback(self, interaction: discord.Interaction):
+        self.pages = self.view.pages
+        self.view.page = self.page
+        self.view.add_buttons()
+        await interaction.message.edit(content=self.pages[self.page].get("content"), embed=self.pages[self.page]["embed"], view=self.view)
+
+# Help View
+
+class HelpView(BaseView):
+    def __init__(self, ctx, commands, timeout=120):
+        super().__init__(
+            timeout=timeout
+        )
+        self.ctx = ctx
+        self.commands = commands
+        self.category = None
+        self.get_buttons()
+
+    async def on_timeout(self):
+        #await super().on_timeout()
+        try:
+            await self.message.delete()
+        except:
+            pass
+
+    def get_buttons(self):
+        if self.children:
+            self.clear_items()
+        if not self.category:
+            for category, pages in sorted(self.commands.items(), key=lambda x: x[0]):
+                if category in ["embed"]:
+                    continue
+                self.add_item(HelpButton(self.ctx, pages, self.children, label=category))
+        
+class HelpButton(discord.ui.Button["HelpView"]):
+    def __init__(self, ctx, pages, children, label, view=None):
+        row = divmod(len(children), 5)[0]
+        super().__init__(style=discord.ButtonStyle.secondary, label=label.capitalize(), row=row)
+        self.help_view = view
+        self.ctx = ctx
+        self.pages = pages
+
+    async def callback(self, interaction: discord.Interaction):
+        if self.label == "Back":
+            self.help_view.category = None
+            self.help_view.get_buttons()
+            return await interaction.response.edit_message(embed=self.help_view.commands["embed"], view=self.help_view)
+        else:
+            self.view.category = self.label.lower()
+            paginator = Paginator(self.ctx, self.pages)
+            paginator.add_item(HelpButton(self.ctx, [], [], label="Back", view=self.view))
+            await interaction.response.edit_message(embed=self.pages[0]["embed"], view=paginator)
+            if await paginator.wait():
+                await self.view.on_timeout()
+
+# Gem Tutorial View
+
 class GemTutorial(BaseView):
     def __init__(self, ctx, tabs, topics):
         self.ctx = ctx
@@ -101,165 +267,7 @@ class GemTutorialTopics(discord.ui.Select):
         self.view.selected_topic = [t for t in self.view.topics if self.values[0] == t.name][0]
         self.view._setup_buttons()
 
-# Static
-
-class OptionPicker(BaseView):
-    def __init__(self, ctx, options):
-        super().__init__(
-            timeout=60
-        )
-        self.ctx = ctx
-        self.value = None
-        for option in options:
-            self.add_item(OptionPickerButton(emoji=option["emoji"], text=option["text"]))
-        
-class OptionPickerButton(discord.ui.Button["OptionPicker"]):
-    def __init__(self, emoji, text):
-        super().__init__(style=discord.ButtonStyle.secondary, emoji=emoji, label=text)
-
-    async def callback(self, interaction: discord.Interaction):
-        self.view.value = self.label
-        self.view.stop()
-
-class Confirm(BaseView):
-    def __init__(self, ctx, timeout=180):
-        super().__init__(
-            timeout=timeout
-        )
-        self.ctx = ctx
-        self.value = None
-
-    @discord.ui.button(label='Confirm', style=discord.ButtonStyle.green)
-    async def confirm(self, button: discord.ui.Button, interaction: discord.Interaction):
-        self.value = True
-        self.stop()
-
-    @discord.ui.button(label='Cancel', style=discord.ButtonStyle.danger)
-    async def cancel(self, button: discord.ui.Button, interaction: discord.Interaction):
-        self.value = False
-        self.stop()
-
-class Traceback(discord.ui.View):
-    def __init__(self, ctx, exception, timeout=60):
-        super().__init__(
-            timeout=timeout
-        )
-        self.ctx = ctx
-        self.exception = exception
-
-    @discord.ui.button(label='Show Traceback', style=discord.ButtonStyle.grey)
-    async def show(self, button: discord.ui.Button, interaction: discord.Interaction):
-        if len(self.exception) > 2000:
-            await interaction.response.send_message(f"```py\n{self.exception[:1990]}```", ephemeral=True)
-            await interaction.followup.send(f"```py\n{self.exception[1990:3980]}```", ephemeral=True)
-        else:
-            await interaction.response.send_message(f"```py\n{self.exception}```", ephemeral=True)
-
-# Dynamic
-
-class Paginator(BaseView):
-    def __init__(self, ctx, pages, page=0, start_end=False, step_10=False, timeout=120):
-        super().__init__(
-            timeout=timeout
-        )
-        self.ctx = ctx
-        self.page = page
-        self.pages = pages
-        self.count = len(pages)
-        self.start_end = start_end
-        self.step_10 = step_10
-        self.add_buttons()
-
-    def add_buttons(self):
-        non_page_buttons = [item for item in self.children if not isinstance(item, PaginatorButton)]
-        if self.children:
-            self.clear_items()
-        if not self.count or self.count == 1:
-            return
-        previous_page = self.page - 1
-        if previous_page < 0:
-            previous_page = self.count - 1
-        self.add_item(PaginatorButton("◀️", previous_page))
-        next_page = self.page + 1
-        if next_page > self.count - 1:
-            next_page = 0
-        self.add_item(PaginatorButton("▶️", next_page))
-        if self.start_end and self.count > 5:
-            if self.page != 0:
-                self.add_item(PaginatorButton("⏮️", 0))
-        if self.step_10 and self.count > 10:
-            previous_10 = self.page - 10
-            if previous_10 < 0:
-                previous_10 = self.count - (10 - self.page)
-            self.add_item(PaginatorButton("⏪", previous_10))
-        if self.step_10 and self.count > 10:
-            next_10 = self.page + 10
-            if next_10 > self.count - 1:
-                next_10 = 0 + next_10 - self.count
-            self.add_item(PaginatorButton("⏩", next_10))
-        if self.start_end and self.count > 5:
-            if self.page != self.count - 1:
-                self.add_item(PaginatorButton("⏭️", self.count - 1, row=1 if len(self.children) >= 5 else 0))
-        for item in non_page_buttons:
-            self.add_item(item)
-
-class PaginatorButton(discord.ui.Button["Paginator"]):
-    def __init__(self, emoji, page, row=0):
-        super().__init__(style=discord.ButtonStyle.secondary, emoji=emoji, row=row)
-        self.page = page
-
-    async def callback(self, interaction: discord.Interaction):
-        self.pages = self.view.pages
-        self.view.page = self.page
-        self.view.add_buttons()
-        await interaction.message.edit(content=self.pages[self.page].get("content"), embed=self.pages[self.page]["embed"], view=self.view)
-
-class HelpView(BaseView):
-    def __init__(self, ctx, commands, timeout=120):
-        super().__init__(
-            timeout=timeout
-        )
-        self.ctx = ctx
-        self.commands = commands
-        self.category = None
-        self.get_buttons()
-
-    async def on_timeout(self):
-        #await super().on_timeout()
-        try:
-            await self.message.delete()
-        except:
-            pass
-
-    def get_buttons(self):
-        if self.children:
-            self.clear_items()
-        if not self.category:
-            for category, pages in sorted(self.commands.items(), key=lambda x: x[0]):
-                if category in ["embed"]:
-                    continue
-                self.add_item(HelpButton(self.ctx, pages, self.children, label=category))
-        
-class HelpButton(discord.ui.Button["HelpView"]):
-    def __init__(self, ctx, pages, children, label, view=None):
-        row = divmod(len(children), 5)[0]
-        super().__init__(style=discord.ButtonStyle.secondary, label=label.capitalize(), row=row)
-        self.help_view = view
-        self.ctx = ctx
-        self.pages = pages
-
-    async def callback(self, interaction: discord.Interaction):
-        if self.label == "Back":
-            self.help_view.category = None
-            self.help_view.get_buttons()
-            return await interaction.response.edit_message(embed=self.help_view.commands["embed"], view=self.help_view)
-        else:
-            self.view.category = self.label.lower()
-            paginator = Paginator(self.ctx, self.pages)
-            paginator.add_item(HelpButton(self.ctx, [], [], label="Back", view=self.view))
-            await interaction.response.edit_message(embed=self.pages[0]["embed"], view=paginator)
-            if await paginator.wait():
-                await self.view.on_timeout()
+# Profiles View
 
 class ProfileView(BaseView):
     def __init__(self, ctx, get_profile, user, classes, server=1):
@@ -286,7 +294,9 @@ class ProfileButton(discord.ui.Button["ProfileView"]):
     async def callback(self, interaction: discord.Interaction):
         await interaction.message.delete()
         await self.get_profile(self.ctx, self.user, self._class, self.server)
-        
+
+# Gear Builds View
+
 class BuildsOptions(discord.ui.Select):
     def __init__(self, view, row=1):
         self.ctx = view.ctx
@@ -377,6 +387,8 @@ class BuildsPickView(BaseView):
                 await self.message.delete()
             except:
                 pass
+
+# Gem Builds View
 
 class GemBaseButton(discord.ui.Button["GemBuildsView"]):
     async def no_concurrent(self, interaction):
@@ -634,7 +646,7 @@ class GemBuildTypeOptions(GemBuildsOption):
             "health": "These builds aim at most amount of health for tanking."
         }
         select = [
-            discord.SelectOption(label=t.capitalize(), description=descriptions[t], emoji=self.get_emote(t), default=t == view.build_arguments.build_type)
+            discord.SelectOption(label=t.capitalize(), description=descriptions[t], emoji=self.get_emote(t))
             for t in options
         ]
         super().__init__(placeholder=f"Pick a build type (Required)", options=select, row=row)
@@ -798,11 +810,7 @@ class GemBuildsView(BaseView):
         
     async def update_message(self, paginate, fetch_builds=False):
         if paginate:
-            arguments = {
-                attr: getattr(self.build_arguments, attr)
-                for attr in dir(self.build_arguments)
-                if not attr.startswith("__")
-            }
+            arguments = self.build_arguments.__dict__
             func = partial(self.builds_maker.get_pages, arguments)
             pages = await self.ctx.bot.loop.run_in_executor(None, func)
             self.pages = pages

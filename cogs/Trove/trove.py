@@ -350,7 +350,7 @@ class Trove(commands.Cog):
             }
             for item, price in items.items():
                 text = f'[**{item}**]({price[1]})'
-                text += f"\nPrice: **{price[0]} <:dragon_coin:858061506074378276>**"
+                text += f"\nPrice: **{price[0]} <:chaoscore:937042427636752455>**"
                 e.add_field(name="\u200b", value=text)
             e.add_field(name="\u200b", value="\u200b")
             e.set_author(name="Corruxion", icon_url="https://i.imgur.com/BPNdE1w.png")

@@ -5,14 +5,21 @@ import re
 from datetime import datetime, timedelta
 
 import discord
+import html2text
+from bs4 import BeautifulSoup
 from discord.ext import commands
-from utils.buttons import Confirm, OptionPicker
+from utils.buttons import Confirm, OptionPicker, Paginator
 from utils.CustomObjects import CEmbed
 
 
 class Partner(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        htmlhandler = html2text.HTML2Text()
+        htmlhandler.ignore_images = True
+        htmlhandler.ignore_emphasis = True
+        htmlhandler.body_width = 0
+        self.htmlhandler = htmlhandler
 
     @commands.command(message_command=False, slash_command=True, slash_command_guilds=[118027756075220992], name="reportbug", help="Report an ingame bug to developers.")
     @commands.cooldown(1, 1800, commands.BucketType.guild)
@@ -245,6 +252,171 @@ class Partner(commands.Cog):
                 await self.bot.utils.ssend(ctx.author, content="This report failed to be sent to Trovesaurus, so here it is for you to retry.", embed=final_e)
                 await ctx.send(f"{ctx.author.mention} Bug report wasn't submitted, an error occured.")
         ctx.command.reset_cooldown(ctx)
+
+    @commands.command(slash_command=True, name="calendar", aliases=["events"], help="Check out Trovesaurus calendar.")
+    async def _show_events(self, ctx):
+        request = await self.bot.AIOSession.get("https://trovesaurus.com/calendar/feed")
+        calendar = await request.json(content_type="text/html")
+        e = CEmbed(color=0x2a5757)
+        e.description = f"You can check current and upcoming events at [Trovesaurus](https://trovesaurus.com/calendar/new)"
+        e.set_author(name="Trovesaurus Calendar", icon_url="https://trovesaurus.com/images/logos/Sage_64.png?1")
+        if calendar:
+            calendar.sort(key= lambda x: x["enddate"])
+            e.set_thumbnail(url=calendar[0]["icon"])
+            for event in calendar:
+                url = f"https://trovesaurus.com/event={event['id']}"
+                name = event["name"]
+                category = event["category"]
+                start, end = event["startdate"], event["enddate"]
+                e.add_field(name=f"{category}: {name}", value=f"[About this event]({url})\nStarted on <t:{start}:F>\nEnds <t:{end}:R>", inline=False)
+        else:
+            e.description += "\n\nNo Events are happening at the time."
+        await ctx.reply(embed=e)
+
+    @commands.command(slash_command=True, help="Search for items, decos or styles on Trovesaurus.")
+    async def search(self, ctx, *, search=commands.Option(name="search", description="What to search on Trovesaurus?")):
+        await ctx.defer()
+        whitelist = [
+            "Collections",
+            "Items",
+            "Deco",
+            "Styles",
+            "News",
+            "Guides",
+            "Users"
+        ]
+        results = {}
+        request = await self.bot.AIOSession.post("https://trovesaurus.com/search/", data={"Search": search}, allow_redirects=True)
+        soup = BeautifulSoup(await request.text(), "html.parser")
+        # Get Categories
+        nav_list = soup.find("ul", id="searchResultsNav")
+        raw_categories = [i.find_next("a").text.replace("\n", " ").strip() for i in nav_list.findAll("li")]
+        categories = [c for c in re.findall("([a-z ]+) ([0-9]+)", str(raw_categories), re.IGNORECASE) if c[0] in whitelist]
+        for category, result_count in categories:
+            results[category] = {
+                "qname": category.replace(" ", "").lower(),
+                "count": int(result_count),
+                "results": []
+            }
+        # ...
+        serch = search.replace(" ", "%20")
+        search_link = request.url
+        for category, data in results.items():
+            req = await self.bot.AIOSession.post(f"https://trovesaurus.com/search/{serch}/{data['qname']}")
+            soup = BeautifulSoup(await req.text(), "html.parser")
+            if category in ["Collections", "Items", "Deco", "Styles"]:
+                items = soup.findAll("figure", {"class": "figure"})
+                data["results"] = [
+                    {
+                        "name": item.find("figcaption").find("a").string.strip(),
+                        "extra_info": "",
+                        "link": item.find("a").get("href"),
+                        "image": item.find("a").find("img").get("src")
+                    }
+                    for item in items if re.findall(f"(?:\W|^)({search.lower()})", item.find("figcaption").find("a").string.strip().lower())
+                ]
+            if category in ["Guides"]:
+                page_results = soup.findAll("div", {"class": "col-md-9"})[0]
+                items = page_results.find_all("li", {"class": "nav-item"})
+                data["results"] = [
+                    {
+                        "name": item.find("div", {"class": "text-shadow"}).text.strip(),
+                        "extra_info": "",
+                        "link": item.find("a").get("href"),
+                        "image": None
+                    }
+                    for item in items if re.findall(f"(?:\W|^)({search.lower()})", item.find("div", {"class": "text-shadow"}).text.strip().lower())
+                ]
+            if category in ["News"]:
+                page_results = soup.findAll("div", {"class": "col-md-9"})[0]
+                items = page_results.find_all(["a", "img"], {"loading": "lazy", "class": None})
+                data["results"] = [
+                    {
+                        "name": item.parent.text.strip(),
+                        "extra_info": "",
+                        "link": item.parent.get("href"),
+                        "image": item.get("src")
+                    }
+                    for item in items if re.findall(f"(?:\W|^)({search.lower()})", item.parent.text.strip().lower())
+                ]
+            if category in ["Users"]:
+                page_results = soup.findAll("div", {"class": "col-md-9"})[0]
+                items = page_results.find_all("a", {"class": None, "href": lambda x: x.startswith("https://trovesaurus.com/user=") if x is not None else False})
+                data["results"] = [
+                    {
+                        "name": item.text.strip(),
+                        "extra_info": "",
+                        "link": item.get("href"),
+                        "image": ("https:" if item.parent.parent.parent.findNext("img").get("src").startswith("//") else "") + item.parent.parent.parent.findNext("img").get("src")
+                    }
+                    for item in items if item if re.findall(f"(?:\W|^)({search.lower()})", item.text.strip().lower())
+                ]
+            # if category in ["Strings"]:
+            #     page_results = soup.findAll("div", {"class": "col-md-9"})[0]
+            #     items = page_results.find_all("blockquote")
+            #     data["results"] = [
+            #         {
+            #             "name": item.find_previous_sibling('p').findNext('strong').text.strip(),
+            #             "extra_info": item.text.strip(),
+            #             "link": None,
+            #             "image": None
+            #         }
+            #         for item in items if item
+            #     ]
+        items = []
+        for nav, data in results.items():
+            for res in data["results"]:
+                res["postname"] = f"{nav}/{res['name']}"
+                items.append(res)
+        if not items:
+            return await ctx.send(f"No items match `{search}` in the following categories: `{'`, `'.join([i.capitalize() for i in whitelist])}`")
+        e = discord.Embed()
+        e.color = discord.Color.random()
+        e.description = ""
+        e.set_author(name=f"Results for search '{search}' at Trovesaurus", icon_url="https://trovesaurus.com/images/logos/Sage_64.png?1")
+        for item in items[:8]:
+            e.description += f"[`{item['postname']}`]({item['link']})\n"
+        if len(items) > 8:
+            e.description += f"... and more\n"
+        if len(items) == 1 and items[0]["image"]:
+            e.set_thumbnail(url=items[0]["image"])
+        e.description += f"\nGet more results for this search at [Trovesaurus]({search_link})"
+        await ctx.send(embed=e, reference=ctx.message.reference, mention_author=True)
+
+    @commands.command(slash_command=True, aliases=["sm", "mod", "searchmod", "find_mod", "findmod"], help="Search for mods on Trovesaurus.")
+    async def search_mod(self, ctx, *, mod=commands.Option(name="search", description="What mod to find on Trovesaurus?")):
+        await ctx.defer()
+        if len(mod) < 4:
+            return await ctx.send("Search word too small.")
+        request = await self.bot.AIOSession.post(self.bot.keys["Trovesaurus"]["Mods"])
+        mods_list = sorted(list(filter(lambda x: mod.lower() in x["name"].lower(),json.loads(await request.text()))), key=lambda x: -int(x["totaldownloads"]))
+        if not mods_list:
+            return await ctx.send("No mods found.")
+        i = 0
+        pages = []
+        for mod in mods_list:
+            i += 1
+            e = discord.Embed()
+            e.color = discord.Color.random()
+            e.timestamp = datetime.utcfromtimestamp(int(mod["date"]))
+            e.description = self.htmlhandler.handle(mod["description"])
+            e.title = mod["name"]
+            e.url = "https://trovesaurus.com/mod=" + mod["id"]
+            e.set_author(name=str(mod.get("author")) + (f" | Mod {i} out of {len(mods_list)}" if len(mods_list) > 1 else ""))
+            e.add_field(name="Type", value=mod["type"], inline=False)
+            e.add_field(name="Views", value=mod["views"])
+            e.add_field(name="Downloads", value=mod["totaldownloads"])
+            e.add_field(name="Likes", value=mod["votes"])
+            e.set_image(url=mod["image_full"])
+            e.set_footer(text=f"Source: Trovesaurus | ID: {mod['id']} | Created at", icon_url="https://trovesaurus.com/images/logos/Sage_64.png?1")
+            page = {
+                "content": None,
+                "page": i,
+                "embed": e
+            }
+            pages.append(page)
+        view = Paginator(ctx, pages, start_end=True)
+        view.message = await ctx.send(embed=pages[0]["embed"], view=view)    
 
 def setup(bot):
     bot.add_cog(Partner(bot))
