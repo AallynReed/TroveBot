@@ -106,6 +106,13 @@ class TroveTime():
         time_find = time_split - int(time_split)
         return int(time_find * 4)
 
+    def get_weekly_time(self, time):
+        time_elapsed = time.timestamp() - self.first_weekly_ds.timestamp()
+        weeks, _ = divmod(time_elapsed, self.week_length)
+        time_split = weeks / 4
+        time_find = time_split - int(time_split)
+        return int(time_find * 4)
+
     @property
     def luxion_time(self):
         time_elapsed = self.now.timestamp() - self.luxion.timestamp()

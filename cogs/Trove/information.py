@@ -65,7 +65,7 @@ class Information(commands.Cog):
             e.set_image(url=image.get("src"))
         await ctx.send(embed=e, ephemeral=True)
 
-    @commands.command(aliases=["chatcmd"])
+    @commands.command(slash_command=True, aliases=["chatcmd"], help="Show popular in game chats for different activities.")
     async def chats(self, ctx):
         chats = {
             "levi": "Join **Leviathan** farms in Geode Topside.",
@@ -84,7 +84,7 @@ class Information(commands.Cog):
         e.set_author(name="Joinable Chats in game", icon_url=self.bot.user.avatar)
         await ctx.send(embed=e)
 
-    @commands.command(aliases=["effort"])
+    @commands.command(slash_command=True, aliases=["effort"], help="Show sources of points towards effort leaderboards.")
     async def effort_leaderboard(self, ctx):
         e = CEmbed()
         e.set_author(name="Effort Contest Objectives", icon_url=ctx.guild.me.avatar)
@@ -122,7 +122,7 @@ class Information(commands.Cog):
         e.set_footer(text=f"Data provided by {self.bot.get_user(225585842654019584)}")
         await ctx.send(embed=e)
 
-    @commands.command(aliases=["lightsteps", "lsteps"])
+    @commands.command(slash_command=True, aliases=["lightsteps", "lsteps"], help="Show light steps in different game stages.")
     async def light_steps(self, ctx):
         e = CEmbed(title="Light Steps", color=discord.Color.random())
         e.set_image(url="https://i.imgur.com/FTN3hcc.png")
@@ -227,7 +227,7 @@ class Information(commands.Cog):
             await ctx.send("Try again in a few seconds, fetching info...")
             return
         sheet = self.bot.Trove.sheets["summer"]["Chaos Chests + Weekly"]
-        now = datetime.utcnow() - timedelta(hours=11)
+        now = self.bot.time.now
         if sheet["A10"].value.timestamp() + 86400 * 6 < now.timestamp():
             await ctx.send("Info fetched is outdated, try again later.")
             return
@@ -247,6 +247,40 @@ class Information(commands.Cog):
             e.add_field(name="\u200b", value="\u200b")
         e.add_field(name="\u200b", value="\u200b")
         await ctx.send(embed=e)
+
+    @commands.command(slash_command=True, help="Show daily and weekly bonuses.")
+    async def bonuses(self, ctx):
+        e = CEmbed(color=discord.Color.random())
+        e.set_author(name="Bonuses", icon_url=self.bot.user.avatar)
+        now = self.bot.time.now
+        now -= timedelta(hours=now.hour, minutes=now.minute, seconds=now.second)
+        daily_bonuses = ""
+        for i in range(7):
+            if i:
+                now += timedelta(seconds=86400)
+            daily_time = now + timedelta(hours=11)
+            daily = self.bot.Trove.daily_data[str(daily_time.weekday())]
+            if not i:
+                daily_bonuses += f"\\{daily['emoji']}{daily['name']} - Now"
+            else:
+                daily_bonuses += f"\n\\{daily['emoji']}{daily['name']} - <t:{int(daily_time.timestamp())}:R>"
+        now = self.bot.time.now
+        now -= timedelta(days=now.weekday(), hours=now.hour, minutes=now.minute, seconds=now.second)
+        weekly_bonuses = ""
+        for i in range(4):
+            if i:
+                now += timedelta(seconds=604800)
+            weekly_time = now + timedelta(hours=11)
+            weekly = self.bot.Trove.weekly_data[str(self.bot.time.get_weekly_time(weekly_time))]
+            if not i:
+                weekly_bonuses += f"\\{weekly['emoji']}{weekly['name']} - Now"
+            else:
+                weekly_bonuses += f"\n\\{weekly['emoji']}{weekly['name']} - <t:{int(weekly_time.timestamp())}:R>"
+        e.add_field(name="Daily Bonuses", value=daily_bonuses)
+        e.add_field(name="Weekly Bonuses", value=weekly_bonuses)
+        await ctx.reply(embed=e)
+
+        
 
     @commands.command(slash_command=True, help="Shows a list of prime numbers up to a 1000", aliases=["primes"])
     async def prime_numbers(self, ctx):

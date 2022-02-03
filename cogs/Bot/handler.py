@@ -82,7 +82,7 @@ class CommandHandler(commands.Cog):
                 pass
             if len(ctx.message.mentions) == 1 and ctx.guild.me in ctx.message.mentions and not ctx.message.reference:
                 prefix = await self.bot.prefix(bot=self.bot, message=message)
-                return await ctx.send(f"Your prefix is `{prefix[2]}`\nUse `{prefix[2]}prefix self <prefix>` to change your prefix.")
+                return await ctx.send(f"Your prefix is `{prefix[2]}`\nUse `{prefix[2]}prefix self <prefix>` to change your prefix.", delete_after=15)
 
     @commands.Cog.listener("on_message_edit")
     async def command_edit_handler(self, before, message):

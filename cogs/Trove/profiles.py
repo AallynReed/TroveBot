@@ -225,7 +225,12 @@ class Profiles(commands.Cog):
         profile["Collected Mastery"] = data["Mastery Info"]
         return profile, _class
 
-    @commands.group(invoke_without_command=True, aliases=["p", "prof"])
+    @commands.group(
+        slash_command=True,
+        help="Check out someone's profile or manage your own",
+        name="profile",
+        invoke_without_command=True,
+        aliases=["p", "prof"])
     async def profile(self, ctx, user: typing.Union[GameClass, discord.Member, TrovePlayer, discord.User, str]=None, _class: typing.Optional[GameClass]=None):
         await self._profile(ctx, user, _class)
 
@@ -242,8 +247,7 @@ class Profiles(commands.Cog):
         _class: typing.Optional[GameClass]=commands.Option(name="class", default=None, description="Input a class")):
         await self._profile(ctx, user, _class, 0)
 
-    async def _profile(self, ctx, user, _class, server=1):
-        await ctx.trigger_typing()
+    async def _profile(self, ctx, user, _class, server=1, is_active=False):
         if isinstance(user, TroveClass):
             _class = user
             user = None
@@ -319,15 +323,30 @@ class Profiles(commands.Cog):
             request = await self.session.post("https://trove.slynx.xyz/profiles/image", data=str(json.dumps(data)))
         except:
             return await ctx.send("Can't get profile right now, try again later.")
-        img = BytesIO(await request.read())
+        img = discord.File(BytesIO(await request.read()), filename="image.png")
         view = ProfileView(ctx, self._profile, user, classes, server)
-        view.message = await ctx.reply(file=discord.File(img, filename="image.png"), view=view if classes else None)
+        if is_active:
+            view.message = is_active
+            return view, img
+        view.message = await ctx.reply(file=img, view=view if classes else None)
 
-    @profile.command()
+    @profile.command(slash_command=True, name="show", help="Show your's or someone's profile.")
+    async def _show(self, ctx, 
+        user: typing.Union[GameClass, discord.Member, TrovePlayer, discord.User, str]=commands.Option(name="user_or_player", default=None, description="Input a user or player name"),
+        _class: typing.Optional[GameClass]=commands.Option(name="class", default=None, description="Input a class")):
+        await self._profile(ctx, user, _class)
+
+    @pprofile.command(slash_command=True, name="show", help="Show your's or someone's PTS profile.")
+    async def __show(self, ctx, 
+        user: typing.Union[GameClass, discord.Member, TrovePlayer, discord.User, str]=commands.Option(name="user_or_player", default=None, description="Input a user or player name"),
+        _class: typing.Optional[GameClass]=commands.Option(name="class", default=None, description="Input a class")):
+        await self._profile(ctx, user, _class, 0)
+
+    @profile.command(slash_command=True, help="Learn how to request a profile", name="request")
     async def request(self, ctx):
         await self.__request(ctx)
 
-    @pprofile.command(slash_command=False, help="Learn how to request a PTS profile", name="request")
+    @pprofile.command(slash_command=True, help="Learn how to request a PTS profile", name="request")
     async def _request(self, ctx):
         await self.__request(ctx)
 
@@ -342,11 +361,11 @@ class Profiles(commands.Cog):
         e.description += "Steam: \n  C:\Program Files (x86)\Steam\steamapps\common\Trove\Games\Trove\Live\```"
         await ctx.send(embed=e)
 
-    @profile.command()
+    @profile.command(name="primary", slash_command=True, help="Select which class is shown by default in your profile")
     async def primary(self, ctx, _class: GameClass):
         await self.__primary(ctx, _class)
 
-    @pprofile.command(name="primary", slash_command=False, help="Select which class is shown by default in your profile")
+    @pprofile.command(name="primary", slash_command=True, help="Select which class is shown by default in your PTS profile")
     async def _primary(self, ctx, _class: GameClass=commands.Option(name="class", description="Input a class")):
         await self.__primary(ctx, _class, 0)
 
@@ -360,11 +379,11 @@ class Profiles(commands.Cog):
             return await ctx.reply(f"You must submit that class first before setting it as primary.")
         await self.bot.db.db_profiles.update_one({"discord_id": ctx.author.id, "Bot Settings.Server": server}, {"$set": {"Bot Settings.Primary": _class.name}})
 
-    @profile.command(name="list")
+    @profile.command(name="list", slash_command=True, help="List all the classes you've submitted to your profile")
     async def _list(self, ctx, user: typing.Union[discord.User, str]=None):
         await self.__list_(ctx, user)
 
-    @pprofile.command(name="list", slash_command=False, help="List all the classes you've submitted to your PTS profile")
+    @pprofile.command(name="list", slash_command=True, help="List all the classes you've submitted to your PTS profile")
     async def __list(self, ctx, user: typing.Union[discord.User, str]=commands.Option(name="user_or_player", default=None, description="Input a user or a player")):
         await self.__list_(ctx, user, 0)
 
@@ -386,13 +405,18 @@ class Profiles(commands.Cog):
         e.set_thumbnail(url=primary.image)
         await ctx.reply(embed=e)
 
-    @profile.command(aliases=["hideclub", "show_club", "showclub"])
+    @profile.command(
+        name="hide_club",
+        slash_command=True,
+        help="Hide/Unhide a club from your profile", 
+        aliases=["hideclub", "show_club", "showclub"])
     async def hide_club(self, ctx, *, club):
         await self.__hide_club(ctx, club)
 
-    @pprofile.command(name="hide_club",
+    @pprofile.command(
+        name="hide_club",
         slash_command=True,
-        help="Hide/Unhide a club from your profile", 
+        help="Hide/Unhide a club from your PTS profile", 
         aliases=["hideclub", "show_club", "showclub"])
     async def _hide_club(self, ctx, *, club=commands.Option(name="club", description="Input a club name")):
         await self.__hide_club(ctx, club, 0)
@@ -413,13 +437,17 @@ class Profiles(commands.Cog):
                 return await self.bot.db.db_profiles.update_one({"discord_id": ctx.author.id, "Bot Settings.Server": server}, {"$set": {"Bot Settings.Hidden Clubs": hidden}})
         await ctx.send("That club is not in your clubs.")
 
-    @profile.command(aliases=["del"])
+    @profile.command(
+        name="delete",
+        slash_command=True,
+        help="Delete your profile", 
+        aliases=["del"])
     async def delete(self, ctx, user: typing.Union[discord.User, str]=None):
         await self.__delete(ctx, user)
 
     @pprofile.command(
         name="delete",
-        slash_command=False,
+        slash_command=True,
         help="Delete your PTS profile", 
         aliases=["del"])
     async def _delete(self, ctx, user: typing.Union[discord.User, str]=commands.Option(name="user_or_player", default=None, description="Input a user or player")):
@@ -456,29 +484,29 @@ class Profiles(commands.Cog):
                 pass
             return await ctx.send("Time out! Profile deletion was cancelled because you took to much time to answer.", delete_after=10)
 
-    @profile.command()
+    @profile.command(name="total", slash_command=True, help="Check amount of PTS profiles submitted")
     async def total(self, ctx):
         i = len(await self.bot.db.db_profiles.find({"Bot Settings.Server": 1}, {"discord_id": 1}).to_list(length=999999))
         await ctx.send(f"There's a total of **{i}** profiles.")
 
-    @pprofile.command(name="total", slash_command=False, help="Check amount of PTS profiles submitted")
+    @pprofile.command(name="total", slash_command=True, help="Check amount of PTS profiles submitted")
     async def _total(self, ctx):
         i = len(await self.bot.db.db_profiles.find({"Bot Settings.Server": 0}, {"discord_id": 1}).to_list(length=999999))
-        await ctx.send(f"There's a total of **{i}** profiles.")
+        await ctx.send(f"There's a total of **{i}** PTS profiles.")
 
-    @profile.command()
+    @profile.command(name="stats", slash_command=True, help="Check out the stats in your's or someone's profile")
     async def stats(self, ctx, user: typing.Union[discord.User, str]=None):
         await self.mastery_stats(ctx, user, "Stats")
 
-    @pprofile.command(name="stats", slash_command=False, help="Check out the stats in your/someone's PTS profile")
+    @pprofile.command(name="stats", slash_command=True, help="Check out the stats in your's or someone's PTS profile")
     async def _stats(self, ctx, user: typing.Union[discord.User, str]=commands.Option(name="user_or_player", default=None, description="Input a user or player")):
         await self.mastery_stats(ctx, user, "Stats", 0)
 
-    @profile.command()
+    @profile.command(slash_command=True, name="mastery", help="Check out the mastery your's or someone's profile")
     async def mastery(self, ctx, user: typing.Union[discord.User, str]=None):
         await self.mastery_stats(ctx, user, "Collected Mastery")
 
-    @pprofile.command(name="mastery", slash_command=False, help="Check out the mastery your/someone's profile")
+    @pprofile.command(slash_command=True, name="mastery", help="Check out the mastery your's or someone's PTS profile")
     async def _mastery(self, ctx, user: typing.Union[discord.User, str]=commands.Option(name="user_or_player", default=None, description="Input a user or player")):
         await self.mastery_stats(ctx, user, "Collected Mastery", 0)
 
@@ -510,7 +538,7 @@ class Profiles(commands.Cog):
         view = Paginator(ctx, pages, start_end=True)
         view.message = await ctx.reply(embed=pages[0]["embed"], view=view)
 
-    @profile.command()
+    @profile.command(slash_command=True, help="Export Live profile to PTS profile.")
     async def export(self, ctx):
         live_profile = await self.bot.db.db_profiles.find_one({"discord_id": ctx.author.id, "Bot Settings.Server": 1})
         if not live_profile:

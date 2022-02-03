@@ -74,7 +74,7 @@ class Calculations(commands.Cog):
                 if cost > 0:
                     cost_text += f"{resource}: **{cost:,}**\n"
             e.add_field(name=f"**Gem {i+1} Cost** | **{round(gems[i][1]*100, 2)}% Augmented**", value=cost_text, inline=False)
-        if len(gems):
+        if len(gems) > 1:
             cost_text = ""
             for resource, cost in total_costs.items():
                 if cost > 0:

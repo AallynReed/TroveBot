@@ -82,7 +82,7 @@ class Builds(commands.Cog):
                 await self.bot.db.db_users.update_one({"_id": build_data["creator"], "builds.saved.code": build_id}, {f"$inc": {"builds.saved.$.views": 1}})
                 creator = await self.bot.try_user(build_data['creator'])
             else:
-                await ctx.reply(f"Build ID doesn't correspond to any build in database.\nThis commands takes no arguments like class or type, it's just `{ctx.prefix}build`", delete_after=15, ephemeral=True)
+                await ctx.reply(f"Build ID doesn't correspond to any build in database.\nThis command takes no arguments like class or type, it's just `{ctx.prefix}build`", delete_after=15, ephemeral=True)
         view = GemBuildsView(ctx, build_data=build_data)
         view.message = await ctx.reply(
             content="Builds will only be calculated once all **Required** fields are filled in." if not build else f"Loaded **{build_data['code']}** by {creator.mention}",
@@ -90,11 +90,11 @@ class Builds(commands.Cog):
             allowed_mentions=discord.AllowedMentions.none()    
         )
 
-    @commands.group(slash_command=True, aliases=["builds_list", "builds"], help="Manage and show saved builds")
-    async def build_list(self, ctx):
+    @commands.group(slash_command=True, aliases=["build_list", "builds_list"], help="Manage and show saved builds")
+    async def builds(self, ctx):
         ...
 
-    @build_list.command(slash_command=True, name="list", help="List of all your saved builds.")
+    @builds.command(slash_command=True, name="list", help="List of all your saved builds.")
     async def _build_list_list(self, ctx):
         data = await self.bot.db.db_users.find_one({"_id": ctx.author.id}, {"builds": 1})
         if not data["builds"]["saved"]:
@@ -103,7 +103,7 @@ class Builds(commands.Cog):
         view = Paginator(ctx, pages, start_end=True)
         view.message = await ctx.reply(embed=pages[0]["embed"], view=view)
 
-    @build_list.command(slash_command=True, name="public", help="List of all public builds.")
+    @builds.command(slash_command=True, name="public", help="List of all public builds.")
     async def _build_list_public(self, ctx):
         data = await self.bot.db.db_users.find({"builds.saved": {"$elemMatch": {"public": True}}}).distinct("builds.saved")
         if not data:
@@ -113,7 +113,7 @@ class Builds(commands.Cog):
         view = Paginator(ctx, pages, start_end=True)
         view.message = await ctx.reply(embed=pages[0]["embed"], view=view)
 
-    @build_list.command(slash_command=True, name="like", aliases=["upvote"], help="Like a public build.")
+    @builds.command(slash_command=True, name="like", aliases=["upvote"], help="Like a public build.")
     async def _build_list_like(self, ctx, build_id=commands.Option(description="Build ID to like.")):
         try:
             build = await self._get_build(build_id, public=True)
@@ -130,7 +130,7 @@ class Builds(commands.Cog):
         await self.bot.db.db_users.update_one({"_id": build["creator"], "builds.saved.code": build_id}, {f"${update[1]}": {"builds.saved.$.likes": ctx.author.id}})
         return await ctx.send(f"You {update[0]} build with ID **{build_id}**")
     
-    @build_list.command(slash_command=True, name="delete", help="Delete one of your saved builds.")
+    @builds.command(slash_command=True, name="delete", help="Delete one of your saved builds.")
     async def _build_list_delete(self, ctx, build_id=commands.Option(description="Build ID to edit.")):
         try:
             build = await self._get_build(build_id, own=ctx.author)
@@ -150,7 +150,7 @@ class Builds(commands.Cog):
         await self.bot.db.db_users.update_one({"_id": ctx.author.id}, {"$pull": {"builds.saved": build}})
         return await ctx.reply(f"Build with id **{build['code']}** was deleted.", ephemeral=True)
 
-    @build_list.group(slash_command=True, name="set", aliases=["edit"], help="Edit your build's Metadata.")
+    @builds.group(slash_command=True, name="set", aliases=["edit"], help="Edit your build's Metadata.")
     async def _build_list_set_values(self, ctx):
         ...
 

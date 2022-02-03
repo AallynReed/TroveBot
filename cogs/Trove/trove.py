@@ -107,7 +107,7 @@ class Trove(commands.Cog):
 
  # Other Commands
 
-    @commands.command(name="betterdiscord", aliases=["bbd"])
+    @commands.command(slash_command=True, name="betterdiscord", aliases=["bbd"], help="Show code for better discord game tags.")
     async def _better_discord(self, ctx):
         e = CEmbed(description="Go to Custom CSS tab in your settings and then paste the following line onto it.```css\n@import url('https://trove.slynx.xyz/gametags');```**Hit update and save.**", color=discord.Color.random())
         e.set_author(name="Better Discord Trove Tags", icon_url=self.bot.user.avatar)

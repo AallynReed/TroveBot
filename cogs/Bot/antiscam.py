@@ -15,6 +15,7 @@ class ScamLogs(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.domain_regex = r"(?:[a-z0-9](?:[a-z0-9-]{0,63}[a-z0-9])?\.)+[a-z0-9][a-z0-9-]{0,63}[a-z0-9]"
+        self.warned_users = []
         self.clear_cache.start()
 
     def cog_unload(self):
@@ -180,7 +181,7 @@ class ScamLogs(commands.Cog):
 
     @commands.Cog.listener("on_message_edit")
     async def _message_edit_filter(self, _, message):
-        if message.author.id == self.bot.user.id:
+        if message.author.bot:
             return
         if not message.guild:
             return
@@ -210,6 +211,19 @@ class ScamLogs(commands.Cog):
             keys["domains"][domain] += 1
         await self.bot.db.db_servers.update_one({"_id": message.guild.id}, {"$inc": {"anti_scam.hit_count": 1}, "$set": {"anti_scam.domains": keys["domains"]}})
         await message.delete(silent=True)
+        if message.author.id not in self.warned_users:
+            self.warned_users.append(message.author.id)
+            try:
+                warning = f"Your account was caught sending scam links in the server **{message.guild}** | chat {message.channel.mention}"
+                warning += "\n\nWhile punishments may still be applied regardless of this warning. This serves only to help you regain access to your account."
+                warning += "\nYou can start by changing your password, this will change a randomly generated token that is most likely being used to control your account."
+                warning += "\nAfter changing your password, you should enable 2FA to make sure that even if someone gets their hands on your credentials, they'll need to verify through phone or 2FA App."
+                warning += "\nTo further help you stay safe, be sure to not click any links claiming to give you free nitro, usually those are only `discord.gift`"
+                warning += "\nIf a URL forces you to leave app to accept nitro gift, it's most likely a scam. Make sure to check URL before clicking any links."
+                warning += "\nIf for some reason you can't use your password or email, make sure to contact discord support at https://dis.gd/support on Help & Support > Hacked Account"
+                await message.author.send(warning)
+            except:
+                ...
         if settings["mode"] == -1:
             ...
         elif settings["mode"] == 0:

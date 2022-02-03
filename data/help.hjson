@@ -141,7 +141,7 @@
         ],
         "hidden": false
     },
-    "build_list": {
+    "builds": {
         "module": "builds",
         "description": "Manage and show saved builds.",
         "example": "{prefix}build_list",
@@ -206,8 +206,8 @@
             }
         },
         "aliases": [
-            "builds_list",
-            "builds"
+            "build_list",
+            "builds_list"
         ],
         "hidden": false
     },
@@ -470,6 +470,14 @@
         "hidden": false
     },
 # Information
+    "bonuses": {
+        "module": "information",
+        "description": "Show daily and weekly bonuses.",
+        "example": "{prefix}bonuses",
+        "subcommands": {},
+        "aliases": [],
+        "hidden": false
+    },
     "calendar": {
         "module": "information",
         "description": "Check out Trovesaurus calendar.",

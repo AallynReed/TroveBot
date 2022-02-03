@@ -83,6 +83,15 @@ class Owner(commands.Cog):
 
     @commands.command(hidden=True)
     @perms.admins()
+    async def slashless(self, ctx):
+        text = ""
+        for command in self.bot.commands:
+            if not command.slash_command and not command.hidden:
+                text += f"{command.name}\n"
+        await ctx.send(text)
+
+    @commands.command(hidden=True)
+    @perms.admins()
     async def helpless(self, ctx):
         data = hjson.loads(open("data/help.hjson").read()).keys()
         commands = []

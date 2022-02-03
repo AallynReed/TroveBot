@@ -23,7 +23,7 @@ class BaseView(discord.ui.View):
             timeout=timeout
         )
 
-    async def interaction_check(self, interaction: discord.Interaction):
+    async def interaction_check(self, item, interaction: discord.Interaction):
         if self.ctx.author == interaction.user:
             return True
         else:
@@ -280,20 +280,20 @@ class ProfileView(BaseView):
             _class = classes[i]
             if i in [4, 8, 12, 16]:
                 y += 1
-            self.add_item(ProfileButton(ctx, get_profile, user, _class, server, row=y))
+            self.add_item(ProfileButton(get_profile, user, _class, server, row=y))
 
 class ProfileButton(discord.ui.Button["ProfileView"]):
-    def __init__(self, ctx, get_profile, user, _class, server, row):
+    def __init__(self, get_profile, user, _class, server, row):
         super().__init__(style=discord.ButtonStyle.secondary, emoji=_class.emoji, row=row)
-        self.ctx = ctx
         self.user = user
         self.server = server
         self._class = _class
         self.get_profile = get_profile
 
     async def callback(self, interaction: discord.Interaction):
-        await interaction.message.delete()
-        await self.get_profile(self.ctx, self.user, self._class, self.server)
+        await interaction.response.defer()
+        view, image = await self.get_profile(self.view.ctx, self.user, self._class, self.server, is_active=self.view.message)
+        await self.view.message.edit(view=view, file=image)
 
 # Gear Builds View
 
@@ -314,9 +314,10 @@ class BuildsOptions(discord.ui.Select):
         return emotes[build_type]
 
     async def callback(self, interaction: discord.Interaction):
+        await interaction.response.defer()
         self.view.build_type = self.values[0].lower()
         self.view.setup_buttons()
-        await interaction.response.edit_message(content=None, embed=self.view.build["embed"], view=self.view)
+        await self.view.message.edit(content=None, embed=self.view.build["embed"], view=self.view)
 
 class BuildClassOptions(discord.ui.Select):
     def __init__(self, view, row=0):
@@ -328,11 +329,12 @@ class BuildClassOptions(discord.ui.Select):
         super().__init__(placeholder=f"Pick a class (Required)", options=select, row=row)
     
     async def callback(self, interaction: discord.Interaction):
+        await interaction.response.defer()
         self.view._class = self.values[0]
         if self.view.build_type and self.view.build_type not in self.view.all_gears[self.view._class].keys():
             self.view.build_type = None
         self.view.setup_buttons()
-        await interaction.response.edit_message(
+        await self.view.message.edit(
             content=f"Pick a build type for **{self.view._class}**" if not self.view.build_type else None,
             embed=self.view.build["embed"] if self.view.build else None,
             view=self.view
@@ -430,7 +432,18 @@ class GemBuildsButton(GemBaseButton):
             await self.view.ctx.bot.db.db_users.update_one({"_id": self.view.ctx.author.id}, {"$pull": {"builds.saved": self.view.build_data}})
             self.view.build_data["config"] = copy(self.view.build_arguments.__dict__)
             self.view.build_data["last_updated"] = time
-            await self.view.ctx.bot.db.db_users.update_one({"_id": self.view.ctx.author.id}, {"$push": {"builds.saved": self.view.build_data}})
+            await self.bot.db.db_users.update_one(
+                {
+                    "_id": self.view.ctx.author.id,
+                    "builds.saved.code": self.view.build_data["code"]
+                },
+                {
+                    f"$set": {
+                        "builds.saved.$.config": self.view.build_data["config"],
+                        "builds.saved.$.last_updated": self.view.build_data["last_updated"]
+                    }
+                }
+            )
             await interaction.response.send_message(f"Build with ID **{self.view.build_data['code']}** was updated.", ephemeral=True)
             self.view.setup_buttons()
         elif str(self.emoji) == "✏️":
@@ -552,8 +565,8 @@ class GemBuildsInput(GemBaseButton):
             await message.delete()
         except:
             pass
-        if wrong:
-            await self.interaction.followup.send(f"Invalid input\n{self.hint}", ephemeral=True)
+        # if wrong:
+        #     await self.interaction.followup.send(f"Invalid input\n{self.hint}", ephemeral=True)
 
     def validate_build(self, argument):
         regex = r"([0-9]{1})[\/]([0-9]{1})[\/ ]([0-9]{1,2})[\/]([0-9]{1,2})(?:(?: )?[\/+ ](?: )?([0-9]{1})[\/]([0-9]{1})(?:[\/ ]([0-9]{1})[\/ ]([0-9]{1}))?[\/ ]([0-9]{1})[\/]([0-9]{1}))?"

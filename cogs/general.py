@@ -60,7 +60,7 @@ class General(commands.Cog):
         e.add_field(name="Invite me", value=f"[Here]({self.bot.invite})")
         await ctx.reply(embed=e)
 
-    @commands.command(aliases=["mutual"])
+    @commands.command(slash_command=True, aliases=["mutual"], help="Show mutual servers with bot.")
     async def mutual_servers(self, ctx,* , user: typing.Union[discord.Member, discord.User]=None):
         user = user or ctx.author
         members = sorted([g.get_member(user.id) for g in self.bot.guilds], key=lambda x: x.joined_at.timestamp() if x else 0)
@@ -71,7 +71,7 @@ class General(commands.Cog):
         e.set_author(name=f"Mutual servers with {user}", icon_url=user.avatar)
         await ctx.reply(embed=e)
 
-    @commands.command(aliases=["ga"])
+    @commands.command(slash_command=True, aliases=["ga"], help="Show information about giveaways on bot.")
     @commands.bot_has_permissions(embed_links=1)
     async def giveaway(self, ctx):
         return await ctx.reply("There's no giveaway currently going on.", delete_after=8)
@@ -189,7 +189,7 @@ class General(commands.Cog):
     async def support(self, ctx):
         await ctx.send("Join support.\nhttps://discord.gg/YAY3jz4rNG", ephemeral=True)
 
-    @commands.command(aliases=["ji"])
+    @commands.command(slash_command=True, aliases=["ji"], help="Show information about a user's join to the server.")
     @commands.bot_has_permissions(embed_links=1)
     async def join_info(self, ctx, user: discord.Member=None):
         if user == None:
@@ -202,7 +202,7 @@ class General(commands.Cog):
         e.add_field(name="Joined server after creation", value=f"{self.bot.utils.time_str(user.joined_at.timestamp() - user.created_at.timestamp(), abbr=True)[1]}", inline=False)
         await ctx.send(embed=e)
 
-    @commands.command(aliases=["jil"])
+    @commands.command(slash_command=True, aliases=["jil"], help="Show list of users that joined based on some time range.")
     @commands.bot_has_permissions(embed_links=1)
     async def join_info_list(self, ctx, *, time: str):
         try:
@@ -290,7 +290,7 @@ class General(commands.Cog):
         # e=CEmbed(title=f"**Communities you can find Trove bot in** ({i})",description=msg, color=self.comment)
         await ctx.send("https://trove.slynx.xyz/communities")#embed=e)
 
-    @commands.command(aliases=["iu"])
+    @commands.command(slash_command=False, aliases=["iu"])
     @commands.bot_has_permissions(embed_links=1)
     async def imgur_upload(self, ctx):
         try:
