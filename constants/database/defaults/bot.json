@@ -1,0 +1,23 @@
+{
+    "_id": "0511",
+    "metadata": {
+        "version": "4.0.000",
+        "last_update": 0
+    },
+    "constants": {
+        "administrators": [],
+        "authors": []
+    },
+    "trove_constants": {
+        "mastery": {
+            "last_trove_update": 0,
+            "last_geode_update": 0,
+            "max_live_mastery_trove": 0,
+            "max_live_mastery_geode": 0,
+            "max_pts_mastery_trove": 0,
+            "max_pts_mastery_geode": 0,
+            "max_console_mastery_trove": 0,
+            "max_console_mastery_geode": 0
+        }
+    }
+}

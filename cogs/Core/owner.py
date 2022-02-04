@@ -11,10 +11,10 @@ import hjson
 from discord.ext import commands
 from discord.utils import find
 
-import utils.checks as perms
-from utils.buttons import Paginator, Traceback
-from utils.CustomObjects import CEmbed, TimeConverter
-from utils.modules import get_loaded_modules
+import core.checks as perms
+from core.buttons import Paginator, Traceback
+from core.objects import CEmbed, TimeConverter
+from core.modules import get_loaded_modules
 
 
 class Owner(commands.Cog):
@@ -26,7 +26,7 @@ class Owner(commands.Cog):
         pages = []
         async for message in self.bot.get_channel(922275962861801503).history(limit=10000):
             e = CEmbed(description=message.content, color=discord.Color.random())
-            if self.bot.version in message.content:
+            if self.bot.version[0] in message.content:
                 e.set_author(name="Change Log - Latest", icon_url=self.bot.user.avatar)
             else:
                 e.set_author(name="Change Log", icon_url=self.bot.user.avatar)
@@ -311,7 +311,7 @@ class Owner(commands.Cog):
                 else:
                     modulesi += "📤 **" + module.name.capitalize() + f"** {size}KB\n"
         modulesi += f"\nTotal: {round(total_size/1024, 2)}KB"
-        embed=CEmbed(colour=self.bot.comment, title=f"Modules - {len(modules)}", description=modulesi)
+        embed=CEmbed(colour=0x0000bb, title=f"Modules - {len(modules)}", description=modulesi)
         await ctx.reply(embed=embed)
 
     @commands.command(aliases=["ul"], hidden=True)
@@ -370,29 +370,6 @@ class Owner(commands.Cog):
                     await ctx.reply(f"Successfully loaded **{module.name}**")
             except Exception as e:
                 await ctx.reply(f"```py\n#Failed to reload **{module.name}**\n\n{str(type(e))}: {e}```")
-
-    @commands.command(aliases=["sf"], hidden=True)
-    @perms.owners()
-    async def send_file(self, ctx, *, file):
-        if ctx.author.id not in self.bot.admin_ids:
-            return
-        try:
-            await ctx.author.send(file=discord.File(file))
-            await ctx.message.add_reaction("✅")
-        except:
-            await ctx.send("No file found.")
-
-    @commands.command(aliases=["rf"], hidden=True)
-    @perms.owners()
-    async def receive_file(self, ctx, *, file):
-        if ctx.author.id not in self.bot.admin_ids:
-            return
-        try:
-            await ctx.message.attachments[0].save(file)
-            await ctx.message.delete()
-            await ctx.send("File Saved.")
-        except:
-            await ctx.send("No file found.")
 
 def setup(bot):
     n = Owner(bot)
