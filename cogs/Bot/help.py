@@ -120,7 +120,7 @@ class Help(commands.Cog):
             e.color = discord.Color.random()
             e.set_author(name=f"Help | {x} Total Commands", icon_url=self.bot.user.avatar)
             e.description = "" if ctx.guild.id not in [118027756075220992] else "**Trovesaurus has a limited feature set.** To access other features, add the bot to your own server.\n\n"
-            e.description += f"Bot is now on version **{self.bot.version}** check changes with `{ctx.prefix}change_log`\n"
+            e.description += f"Bot is now on version **{self.bot.version[0]}** released <t:{self.bot.version[1]}:R>, check changes with `{ctx.prefix}change_log`\n"
             e.description += "\n**Modules:**\n\n"
             e.description += "\n".join(sorted([f"`{m.capitalize()}`\n{module_descriptions[m]}\n" for m in commands_list.keys()]))
             e.description += f"\n**Want to add the bot to your own server feel free to do so [here]({self.bot.invite})**\nNeed help? Want to discuss something about the bot? [`Join support server`](https://trove.slynx.xyz/support) you can also get help through bot DM's"

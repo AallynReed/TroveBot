@@ -318,7 +318,6 @@ class Builds(commands.Cog):
         builds_data = await self.bot.db.db_users.find(query, {"builds": 1}).distinct("builds.saved")
         if not builds_data:
             raise Exception(("You don't have a" if own else "There's no") + " build with that ID")
-        print(builds_data)
         for build in builds_data:
             if build_id == build["code"]:
                 if public and not build["public"]:

@@ -369,7 +369,7 @@ class Partner(commands.Cog):
                 res["postname"] = f"{nav}/{res['name']}"
                 items.append(res)
         if not items:
-            return await ctx.send(f"No items match `{search}` in the following categories: `{'`, `'.join([i.capitalize() for i in whitelist])}`")
+            return await ctx.send(f"No items match `{search}` in the following categories: `{'`, `'.join([i.capitalize() for i in whitelist])}`", ephemeral=True)
         e = discord.Embed()
         e.color = discord.Color.random()
         e.description = ""

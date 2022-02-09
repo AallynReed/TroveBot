@@ -164,7 +164,7 @@ class Trove(commands.AutoShardedBot):
         self.success = 0x008000
         self.error = 0x800000
         self.progress = 0xf9d71c
-        self.version = "3.3.36"
+        self.version = "3.3.44", 1644410326
         self.time = TroveTime()
         self.uptime = datetime.utcnow().timestamp()
         self._last_exception = None
@@ -206,7 +206,7 @@ class Trove(commands.AutoShardedBot):
             "n!help",
             "slynx.xyz/trovebot",
             f"in {len(self.guilds)} communities",
-            f"v{self.version}"
+            f"v{self.version[0]}"
         ]
         for status in statuses:
             await self.change_presence(

@@ -26,7 +26,7 @@ class Owner(commands.Cog):
         pages = []
         async for message in self.bot.get_channel(922275962861801503).history(limit=10000):
             e = CEmbed(description=message.content, color=discord.Color.random())
-            if self.bot.version in message.content:
+            if self.bot.version[0] in message.content:
                 e.set_author(name="Change Log - Latest", icon_url=self.bot.user.avatar)
             else:
                 e.set_author(name="Change Log", icon_url=self.bot.user.avatar)

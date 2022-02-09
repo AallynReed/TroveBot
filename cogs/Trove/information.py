@@ -8,7 +8,7 @@ import discord
 from bs4 import BeautifulSoup
 from discord.ext import commands
 from tabulate import tabulate
-from utils.buttons import GemTutorial
+from utils.buttons import GemTutorial, Paginator
 from utils.CustomObjects import CEmbed
 
 
@@ -357,6 +357,44 @@ class Information(commands.Cog):
         view = GemTutorial(ctx, tabs, topics)
         view.message = await ctx.reply(embed=e, view=view)
 
+    @commands.command(slash_command=True, message_command=False, help="Look for keywords in previous patch notes")
+    async def search_post(self, ctx,
+        _filter: typing.Literal["PTS Patches", "Live Patches", "Console Patches"]=commands.Option(name="filter", default=None, description="Filter posts to find keywords in."),
+        keywords=commands.Option(description="Filter posts by keywords, keywords separated with ;")
+    ):
+        keywords = keywords.split(";")
+        kws = "` `".join(keywords)
+        found_posts = []
+        async for post in self.bot.db.db_forums.find({}):
+            if _filter and _filter != post["type"]:
+                continue
+            if not (content := post.get("content")):
+                continue
+            posti = [kw for kw in keywords if kw.lower() not in content.lower()]
+            if not posti:
+                found_posts.append(post)
+        if not found_posts:
+            return await ctx.send(f"No posts matching keywords `{kws}` were found.", ephemeral=True)
+        found_posts.sort(key=lambda x: -x["created_at"])
+        raw_pages = self.bot.utils.chunks(found_posts, 4)
+        pages = []
+        i = 0
+        for raw_page in raw_pages:
+            i += 1
+            e = CEmbed(description=f"Posts for `{kws}`")
+            e.set_author(name=f"Forum Posts Search [{i}/{len(raw_pages)}]")
+            for post in raw_page:
+                e.add_field(name=f"[{post['_id']}] {post['title']}", value=f"[Check out here](https://trove.slynx.xyz/posts/{post['_id']}/)\nBy {post['author']}\nPosted on <t:{int(post['created_at'])}:D>\n[Forums Link]({post['link']})\n\u200b", inline=False)
+            page = {
+                "content": None,
+                "page": i,
+                "embed": e
+            }
+            pages.append(page)
+        view = Paginator(ctx, pages, start_end=True)
+        view.message = await ctx.send(embed=pages[0]["embed"], view=view)
+        
+            
 
 def setup(bot):
     bot.add_cog(Information(bot))

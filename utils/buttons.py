@@ -429,10 +429,9 @@ class GemBuildsButton(GemBaseButton):
             await interaction.response.send_message(f"Build was saved with ID -> **{data['code']}**\nCheck out `{self.view.ctx.prefix}builds list`", ephemeral=True)
         elif str(self.emoji) == "📥":
             time = int(datetime.utcnow().timestamp())
-            await self.view.ctx.bot.db.db_users.update_one({"_id": self.view.ctx.author.id}, {"$pull": {"builds.saved": self.view.build_data}})
             self.view.build_data["config"] = copy(self.view.build_arguments.__dict__)
             self.view.build_data["last_updated"] = time
-            await self.bot.db.db_users.update_one(
+            await self.view.ctx.bot.db.db_users.update_one(
                 {
                     "_id": self.view.ctx.author.id,
                     "builds.saved.code": self.view.build_data["code"]
@@ -572,7 +571,7 @@ class GemBuildsInput(GemBaseButton):
         regex = r"([0-9]{1})[\/]([0-9]{1})[\/ ]([0-9]{1,2})[\/]([0-9]{1,2})(?:(?: )?[\/+ ](?: )?([0-9]{1})[\/]([0-9]{1})(?:[\/ ]([0-9]{1})[\/ ]([0-9]{1}))?[\/ ]([0-9]{1})[\/]([0-9]{1}))?"
         res = re.findall(regex, argument)
         if res:
-            res = self.chunk_builds([int(i) for i in list(res[0]) if i], 2)
+            res = self.chunk_builds([int(i) for i in list(res[0]) if i])
             if self.is_valid_build(res):
                 return res
         return False
@@ -601,28 +600,28 @@ class GemBuildsInput(GemBaseButton):
             return False
         return True
 
-    def chunk_builds(self, lst, n):
+    def chunk_builds(self, lst):
         result = []
         if len(lst) in [4, 8]:
             for i in range(0, len(lst), 2):
-                result.append(tuple(lst[i:i + 2]))
+                result.append(list(lst[i:i + 2]))
             if len(lst) == 4:
-                result.append((0,0,3))
-                result.append((0,0,6))
+                result.append([0,0,3])
+                result.append([0,0,6])
             if len(lst) == 8:
                 y = sum(result[2])
-                result[2] = tuple(list(result[2]) + [3-y])
+                result[2] = list(list(result[2]) + [3-y])
                 y = sum(result[3])
-                result[3] = tuple(list(result[3]) + [6-y])
+                result[3] = list(list(result[3]) + [6-y])
 
         else:
             first_lst = lst[:4]
             for i in range(0, len(first_lst), 2):
-                result.append(tuple(first_lst[i:i + 2]))
+                result.append(list(first_lst[i:i + 2]))
             first_lst = lst[4:]
             for i in range(0, len(first_lst), 3):
-                result.append(tuple(first_lst[i:i + 3]))
-        return tuple(result)
+                result.append(list(first_lst[i:i + 3]))
+        return result
 
     def build_text(self, b):
         build = []
@@ -812,7 +811,8 @@ class GemBuildsView(BaseView):
             #self.add_item(GemBuildsToggle(self, "mod", "Mod Coeff", False, disabled=self.build_arguments.build_type=="health", row=3)) # Mod
             self.add_item(GemBuildsToggle(self, "primordial", "Cosmic Primordial", False, row=3))
             self.add_item(GemBuildsToggle(self, "crystal5", "Crystal 5", False, row=3))
-            self.add_item(GemBuildsButton(self, "Page Mode", "📑", row=3))
+            if not self.build_arguments.build:
+                self.add_item(GemBuildsButton(self, "Page Mode", "📑", row=3))
             if not getattr(self, "build_data"):
                 self.add_item(GemBuildsButton(self, "Save Build", "📤", row=4))
             elif self.build_data and self.ctx.author.id == self.build_data["creator"]:

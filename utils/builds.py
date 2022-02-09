@@ -89,7 +89,8 @@ class BuildsMaker():
         filt = self.build_part(self.arguments.filter)[0] if self.arguments.filter else self.arguments.filter
         builds = []
         builder = self._generate_combinations(coeff=self.arguments.build_type in ["health", "coeff"], light=self.arguments.light)
-        for build in builder:
+        for buildi in builder:
+            build = list(buildi)
             if filt and filt not in build:
                 continue
             gem_damage, gem_critical_damage, gem_light = self._get_gem_build_stats(build, prim=self.arguments.primordial, health=self.arguments.build_type=="health")
@@ -327,13 +328,13 @@ class BuildsMaker():
         return part, "/".join([str(i) for i in part])
 
     def _generate_combinations(self, coeff=False, light=False):
-        tuples1 = []
+        eemp = []
         for i in range(10):
-            tuples1.append((i, 9 - i))
-        tuples2 = []
+            eemp.append([i, 9 - i])
+        eless = []
         for i in range(19):
-            tuples2.append((i, 18 - i))
-        tuples3 = []
+            eless.append([i, 18 - i])
+        cemp = []
         for x in range(4):
             for y in range(4):
                 for z in range(4):
@@ -343,8 +344,8 @@ class BuildsMaker():
                         continue
                     if not light and not coeff and z != 3:
                         continue
-                    tuples3.append((x, y, z))
-        tuples4 = []
+                    cemp.append([x, y, z])
+        cless = []
         for x in range(7):
             for y in range(7):
                 for z in range(7):
@@ -354,8 +355,8 @@ class BuildsMaker():
                         continue
                     if not light and not coeff and z != 6:
                         continue
-                    tuples4.append((x, y, z))
-        return itertools.product(tuples1, tuples2, tuples3, tuples4)
+                    cless.append([x, y, z])
+        return itertools.product(eemp, eless, cemp, cless)
     
     def _get_gem_build_stats(self, build, prim=False, health=False):
         lesser_base_light = self.values.lesser_base_light
