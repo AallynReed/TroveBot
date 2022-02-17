@@ -58,7 +58,7 @@ class Builds(commands.Cog):
         self.values.update_gear_builds()
         await ctx.reply("Updated gear builds.")
 
-    @commands.command(slash_command=True, aliases=["gem", "gems"], help="Show gem builds for a class.")
+    @commands.command(aliases=["gem", "gems"], help="Show gem builds for a class.")
     @commands.cooldown(1, 180, commands.BucketType.user)
     @commands.bot_has_permissions(embed_links=1)
     async def build(self, ctx, build_id=commands.Option(default=None, description="Load your's or someone's saved build")):

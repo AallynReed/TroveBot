@@ -80,7 +80,7 @@ class Calculations(commands.Cog):
                 if cost > 0:
                     cost_text += f"{resource}: **{cost:,}**\n"
             e.add_field(name=f"---------------------------------------------------\n**Total Cost**", value=cost_text, inline=False)
-        else:
+        elif not gems:
             e.add_field(name="No valid gems given.", value="\u200b")
         await ctx.send(embed=e)
 

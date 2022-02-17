@@ -7,6 +7,8 @@ from random import choices
 from string import ascii_letters, digits
 
 import discord
+from discord import Embed
+from discord.embeds import EmptyEmbed
 
 from utils.builds import BuildsMaker
 from utils.CustomObjects import CEmbed, Dict
@@ -33,8 +35,124 @@ class BaseView(discord.ui.View):
     async def on_timeout(self):
         try:
             await self.message.edit(view=None)
-        except:
+        except Exception:
             pass
+
+class Page(Embed):
+    def __init__(self, content=None, files=None, embed=True, **kwargs):
+        super().__init__(**kwargs)
+        self.embed = embed
+        self.content = content
+        self.attachments = files or []
+
+    async def send(self, messageable, view=None):
+        return await messageable(content=self.content, files=self.attachments, embed=self if self.embed else None, view=view)
+
+    async def edit(self, editable, view=None):
+        await editable(content=self.content, files=self.attachments, embed=self if self.embed else None, view=view)
+
+    def set_author(self, *, name, url=EmptyEmbed, icon_url=EmptyEmbed):
+        return super().set_author(name=name, url=url, icon_url=icon_url or Embed.Empty)
+
+    def set_footer(self: Embed, *, text = EmptyEmbed, icon_url = EmptyEmbed):
+        return super().set_footer(text=text, icon_url=icon_url or Embed.Empty)
+
+    def set_thumbnail(self, *, url):
+        return super().set_thumbnail(url=url or Embed.Empty)
+
+    def set_image(self, *, url):
+        return super().set_image(url=url or Embed.Empty)
+
+class Pager(BaseView):
+    def __init__(self, ctx, initial_page=0, start_end=False, step_10=False, timeout=120):
+        super().__init__(
+            timeout=timeout
+        )
+        self.ctx = ctx
+        self.start_end = start_end
+        self.step_10 = step_10
+        self.index = initial_page
+        self.pages = []
+        self.started = False
+    
+    def start(self):
+        if self.started:
+            raise RuntimeError("This paginator was already started")
+        self.add_buttons()
+        return self
+
+    @property
+    def count(self):
+        return len(self.pages)
+    
+    @property
+    def selected_page(self):
+        return self.pages[self.index]
+
+    @property
+    def button_values(self):
+        return {
+            "◀️": -1,
+            "▶️": 1,
+            "⏮️": -self.index,
+            "⏪": -10,
+            "⏩": 10,
+            "⏭️": self.count-1-self.index
+        }
+
+    def add_page(self, page: Page):
+        self.pages.append(page)
+
+    def remove_page(self, page: Page):
+        self.pages.remove(page)
+
+    def make_page(self, content: str=None, files: list=None, embed: bool=True, **kwargs):
+        page = Page(content=content, files=files, embed=embed, **kwargs)
+        self.pages.append(page)
+        return page
+
+    def get_page(self, page: int):
+        if page > self.count - 1:
+            raise ValueError("Index not a valid page number")
+        self.index = page
+        return self.selected_page
+
+    def add_buttons(self, change=None):
+        non_page_buttons = [item for item in self.children if not isinstance(item, PagerButton)]
+        if self.children:
+            self.clear_items()
+
+        if not self.count or self.count == 1:
+            return
+
+        if change:
+            self.get_index(self.button_values[str(change)])
+
+        self.add_item(PagerButton(emoji="◀️"))
+        self.add_item(PagerButton(emoji="▶️"))
+        if self.start_end and self.count > 5:
+            if self.index != 0:
+                self.add_item(PagerButton(emoji="⏮️"))
+        if self.step_10 and self.count > 10:
+            self.add_item(PagerButton(emoji="⏪"))
+            self.add_item(PagerButton(emoji="⏩"))
+        if self.start_end and self.count > 5:
+            if self.index != self.count - 1:
+                self.add_item(PagerButton(emoji="⏭️"))
+
+        for item in non_page_buttons:
+            self.add_item(item)
+
+    def get_index(self, diff: int):
+        self.index = (self.index + diff) % self.count
+
+class PagerButton(discord.ui.Button["Pager"]):
+    def __init__(self, **kwargs):
+        super().__init__(style=discord.ButtonStyle.secondary, **kwargs)
+
+    async def callback(self, _: discord.Interaction):
+        self.view.add_buttons(self.emoji)
+        await self.view.selected_page.edit(self.view.message.edit, view=self.view)
 
 ## Static
 
@@ -167,7 +285,7 @@ class HelpView(BaseView):
         #await super().on_timeout()
         try:
             await self.message.delete()
-        except:
+        except Exception:
             pass
 
     def get_buttons(self):
@@ -369,7 +487,7 @@ class BuildsPickView(BaseView):
         if ctx.guild.id == 118027756075220992 and self.build_type:
             try:
                 await ctx.message.delete()
-            except:
+            except Exception:
                 pass
             try:
                 channel = self.message.channel
@@ -378,16 +496,16 @@ class BuildsPickView(BaseView):
                 await message.add_reaction("👁️")
                 # await self.message.edit(content=f"{ctx.author.mention} used `{ctx.prefix}gear` for **{self._class} {self.build_type.capitalize()} General build** automatically hidden after 5 minutes. Click the 👁️ to show\nYou may also follow this link <{self.build['link']}> for this build.", suppress=True)
                 # await self.message.add_reaction("👁️")
-            except:
+            except Exception:
                 return
         elif not self.build_type:
             try:
                 await ctx.message.delete()
-            except:
+            except Exception:
                 pass
             try:
                 await self.message.delete()
-            except:
+            except Exception:
                 pass
 
 # Gem Builds View
@@ -562,7 +680,7 @@ class GemBuildsInput(GemBaseButton):
     async def delete_msg(self, message, wrong=False):
         try:
             await message.delete()
-        except:
+        except Exception:
             pass
         # if wrong:
         #     await self.interaction.followup.send(f"Invalid input\n{self.hint}", ephemeral=True)
@@ -763,7 +881,7 @@ class GemBuildsView(BaseView):
         if ctx.guild.id == 118027756075220992:
             try:
                 await ctx.message.delete()
-            except:
+            except Exception:
                 pass
             try:
                 channel = self.message.channel
@@ -772,7 +890,7 @@ class GemBuildsView(BaseView):
                 await message.add_reaction("👁️")
                 # await self.message.edit(content=f"{ctx.author.mention} used `{ctx.prefix}build` for **{self.build_arguments._class} {self.build_arguments.build_type.capitalize()} Gem build** automatically hidden after 5 minutes. Click the 👁️ to show.", suppress=True, view=None)
                 # await self.message.add_reaction("👁️")
-            except:
+            except Exception:
                 pass
 
     def setup_buttons(self, paginate=False, just_started=False):

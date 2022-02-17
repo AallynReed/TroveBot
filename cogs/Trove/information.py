@@ -280,8 +280,6 @@ class Information(commands.Cog):
         e.add_field(name="Weekly Bonuses", value=weekly_bonuses)
         await ctx.reply(embed=e)
 
-        
-
     @commands.command(slash_command=True, help="Shows a list of prime numbers up to a 1000", aliases=["primes"])
     async def prime_numbers(self, ctx):
         prime_numbers = list(self.bot.utils.primes(1, 1000))

@@ -599,10 +599,6 @@ class General(commands.Cog):
         full_summary.append({"content": None, "embed":e})
         return full_summary + channels_summary 
 
-    @debug.command()
-    async def info(self, ctx):
-        ...
-
 def setup(bot):
     n = General(bot)
     bot.add_cog(n)

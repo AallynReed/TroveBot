@@ -5,6 +5,7 @@ import os
 import re
 import traceback
 from datetime import datetime
+from typing import Union
 
 import discord
 import hjson
@@ -20,6 +21,26 @@ from utils.modules import get_loaded_modules
 class Owner(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+
+    @commands.command()
+    async def check_app(self, ctx, application: Union[discord.User, int]):
+        if isinstance(application, int):
+            u = await self.bot.fetch_user(application)
+        if not application.bot:
+            return await ctx.send("That's not an application")
+        u = f"/applications/{application.id}/rpc"
+        r = discord.http.Route("GET", u, bot_id=application.id)
+        res = await self.bot.http.request(r) 
+        info = discord.PartialAppInfo(state=self.bot._connection, data=res)
+        e = CEmbed(description=info.description)
+        e.set_author(name=info.name, icon_url=info.icon)
+        e.set_thumbnail(url=info.icon.url)
+        if info.privacy_policy_url:
+            e.add_field(name="Privacy Policy", value=info.privacy_policy_url)
+        if info.terms_of_service_url:
+            e.add_field(name="Terms of Service", value=info.terms_of_service_url)
+        e.set_footer(text=f"App ID: {info.id}")
+        await ctx.send(embed=e)
 
     @commands.command(slash_command=True, aliases=["changelog", "cl"], help="Check out the latest changes to the bot.")
     async def change_log(self, ctx):

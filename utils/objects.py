@@ -3,13 +3,39 @@ import re
 import urllib.request as urlget
 from io import BytesIO
 
+from discord import app
 from discord.ext import commands
 from openpyxl import load_workbook
 from PIL import Image
 from pytz import UTC
 
-from utils.trove import Ally
 from utils.CustomObjects import TimeConverter
+from utils.trove import Ally
+
+
+class SlashContext():
+    def __init__(self, command):
+        self.command = command
+        self.interaction = command.interaction
+        self.channel = self.interaction.channel
+        self.author = self.interaction.user
+        self.guild = self.interaction.guild
+        self.bot = command.client
+        self.defer = self.interaction.response.defer
+        self.prefix = "/"
+        self.on_slash_command()
+
+    def on_slash_command(self):
+        self.bot.dispatch("app_slash", self)
+
+    async def send(self, content=None, **kwargs):
+        return await self.interaction.followup.send(content=content, **kwargs)
+
+class SlashCommand(app.SlashCommand):
+    async def get_context(self):
+        ctx = SlashContext(self)
+        await ctx.defer()
+        return ctx
 
 class TimeConvert(commands.Converter):
     async def convert(self, ctx, argument):

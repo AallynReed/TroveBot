@@ -1,0 +1,15 @@
+git+https://github.com/IAmTomahawkx/enhanced-discord.py@downstream-2.0
+pymongo
+motor
+pytz
+pillow
+websockets
+openpyxl
+pandas
+html2text
+simpleeval
+beautifulsoup4
+hjson
+psutil
+tabulate
+pushbullet.py==0.9.1

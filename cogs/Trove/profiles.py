@@ -53,7 +53,7 @@ class Profiles(commands.Cog):
                 if quick_request:
                     del self.quick_request[str(message.author.id)]
                 text = "You are about to submit a export metrics file to create a profile."
-                text += "Are you sure you want to proceed?"
+                text += " Are you sure you want to proceed?"
                 interaction = Confirm(message, timeout=30)
                 interaction.message = await channel.send(text, view=interaction, delete_after=30)
                 await interaction.wait()
@@ -318,7 +318,7 @@ class Profiles(commands.Cog):
                 "Server": server
             }
         except:
-            return await ctx.send(f"Your profile for **{_class.name}** is outdated", delete_after=10, ephemeral=True)
+            return await ctx.send(f"**{user}**'s profile for **{_class.name}** is outdated", delete_after=10, ephemeral=True)
         try:
             request = await self.session.post("https://trove.slynx.xyz/profiles/image", data=str(json.dumps(data)))
         except:
