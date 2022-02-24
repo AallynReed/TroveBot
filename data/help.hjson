@@ -364,14 +364,6 @@
         "subcommands": {},
         "aliases": [],
         "hidden": false
-    }
-    "chats": {
-        "module": "general",
-        "description": "Shows list of popular in game chats.",
-        "example": "{prefix}chats",
-        "subcommands": {},
-        "aliases": [],
-        "hidden": false
     },
     "corruxion": {
         "module": "general",
@@ -508,6 +500,16 @@
         ],
         "hidden": false
     },
+    "gamigo_resources": {
+        "module": "information",
+        "description": "Shows a list of Trove/Gamigo resources for the player.",
+        "example": "{prefix}gamigo_resources",
+        "subcommands": {},
+        "aliases": [
+            "gt"
+        ],
+        "hidden": false
+    },
     "gem_tutorial": {
         "module": "information",
         "description": "Shows the an almost full gem tutorial.",
@@ -560,7 +562,7 @@
     "search": {
         "module": "information",
         "description": "Search for things in Trovesaurus database.",
-        "example": "{prefix}search Chaos Chest",
+        "example": "**Slash Command only**\n/search Chaos Chest",
         "subcommands": {},
         "aliases": [],
         "hidden": false
@@ -568,15 +570,17 @@
     "search_mod": {
         "module": "information",
         "description": "Search for mods in Trovesaurus database.",
-        "example": "{prefix}findmod Sageosaurus",
+        "example": "**Slash Command only**\n/search_mod Sageosaurus",
         "subcommands": {},
-        "aliases": [
-            "sm",
-            "find_mod",
-            "mod",
-            "searchmod",
-            "find_mod"
-        ],
+        "aliases": [],
+        "hidden": false
+    },
+    "search_post": {
+        "module": "information",
+        "description": "Search for patch notes and some forum posts in Trove Bot's database.",
+        "example": "**Slash Command only**\n/search_post 300% Magic Damage",
+        "subcommands": {},
+        "aliases": [],
         "hidden": false
     },
     "weekly": {
@@ -665,11 +669,9 @@
     "imgur_upload": {
         "module": "miscellaneous",
         "description": "Upload an image to imgur.",
-        "example": "{prefix}iu [Attachment]",
+        "example": "**Slash Command only**\n/imgur_upload [Attachment]",
         "subcommands": {},
-        "aliases": [
-            "iu"
-        ],
+        "aliases": [],
         "hidden": false
     },
     "join_info": {

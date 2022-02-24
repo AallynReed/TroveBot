@@ -3,15 +3,34 @@ import re
 import urllib.request as urlget
 from io import BytesIO
 
+import discord
 from discord import app
 from discord.ext import commands
 from openpyxl import load_workbook
 from PIL import Image
-from pytz import UTC
 
 from utils.CustomObjects import TimeConverter
 from utils.trove import Ally
 
+
+class ACResponse(app.AutoCompleteResponse):
+    def __getitem__(self, x):
+        if isinstance(x, slice):
+            response = ACResponse()
+            for i, (k, v) in enumerate(self.items()):
+                step_start = x.start or 0
+                if x.start and i < x.start or x.stop and i >= x.stop:
+                    continue
+                if x.step and (i-step_start)%x.step:
+                    continue
+                response.add_option(k, v)
+            return response
+        elif isinstance(x, int):
+            return ACResponse([{k: v} for k, v in self.items()][x])
+        elif isinstance(x, str):
+            return super().__getitem__(x)
+        else:
+            raise TypeError("slice indices must be integers or None")
 
 class SlashContext():
     def __init__(self, command):
@@ -32,10 +51,46 @@ class SlashContext():
         return await self.interaction.followup.send(content=content, **kwargs)
 
 class SlashCommand(app.SlashCommand):
-    async def get_context(self):
+    async def get_context(self, ephemeral=False):
         ctx = SlashContext(self)
+        await ctx.defer(ephemeral=ephemeral)
+        return ctx
+
+    async def error(self, error):
+        if isinstance(error, discord.errors.NotFound) and error.text == "Unknown interaction":
+            ...
+        else:
+            await super().error(error)
+
+class UserCommandContext():
+    def __init__(self, command):
+        self.command = command
+        self.interaction = command.interaction
+        self.channel = self.interaction.channel
+        self.author = self.interaction.user
+        self.guild = self.interaction.guild
+        self.bot = command.client
+        self.defer = self.interaction.response.defer
+        self.prefix = "/"
+        self.on_user_command()
+
+    def on_user_command(self):
+        self.bot.dispatch("app_user", self)
+
+    async def send(self, content=None, **kwargs):
+        return await self.interaction.followup.send(content=content, **kwargs)
+
+class UserCommand(app.UserCommand):
+    async def get_context(self):
+        ctx = UserCommandContext(self)
         await ctx.defer()
         return ctx
+
+    async def error(self, error):
+        if isinstance(error, discord.errors.NotFound) and error.text == "Unknown interaction":
+            ...
+        else:
+            await super().error(error)
 
 class TimeConvert(commands.Converter):
     async def convert(self, ctx, argument):

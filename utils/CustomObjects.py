@@ -26,12 +26,17 @@ class CEmbed(Embed):
 class TimeConverter():
     def __init__(self, input, fuzzy=True):
         self.fuzzy = fuzzy
-        if isinstance(input, (int, float)) or input.isdigit():
+        if isinstance(input, timedelta):
+            self.seconds = input.total_seconds()
+        elif isinstance(input, (int, float)):
             self.seconds = int(input)
         elif isinstance(input, str):
-            parts = self._get_time_parts(input)
-            result = self._parts_to_int(parts)
-            self.seconds = result
+            if input.isdigit():
+                self.seconds = int(input)
+            else:
+                parts = self._get_time_parts(input)
+                result = self._parts_to_int(parts)
+                self.seconds = result
         else:
             raise ValueError("Wrong Input")
         self._seconds = self.seconds

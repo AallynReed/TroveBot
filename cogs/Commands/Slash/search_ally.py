@@ -2,15 +2,15 @@
 import re
 
 import discord
-from discord import app
+from discord.app import Option
 from utils.buttons import Pager
-from utils.objects import SlashCommand
+from utils.objects import ACResponse, SlashCommand
 
 
 class SearchAllyCommand(SlashCommand, name="search_ally", description="Search for an ally name or stats/abilities"):
-    stat = app.Option(default=None, description="Search for an ally through stat", autocomplete=True)
-    ability = app.Option(default=None, description="Search for an ally through ability", autocomplete=True)
-    name = app.Option(default=None, description="Search for an ally through name", autocomplete=True)
+    stat = Option(default=None, description="Search for an ally through stat", autocomplete=True)
+    ability = Option(default=None, description="Search for an ally through ability", autocomplete=True)
+    name = Option(default=None, description="Search for an ally through name", autocomplete=True)
     async def callback(self):
         ctx = await self.get_context()
         allies = list(filter(self.filter_allies, ctx.bot.Trove.values.allies))
@@ -53,7 +53,7 @@ class SearchAllyCommand(SlashCommand, name="search_ally", description="Search fo
         )
         
     async def autocomplete(self, options, focused):
-        response = app.AutoCompleteResponse()
+        response = ACResponse()
         value = options[focused]
         value = value.lower()
         self.allies = self.client.Trove.values.allies

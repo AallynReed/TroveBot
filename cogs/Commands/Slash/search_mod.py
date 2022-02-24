@@ -4,9 +4,9 @@ from datetime import datetime
 
 import discord
 import html2text
-from discord import app
+from discord.app import Option
 from utils.buttons import Pager
-from utils.objects import SlashCommand
+from utils.objects import ACResponse, SlashCommand
 
 htmlhandler = html2text.HTML2Text()
 htmlhandler.ignore_images = True
@@ -14,7 +14,7 @@ htmlhandler.ignore_emphasis = True
 htmlhandler.body_width = 0
 
 class SearchModCommand(SlashCommand, name="search_mod", description="Search for a mod at Trovesaurus"):
-    query = app.Option(description="What mod to search on Trovesaurus", autocomplete=True)
+    query = Option(description="What mod to search on Trovesaurus", autocomplete=True)
     async def callback(self):
         ctx = await self.get_context()
         if len(self.query) < 3:
@@ -50,7 +50,7 @@ class SearchModCommand(SlashCommand, name="search_mod", description="Search for 
             self.client.Trove.mods_list_update = datetime.utcnow().timestamp()
 
     async def autocomplete(self, options, focused):
-        response = app.AutoCompleteResponse()
+        response = ACResponse()
         query = options[focused]
         query = query.lower()
         await self._get_mods_list(query)

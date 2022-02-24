@@ -2,7 +2,6 @@ import itertools
 import re
 from datetime import datetime
 
-
 from utils.CustomObjects import CEmbed, Colorize
 from utils.objects import GameClass
 

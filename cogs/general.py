@@ -1,5 +1,4 @@
 # Priority: 1
-import base64
 import os
 import typing
 from datetime import datetime
@@ -7,7 +6,6 @@ from zipfile import ZipFile
 
 import discord
 import psutil
-import requests
 import utils.checks as perms
 from discord.ext import commands
 from utils.buttons import Paginator
@@ -289,60 +287,6 @@ class General(commands.Cog):
         #     i += 1
         # e=CEmbed(title=f"**Communities you can find Trove bot in** ({i})",description=msg, color=self.comment)
         await ctx.send("https://trove.slynx.xyz/communities")#embed=e)
-
-    @commands.command(slash_command=False, aliases=["iu"])
-    @commands.bot_has_permissions(embed_links=1)
-    async def imgur_upload(self, ctx):
-        try:
-            try:
-                await ctx.message.delete()
-            except:
-                pass
-            contents = await ctx.message.attachments[0].read()
-            b64 = base64.b64encode(contents)
-            data = {
-                'image': b64,
-                'type': 'base64',
-            }
-            url = 'https://api.imgur.com/3/image'
-            headers = {
-              'Authorization': f'Client-ID {self.bot.keys["Imgur"]["ClientID"]}'
-            }
-            i = 0
-            if i == 0:
-                i += 1
-                response = requests.request('POST', url, headers = headers, data = data, allow_redirects=False)
-                try:
-                    if response .json()["data"]["code"] == 1003:
-                        await ctx.send("File Type invalid")
-                        return
-                except:
-                    pass
-                linkerino = response.json()["data"]["link"]
-                e=CEmbed(description=f"You imgur link: {linkerino}", color=ctx.author.color)
-                message = await ctx.send(embed=e)
-                await message.add_reaction("👁")
-                while datetime.utcnow().timestamp() < ctx.message.created_at.timestamp() + 60:
-                    def check(reaction, user):
-                        return user == ctx.author and str(reaction.emoji) == '👁' and reaction.message.id == message.id
-                    try:
-                        await self.bot.wait_for('reaction_add', check=check, timeout=60)
-                    except:
-                        return
-                    e=CEmbed(description=f"You imgur link: {linkerino}", color=ctx.author.color)
-                    e.set_image(url=linkerino)
-                    await message.edit(embed=e)
-                    def _check(reaction, user):
-                        return user == ctx.author and str(reaction.emoji) == '👁' and reaction.message.id == message.id
-                    try:
-                        await self.bot.wait_for('reaction_remove', check=_check, timeout=60)
-                    except:
-                        return
-                    e=CEmbed(description=f"You imgur link: {linkerino}", color=ctx.author.color)
-                    await message.edit(embed=e)
-        except Exception as e:
-            await ctx.send(f"{e}\nAn error ocurred, try again please!")
-            print(e)
 
     @commands.command(aliases=["hs"], hidden=True)
     @commands.bot_has_permissions(embed_links=1)

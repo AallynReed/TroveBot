@@ -160,16 +160,16 @@ class Information(commands.Cog):
                     if activity.name == "Trove":
                         if "application_id" not in dir(activity):
                             continue
-                                                          #       PC                   XBOX
-                        if activity.application_id not in [363409000399634432, 438122941302046720]:
+                                                          #       PC                   XBOX            PlayStation
+                        if activity.application_id not in [363409000399634432, 438122941302046720, 1234]:
                             fake.append([member.id, member.guild.name, member.guild.id])
                             continue
                         if activity.application_id == 363409000399634432:
                             platform = "<:windows:839445248517079050>"
                         if activity.application_id == 438122941302046720:
                             platform = "<:xbox:839439645359603713>"
-                        # if activity.application_id == 1234:
-                        #     platform = "<:playstation:921080331782737990>"
+                        if activity.application_id == 1234:
+                            platform = "<:playstation:921080331782737990>"
                         is_in = bool(ctx.guild.get_member(member.id))
                         playingtrove.append([str(member), member.id, activity.created_at.timestamp(), platform, is_in])
                         break
@@ -392,7 +392,35 @@ class Information(commands.Cog):
         view = Paginator(ctx, pages, start_end=True)
         view.message = await ctx.send(embed=pages[0]["embed"], view=view)
         
-            
+    @commands.command(slash_command=True, name="gamigo_resources", aliases=["trove_resources"], help="List of gamigo resources, for new or contacting")
+    async def _list_gamigo_resources(self, ctx):
+        resources = {
+            "<:trove:943719336395309097> Trove Resources": {
+                "Forums": "http://forums.trovegame.com/forum.php",
+                "Support": "https://support.gamigo.com/hc/en-us/categories/200198383-Trove",
+                "Report Player": "https://gameservices.gamigo.com/PlayerReports/TROVE",
+                "Discord": "https://discord.gg/VqFgpu4Fyz",
+                "Youtube": "https://www.youtube.com/trove",
+                "Twitter": "http://twitter.com/trovegame",
+                "Instagram": "http://instagram.com/trovegame",
+                "Facebook/Meta": "https://www.facebook.com/trovegame",
+            },
+            "<:gamigo:943719015031926825> Gamigo Resources": {
+                "Support": "https://support.gamigo.com/hc/en-us/",
+                "Youtube": "https://www.youtube.com/channel/UC79b7oBigBct0kgmc4xQ61g",
+                "Twitch": "https://www.twitch.tv/gamigogames",
+                "Twitter": "https://twitter.com/gamigo",
+                "Instagram": "https://www.instagram.com/gamigogroup",
+                "Facebook/Meta": "https://www.facebook.com/gamigo.group/"
+            }
+        }
+        e = CEmbed()
+        e.set_author(name="Gamigo Resources", icon_url="")
+        e.description = "This is a list of Gamigo/Trove Resources for the player including social media.\n\n"
+        for resource, tree in resources.items():
+            text = "\n".join([f"[**{name}**]({link})" for name, link in tree.items()])
+            e.add_field(name=resource, value=text)
+        await ctx.send(embed=e)
 
 def setup(bot):
     bot.add_cog(Information(bot))

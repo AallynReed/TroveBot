@@ -38,6 +38,12 @@ class BaseView(discord.ui.View):
         except Exception:
             pass
 
+    async def on_error(self, error, item, interaction:discord.Interaction):
+        if isinstance(error, discord.errors.NotFound) and error.text == "Unknown interaction":
+            ...
+        else:
+            await super().on_error(error, item, interaction)
+
 class Page(Embed):
     def __init__(self, content=None, files=None, embed=True, **kwargs):
         super().__init__(**kwargs)

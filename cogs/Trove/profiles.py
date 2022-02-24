@@ -47,7 +47,7 @@ class Profiles(commands.Cog):
             return
         if message:
             if server:
-                await self.trovesaurus_submit_profile(metrics)
+                await self.trovesaurus_submit_profile(metrics.encode("utf-8"))
             quick_request = self.quick_request.get(str(message.author.id))
             if not quick_request or datetime.utcnow().timestamp() - quick_request > 900:
                 if quick_request:
@@ -97,13 +97,13 @@ class Profiles(commands.Cog):
         content = await f.read()
         self.bot.dispatch("profile_create", content.decode("utf-8"), message)
 
-    async def trovesaurus_submit_profile(self, file):
+    async def trovesaurus_submit_profile(self, metrics):
         data = {
             "SubmitMetrics": "cool", 
             "Token": self.bot.keys["Trovesaurus"]["Token"],
-            "File": file
+            "File": metrics
         }
-        async with self.session.post("https://trovesaurus.com/metrics", data=data) as request:
+        async with self.session.post("https://trovesaurus.com/metrics", data=data, allow_redirects=False) as request:
             if request.status != 200:
                 print("An error occured sending metrics to trovesaurus.")
 

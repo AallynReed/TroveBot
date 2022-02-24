@@ -3,14 +3,14 @@ import re
 from typing import Literal
 
 import discord
-from discord import app
+from discord.app import Option
 from utils.CustomObjects import CEmbed
-from utils.objects import SlashCommand
+from utils.objects import ACResponse, SlashCommand
 
 
 class SearchCommand(SlashCommand, name="search", description="What to search on Trovesaurus?"):
-    query = app.Option(description="What to search on Trovesaurus?", autocomplete=True)
-    filtering: Literal["Collections", "Items", "Deco", "Styles"] = app.Option(default=None, description="Filter results by type")
+    query = Option(description="What to search on Trovesaurus?", autocomplete=True)
+    filtering: Literal["Collections", "Items", "Deco", "Styles"] = Option(default=None, description="Filter results by type")
     async def callback(self):
         categories = ["collections", "items", "deco", "styles"]
         ctx = await self.get_context()
@@ -44,7 +44,7 @@ class SearchCommand(SlashCommand, name="search", description="What to search on 
     
     async def autocomplete(self, options, focused: str):
         categories = ["collections", "items", "deco", "styles"]
-        response = app.AutoCompleteResponse()
+        response = ACResponse()
         query = options[focused]
         query = query.lower()
         if len(query) < 3:

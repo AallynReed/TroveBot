@@ -1,11 +1,11 @@
 # Priority: 1
-from discord import app
+from discord.app import Option
 from utils.buttons import GemBuildsView
-from utils.objects import SlashCommand
+from utils.objects import ACResponse, SlashCommand
 
 
 class BuildCommand(SlashCommand, name="build", description="Show gem builds for a class."):
-    build_id = app.Option(description="Load your's or someone's saved build", default=None, autocomplete=True)
+    build_id = Option(description="Load your's or someone's saved build", default=None, autocomplete=True)
     async def callback(self):
         ctx = await self.get_context()
         build_id = self.build_id
@@ -32,7 +32,7 @@ class BuildCommand(SlashCommand, name="build", description="Show gem builds for 
             view=view)
     
     async def autocomplete(self, options, focused: str):
-        response = app.AutoCompleteResponse()
+        response = ACResponse()
         value = options[focused]
         value = value.lower()
         if not hasattr(self, "builds_cache"):

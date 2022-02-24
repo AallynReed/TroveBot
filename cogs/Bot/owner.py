@@ -22,24 +22,44 @@ class Owner(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command()
-    async def check_app(self, ctx, application: Union[discord.User, int]):
-        if isinstance(application, int):
-            u = await self.bot.fetch_user(application)
-        if not application.bot:
-            return await ctx.send("That's not an application")
-        u = f"/applications/{application.id}/rpc"
-        r = discord.http.Route("GET", u, bot_id=application.id)
-        res = await self.bot.http.request(r) 
-        info = discord.PartialAppInfo(state=self.bot._connection, data=res)
-        e = CEmbed(description=info.description)
-        e.set_author(name=info.name, icon_url=info.icon)
-        e.set_thumbnail(url=info.icon.url)
-        if info.privacy_policy_url:
-            e.add_field(name="Privacy Policy", value=info.privacy_policy_url)
-        if info.terms_of_service_url:
-            e.add_field(name="Terms of Service", value=info.terms_of_service_url)
-        e.set_footer(text=f"App ID: {info.id}")
+    @commands.command(slash_command=True)
+    async def check_app(self, ctx, application: Union[discord.User, int]=commands.Option(description="Provide a user.")):
+        if isinstance(application, discord.User):
+            application = application.id
+        intents = {
+            "gateway_guild_members": "Members",
+            "gateway_presence": "Presence",
+            "gateway_message_content": "Messages"
+        }
+        try:
+            data = await self.bot.http.get_application(application)
+        except Exception as error:
+            return await ctx.send(error)
+        avatar = f"https://cdn.discordapp.com/app-icons/{application}/{data['icon']}?size=2048"
+        e = CEmbed(description=data["description"])
+        e.set_author(name=data["name"], icon_url=avatar)
+        e.set_thumbnail(url=avatar)
+        e.set_footer(text=f"UAID: {data['id']}")
+        e.add_field(name="Public Bot", value=str(data["bot_public"]))
+        e.add_field(name="Requires Oauth2", value=data.get("bot_require_code_grant"))
+        bot_intents = dict(discord.ApplicationFlags._from_value(data["flags"]))
+        intents_enabled = [k for k, v in bot_intents.items() if v]
+        intent_text = ""
+        for intent, name in intents.items():
+            if intent in intents_enabled:
+                intent_text += f"✅ {name}\n"
+            else:
+                intent_text += f"❌ {name}\n"
+        e.add_field(name="Privileged Intents", value=intent_text)
+        if data["bot_public"] and (install_params := data.get("install_params")):
+            perms = install_params.get("permissions")
+            scopes = install_params.get("scopes")
+            invite = f"https://discord.com/oauth2/authorize?client_id={application}&permissions={perms}&scope=" + "%20".join(scopes)
+            e.add_field(name="Invite", value=f"[Link]({invite})")
+        if tos := data.get("terms_of_service_url"):
+            e.add_field(name="Terms of Service", value=tos, inline=False) 
+        if pp := data.get("privacy_policy_url"):
+            e.add_field(name="Privacy Policy", value=pp, inline=False)
         await ctx.send(embed=e)
 
     @commands.command(slash_command=True, aliases=["changelog", "cl"], help="Check out the latest changes to the bot.")

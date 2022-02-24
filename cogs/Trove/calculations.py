@@ -43,7 +43,6 @@ class Calculations(commands.Cog):
             get_gem_cost(gem) for gem in augmentation["gems"]
             if gem[0][1] + gem[1][1] + gem[2][1] != 300
         ]
-        print(gems)
         e = CEmbed(description=f"Prefered: **{augmentation['focus'].capitalize()}**", color=self.bot.comment)
         e.set_author(name="Gem Augmentation", icon_url="https://i.imgur.com/st2CWEz.png")
         e.set_image(url="https://i.imgur.com/M5rAxEM.png")
