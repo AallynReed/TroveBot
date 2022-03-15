@@ -135,9 +135,9 @@ class Information(commands.Cog):
         e = CEmbed(color=0x0000ff, timestamp=datetime.utcfromtimestamp(self.bot.Trove.last_updated))
         e.set_author(name="Meta", icon_url=self.bot.user.avatar.url)
         e.description = "Here are the game's Meta classes for each activity."
-        e.add_field(name="Farming (Adventure/Topside)", value="Physical: <:c_NN:876846928808259654> **Neon Ninja**\nMagic: <:c_DT:876846922135126036> **Dino Tamer** or <:c_BD:876846944604024842> **Bard**", inline=False)
-        e.add_field(name="DPS (Single Target)", value="Magic: <:c_CM:876846891747410001> **Chloromancer**", inline=False)
-        e.add_field(name="Delve Path (Delve Dusk - | Below Depth ~129)", value="Magic: <:c_TR:876846901801123850> **Tomb Raiser**", inline=False)
+        e.add_field(name="Farming (Adventure/Topside)", value="Physical: <:c_NN:876846928808259654> **Neon Ninja** or <:c_SH:876846872503943170> **Shadow Hunter**\nMagic: <:c_DT:876846922135126036> **Dino Tamer** or <:c_BD:876846944604024842> **Bard**", inline=False)
+        e.add_field(name="DPS (Single Target)", value="Physical: <:c_SH:876846872503943170> **Shadow Hunter**\nMagic: <:c_CM:876846891747410001> **Chloromancer**", inline=False)
+        e.add_field(name="Delve Path (Delve Dusk - | Below Depth ~129)", value="Magic: <:c_TR:876846901801123850> **Tomb Raiser** or <:c_DL:876846884143116368> **Dracolyte**", inline=False)
         e.add_field(name="Delve Path (Delve Dusk + | Above Depth ~129)", value="Magic: <:c_IS:876846881311965224> **Ice Sage**", inline=False)
         e.set_footer(text="Last updated")
         await ctx.send(embed=e)

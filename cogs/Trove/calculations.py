@@ -194,8 +194,9 @@ class Calculations(commands.Cog):
   Magic Find  | Normal | Patron |
 --------------|--------|--------|
   Normal      |  {round(mf*1.5)}  |  {round(mf*2*1.5)} |
-+ Sunday      |  {round((mf+100)*1.5)}  |  {round((mf+200)*2*1.5)} |
-+ Clov & Elix |  {round((mf+100+75+50)*1.5)}  |  {round((mf+200+75+50)*2*1.5)} |
++ Borr. Luck  |  {round((mf+250)*1.5)}  |  {round((mf+250)*2*1.5)} |
++ Sunday      |  {round((mf+100+250)*1.5)}  |  {round((mf+200+250)*2*1.5)} |
++ Clov & Elix |  {round((mf+100+75+50+250)*1.5)}  |  {round((mf+200+75+50+250)*2*1.5)} |
 ```
 """
         e.add_field(name="Live Max Magic Find", value=mastery_table(live_mf), inline=False)

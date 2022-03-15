@@ -2,7 +2,7 @@
     "Gunslinger": {
         "light": {
             "enabled": true,
-            "tier": 1,
+            "tier": 3,
             "hat": [
                 "Maximum Health",
                 "Light",
@@ -124,7 +124,7 @@
     "Ice Sage": {
         "light": {
             "enabled": true,
-            "tier": 1,
+            "tier": 2,
             "hat": [
                 "Maximum Health",
                 "Light",
@@ -245,7 +245,7 @@
     "Pirate Captain": {
         "light": {
             "enabled": true,
-            "tier": 2,
+            "tier": 3,
             "hat": [
                 "Maximum Health",
                 "Light",
@@ -488,7 +488,7 @@
     "Fae Trickster": {
         "light": {
             "enabled": true,
-            "tier": 2,
+            "tier": 3,
             "hat": [
                 "Maximum Health",
                 "Light",
@@ -1389,7 +1389,7 @@
     "Vanguardian": {
         "light": {
             "enabled": true,
-            "tier": 3,
+            "tier": 4,
             "hat": [
                 "Maximum Health",
                 "Light",
@@ -1510,7 +1510,7 @@
     "Boomeranger": {
         "light": {
             "enabled": true,
-            "tier": 4,
+            "tier": 3,
             "hat": [
                 "Maximum Health",
                 "Light",
@@ -1872,32 +1872,32 @@
     "Shadow Hunter": {
         "light": {
             "enabled": true,
-            "tier": 4,
+            "tier": 2,
             "hat": [
                 "Maximum Health",
                 "Light",
                 "Critical Damage",
                 "Preference",
-                "Movement Speed"
+                "Attack Speed"
             ],
             "weapon": [
                 "Physical Damage",
                 "Light",
                 "Critical Damage",
                 "Preference",
-                "Movement Speed"
+                "Energy Regeneration"
             ],
             "face": [
                 "Maximum Health",
                 "Light",
                 "Critical Damage",
                 "Physical Damage",
-                "Movement Speed"
+                "Attack Speed"
             ],
             "ring": [
                 "Physical Damage",
                 "Light",
-                "Preference"
+                "Energy Regeneration"
             ],
             "ally": [
                 "Earnie"
@@ -1905,7 +1905,7 @@
             "banner": [
                 "Physical Damage",
                 "Flask",
-                "Movement Speed"
+                "Attack Speed"
             ],
             "subclass": [
                 "Knight"

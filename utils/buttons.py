@@ -11,11 +11,98 @@ from discord import Embed
 from discord.embeds import EmptyEmbed
 
 from utils.builds import BuildsMaker
-from utils.CustomObjects import CEmbed, Dict
+from utils.CustomObjects import CEmbed, Dict, Sage
 
 
 class Dummy():
     ...
+
+# Modals
+class SageModal(discord.ui.Modal):
+    def __init__(self, bot, name=None, content=None, image=None, update=False):
+        super().__init__("Submit New Sage")
+        self.bot = bot
+        self.update = update
+        items = [
+            discord.ui.TextInput(
+                label="Sage name [6-32 Character Limit]",
+                style=discord.TextInputStyle.short,
+                min_length=6,
+                max_length=32,
+                value=name
+            ),
+            discord.ui.TextInput(
+                label="Sage content",
+                style=discord.TextInputStyle.long,
+                value=content
+            ),
+            discord.ui.TextInput(
+                label="Sage image",
+                placeholder="Imgur direct links only: https://i.imgur.com/imgcode.png",
+                required=False,
+                style=discord.TextInputStyle.short,
+                max_length=32,
+                value=image
+            )
+        ]
+        for item in items:
+            self.add_item(item)
+
+    async def callback(self, interaction):
+        if image := self.children[2].value:
+            match = re.findall(
+                "(https?:\/\/i\.imgur\.com\/[a-zA-Z0-9]*\.(?:jpg|jpeg|png))",
+                image
+            )
+            image = match[0] if match else match
+        if self.update:
+            await self.bot.db.db_tags.delete_one({"_id": self.update._id})
+            sage = Sage(self.update.data)
+            sage.name = self.children[0].value
+            sage.content=self.children[1].value
+            sage.image=image
+        else:
+            sage = Sage(
+                name=self.children[0].value,
+                content=self.children[1].value,
+                image=image,
+                author=interaction.user.id
+            )
+        author = await self.bot.try_user(sage.author)
+        e = CEmbed(description=sage.content)
+        e.timestamp = sage.creation_date
+        e.color = discord.Color.random()
+        e.set_author(name=sage.name, icon_url="https://i.imgur.com/2Cjlmwb.png")
+        e.set_footer(text=f"{author} | SageID: {sage._id} | Created", icon_url=author.avatar)
+        e.set_image(url=sage.image)
+        if self.children[2].value and not image:
+            if self.update:
+                await self.bot.db.db_tags.insert_one(self.update.data)
+            return await interaction.response.send_message(
+                content="The image link is not a valid imgur link.",
+                embed=e,
+                ephemeral=True
+            )
+        data = await self.bot.db.db_tags.find_one(
+            {"name": {"$regex": f"(?i)^{re.escape(sage.name)}$"}}
+        )
+        if data:
+            if self.update:
+                await self.bot.db.db_tags.insert_one(self.update.data)
+            return await interaction.response.send_message(
+                content="Name already match another sage's.",
+                embed=e,
+                ephemeral=True    
+            )
+        if 125277653199618048 in [r.id for r in interaction.user.roles]:
+            sage.approved = True
+        await self.bot.db.db_tags.insert_one(sage.data)
+        await self.bot.get_channel(944381733850214440).send(embed=e)
+        await interaction.response.send_message(
+            content="Sage submitted and sent for review.",
+            embed=e,
+            ephemeral=True
+        )
 
 # Base
 
@@ -25,7 +112,7 @@ class BaseView(discord.ui.View):
             timeout=timeout
         )
 
-    async def interaction_check(self, item, interaction: discord.Interaction):
+    async def interaction_check(self, _, interaction: discord.Interaction):
         if self.ctx.author == interaction.user:
             return True
         else:

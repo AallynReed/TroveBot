@@ -15,7 +15,7 @@
     },
     "bat_eye": {
         "blueprint": "c_c_bat_eye_ui[skythevirus].png",
-        "category": "Shadow Tower",
+        "category": "Shadow Arena",
         "desc": "Has a bad habit of suddenly appearing and disappearing whenever you blink.",
         "designer": "SkyTheVirus",
         "file": "Pets",
@@ -25,7 +25,7 @@
         "name": "Batting Eye",
         "powerrank": "75",
         "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>2.5% Critical Hit</li>\r\n<li>45 Magic Find</li>\r\n<li>1 Flask Capacity</li>\r\n</ul>",
-        "updated_at": 1637100534
+        "updated_at": 1647370256
     },
     "bat_gardening": {
         "blueprint": "c_c_bat_gardening_ui[skythevirus].png",
@@ -922,6 +922,34 @@
         "powerrank": "20",
         "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>2 Movement Speed</li>\r\n<li>30 Stability</li>\r\n</ul>",
         "updated_at": 1637100534
+    },
+    "cat_flamefox": {
+        "blueprint": "2022/allies/cat_flamefox/c_c_cat_flamefox_ui.png",
+        "category": "Store",
+        "desc": "Born from fire, burning bright.",
+        "designer": "Trove Team",
+        "file": "Pets",
+        "filename": "collections/pet/cat_flamefox",
+        "mastery": "20",
+        "mastery_geode": "0",
+        "name": "Vulpcendia",
+        "powerrank": "20",
+        "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>10 Jump</li>\r\n</ul>",
+        "updated_at": 1647370256
+    },
+    "cat_frostfox": {
+        "blueprint": "2022/allies/cat_frostfox/c_c_cat_frostfox_ui.png",
+        "category": "Store",
+        "desc": "Sprung from frost, sparkling light.",
+        "designer": "Trove Team",
+        "file": "Pets",
+        "filename": "collections/pet/cat_frostfox",
+        "mastery": "20",
+        "mastery_geode": "0",
+        "name": "Vulpglacia",
+        "powerrank": "20",
+        "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>10 Jump</li>\r\n</ul>",
+        "updated_at": 1647370256
     },
     "cat_icecream": {
         "blueprint": "c_c_cat_icecream_head.png",
@@ -2407,6 +2435,20 @@
         "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>8.0% Magic Damage</li>\r\n<li>8.0% Physical Damage</li>\r\n<li>1 Superstition</li>\r\n</ul>",
         "updated_at": 1637100534
     },
+    "dragonfly_carps": {
+        "blueprint": "2022/allies/dragonfly_carps/c_c_dragonfly_carps_ui.png",
+        "category": "Store",
+        "desc": "Swimming serenely on the breeze.",
+        "designer": "Trove Team",
+        "file": "Pets",
+        "filename": "collections/pet/dragonfly_carps",
+        "mastery": "0",
+        "mastery_geode": "0",
+        "name": "Carp Kite",
+        "powerrank": "0",
+        "tooltip": "",
+        "updated_at": 1647370256
+    },
     "dragonfly_firefly_purple": {
         "blueprint": "c_c_dragonfly_firefly_purple_ui.png",
         "category": "Gardening",
@@ -2687,6 +2729,34 @@
         "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>-10.0% Incoming Damage</li>\r\n<li>10 Stability</li>\r\n</ul>",
         "updated_at": 1637100534
     },
+    "egg_cat": {
+        "blueprint": "2022/allies/egg_cat/c_c_egg_cat_ui.png",
+        "category": "Store",
+        "desc": "Why, would YOU leave this comfortable place?",
+        "designer": "Trove Team",
+        "file": "Pets",
+        "filename": "collections/pet/egg_cat",
+        "mastery": "20",
+        "mastery_geode": "0",
+        "name": "Cattistra",
+        "powerrank": "20",
+        "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>10 Jump</li>\r\n</ul>",
+        "updated_at": 1647370256
+    },
+    "egg_puppy": {
+        "blueprint": "2022/allies/egg_puppy/c_c_egg_puppy_ui.png",
+        "category": "Store",
+        "desc": "The best for the best.",
+        "designer": "Trove Team",
+        "file": "Pets",
+        "filename": "collections/pet/egg_puppy",
+        "mastery": "20",
+        "mastery_geode": "0",
+        "name": "Bud's bed",
+        "powerrank": "20",
+        "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>10 Jump</li>\r\n</ul>",
+        "updated_at": 1647370256
+    },
     "fae_bunfae_shadow": {
         "blueprint": "2021/allies/fae_bunfae_shadow/c_c_fae_bunfae_shadow_ui[thestimergames].png",
         "category": "Chaotic",
@@ -2785,6 +2855,20 @@
         "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>2 Jump</li>\r\n</ul>",
         "updated_at": 1637100534
     },
+    "fae_leprechaun": {
+        "blueprint": "2022/allies/fae_leprechaun/c_c_fae_leprechaun_ui.png",
+        "category": "Event",
+        "desc": "Luck is always assured when Lil Lucky is around.",
+        "designer": "Trove Team",
+        "file": "Pets",
+        "filename": "collections/pet/fae_leprechaun",
+        "mastery": "10",
+        "mastery_geode": "0",
+        "name": "Lil Lucky",
+        "powerrank": "20",
+        "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>10 Jump</li>\r\n<li>40 Magic Find</li>\r\n</ul>",
+        "updated_at": 1647370256
+    },
     "fae_mini_elysia": {
         "blueprint": "2020/c_c_fae_mini_elysia_ui.png",
         "category": "Store",
@@ -2815,7 +2899,7 @@
     },
     "fae_pinfae": {
         "blueprint": "c_c_fae_pinfae_head.png",
-        "category": "Shadow Tower",
+        "category": "Shadow Arena",
         "desc": "Brought about by a dying curse, it now stalks you for eternity.",
         "designer": "Trove Team",
         "file": "Pets",
@@ -2825,7 +2909,7 @@
         "name": "Fractious Fury",
         "powerrank": "75",
         "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>6.0% Magic Damage</li>\r\n<li>40 Magic Find</li>\r\n<li>30 Energy Regen</li>\r\n</ul>",
-        "updated_at": 1637100534
+        "updated_at": 1647370256
     },
     "fae_pinfae_hyper": {
         "blueprint": "c_c_fae_pinfae_hyper_ui.png",
@@ -2969,7 +3053,7 @@
     },
     "floateye_prophet": {
         "blueprint": "custom/wee_weepie_winkie.png",
-        "category": "Shadow Tower",
+        "category": "Shadow Arena",
         "desc": "Try not to make fun of his shenanigans, he's a little sensitive right now.",
         "designer": "Trove Team",
         "file": "Pets",
@@ -2979,7 +3063,7 @@
         "name": "Wee Weepie Winkie",
         "powerrank": "75",
         "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>6.0% Physical Damage</li>\r\n<li>40 Magic Find</li>\r\n<li>30 Energy Regen</li>\r\n</ul>",
-        "updated_at": 1637100534
+        "updated_at": 1647370256
     },
     "floateye_rainbowskull": {
         "blueprint": "c_c_floateye_rainbowskull_ui[skythevirus].png",
@@ -3114,12 +3198,12 @@
         "designer": "Cyekie13_",
         "file": "Pets",
         "filename": "collections/pet/frog_undertow",
-        "mastery": "0",
+        "mastery": "20",
         "mastery_geode": "0",
         "name": "Cave Croaker",
-        "powerrank": "0",
-        "tooltip": "",
-        "updated_at": 1637100534
+        "powerrank": "20",
+        "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>5 Jump</li>\r\n<li>3 Movement Speed</li>\r\n</ul>",
+        "updated_at": 1647370256
     },
     "froleek_breadbasket": {
         "blueprint": "2021/allies/froleek_breadbasket/c_c_froleek_breadbasket_ui.png",
@@ -3305,7 +3389,7 @@
     },
     "goat_prestige": {
         "blueprint": "2021/allies/goat_prestige/c_c_goat_ui.png",
-        "category": "Paragon",
+        "category": "Prestige",
         "desc": "Stubborn, fickle, but always reliable.",
         "designer": "Trove Team",
         "file": "Pets",
@@ -3315,7 +3399,7 @@
         "name": "Earnie",
         "powerrank": "75",
         "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>400 Light</li>\r\n<li>25% Physical Damage</li>\r\n</ul>\r\n<p>Gain a protective shield when a nearby enemy dies.</p>",
-        "updated_at": 1637244619
+        "updated_at": 1647370256
     },
     "goat_scapes": {
         "blueprint": "c_c_goat_scapes_ui[scapes].png",
@@ -4003,6 +4087,34 @@
         "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>15.0% Critical Damage</li>\r\n</ul>",
         "updated_at": 1637100534
     },
+    "jelotl_triceratops_flux": {
+        "blueprint": "2022/allies/jelotl_triceratops_flux/c_c_jelotl_triceratops_flux_ui.png",
+        "category": "Event",
+        "desc": "Much tamer than the Fluxbeast or Luckbeast, you could almost rest your head on its belly and it might not even notice.",
+        "designer": "Trove Team",
+        "file": "Pets",
+        "filename": "collections/pet/jelotl_triceratops_flux",
+        "mastery": "10",
+        "mastery_geode": "0",
+        "name": "Lil Tricera-Flux",
+        "powerrank": "20",
+        "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>45 Magic Damage</li>\r\n<li>45 Physical Damage</li>\r\n<li>50 Magic Find</li>\r\n</ul>",
+        "updated_at": 1647370256
+    },
+    "jelotl_triceratops_lucky": {
+        "blueprint": "2022/allies/jelotl_triceratops_lucky/c_c_jelotl_triceratops_lucky_ui.png",
+        "category": "Event",
+        "desc": "Much more active than the Tricera-Flux, known to spirit away untended flux or glim.",
+        "designer": "Trove Team",
+        "file": "Pets",
+        "filename": "collections/pet/jelotl_triceratops_lucky",
+        "mastery": "10",
+        "mastery_geode": "0",
+        "name": "Lil Tricera-Luck",
+        "powerrank": "20",
+        "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>20.0% Critical Damage</li>\r\n<li>25 Magic Find</li>\r\n</ul>",
+        "updated_at": 1647370256
+    },
     "joystick": {
         "blueprint": "c_c_joystick_store.png",
         "category": "Extra Life",
@@ -4313,7 +4425,7 @@
     },
     "mammoth_prestige": {
         "blueprint": "2021/allies/mammoth_prestige/c_c_mammoth_ui.png",
-        "category": "Paragon",
+        "category": "Prestige",
         "desc": "Walton walks where Walton wants.",
         "designer": "Trove Team",
         "file": "Pets",
@@ -4323,7 +4435,21 @@
         "name": "Walton",
         "powerrank": "75",
         "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>400 Light</li>\r\n<li>50 Lasermancy</li>\r\n<li>-10% Incoming Damage</li>\r\n</ul>\r\n<p>Has a chance to recover one flask charge when a nearby enemy dies.</p>\r\n<p>Chance when a nearby enemy dies to gain a large damage and movement speed boost.</p>",
-        "updated_at": 1637244619
+        "updated_at": 1647370256
+    },
+    "mimic_bike": {
+        "blueprint": "2022/allies/mimic_bike/c_c_mimic_bike_ui.png",
+        "category": "Store",
+        "desc": "Bring bring.",
+        "designer": "Trove Team",
+        "file": "Pets",
+        "filename": "collections/pet/mimic_bike",
+        "mastery": "0",
+        "mastery_geode": "0",
+        "name": "Biron Bicycle",
+        "powerrank": "0",
+        "tooltip": "",
+        "updated_at": 1647370256
     },
     "mimic_builderbook": {
         "blueprint": "2021/allies/mimic_builderbook/c_c_mimic_builderbook_ui[evilagician,ylva].png",
@@ -4408,6 +4534,20 @@
         "powerrank": "5",
         "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>68 Magic Damage</li>\r\n<li>68 Physical Damage</li>\r\n</ul>",
         "updated_at": 1637100534
+    },
+    "mimic_foolsgold": {
+        "blueprint": "2022/allies/mimic_foolsgold_box/c_c_mimic_foolsgold_ui.png",
+        "category": "Event",
+        "desc": "Only the insane would try to open it, let alone see what's inside.",
+        "designer": "Trove Team",
+        "file": "Pets",
+        "filename": "collections/pet/mimic_foolsgold",
+        "mastery": "0",
+        "mastery_geode": "0",
+        "name": "Fool's Chest",
+        "powerrank": "0",
+        "tooltip": "",
+        "updated_at": 1647370256
     },
     "mimic_jaws": {
         "blueprint": "2021/allies/mimic_jaws/c_c_mimic_jaws_ui.png",
@@ -4535,6 +4675,20 @@
         "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>50 Magic Find</li>\r\n</ul>",
         "updated_at": 1637100534
     },
+    "monkey_bunsmasher": {
+        "blueprint": "2022/allies/monkey_bunsmasher/c_c_monkey_bunsmasher_ui.png",
+        "category": "Event",
+        "desc": "Bunsmashers are smashy, but nothing's as smashy as a baby bunsmasher.",
+        "designer": "Trove Team",
+        "file": "Pets",
+        "filename": "collections/pet/monkey_bunsmasher",
+        "mastery": "0",
+        "mastery_geode": "0",
+        "name": "Baby Bunsmasher",
+        "powerrank": "0",
+        "tooltip": "",
+        "updated_at": 1647370256
+    },
     "monkey_carys": {
         "blueprint": "2021/allies/monkey_carys/c_c_monkey_ui.png",
         "category": "Store",
@@ -4562,6 +4716,20 @@
         "powerrank": "0",
         "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>6 Jump</li>\r\n<li>0.6% Critical Hit</li>\r\n</ul>",
         "updated_at": 1637100534
+    },
+    "monkey_cft": {
+        "blueprint": "2022/allies/monkey_cft/c_c_monkey_cft_ui[cft].png",
+        "category": "Promo",
+        "desc": "The Charming French Touch.",
+        "designer": "CFT",
+        "file": "Pets",
+        "filename": "collections/pet/monkey_cft",
+        "mastery": "-1",
+        "mastery_geode": "0",
+        "name": "Bag'ets Camembert",
+        "powerrank": "5",
+        "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>7 Jump</li>\r\n<li>25 Magic Find</li>\r\n</ul>",
+        "updated_at": 1647370256
     },
     "monkey_chocolate": {
         "blueprint": "2021/allies/monkey_chocolate/c_c_monkey_chocolate_ui.png",
@@ -4957,7 +5125,7 @@
     },
     "octopus_flower_prestige": {
         "blueprint": "2021/allies/octopus_prestige/c_c_octopus_ui.png",
-        "category": "Paragon",
+        "category": "Prestige",
         "desc": "Also goes by the Golden Lotus.",
         "designer": "Trove Team",
         "file": "Pets",
@@ -4967,7 +5135,7 @@
         "name": "Orchian",
         "powerrank": "75",
         "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>400 Light</li>\r\n<li>25% Magic Damage</li>\r\n</ul>\r\n<p>Gain a movement speed boost when a nearby enemy dies.</p>",
-        "updated_at": 1637244619
+        "updated_at": 1647370256
     },
     "octopus_ghost": {
         "blueprint": "c_c_octopus_ghost_ui[mcowner].png",
@@ -5041,7 +5209,7 @@
     },
     "octopus_octoeye": {
         "blueprint": "c_c_octopus_octoeye_ui[skythevirus].png",
-        "category": "Shadow Tower",
+        "category": "Shadow Arena",
         "desc": "Ever since it met you, it has eye only for you.",
         "designer": "SkyTheVirus",
         "file": "Pets",
@@ -5051,7 +5219,7 @@
         "name": "Admiring Eyetopus",
         "powerrank": "75",
         "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>8 Maximum Energy</li>\r\n<li>8 Movement Speed</li>\r\n<li>8 Jump</li>\r\n</ul>",
-        "updated_at": 1637100534
+        "updated_at": 1647370256
     },
     "octopus_pumpkin": {
         "blueprint": "c_c_octopus_pumpkin_ui.png",
@@ -5094,6 +5262,34 @@
         "powerrank": "20",
         "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>35 Lasermancy</li>\r\n<li>6 Movement Speed</li>\r\n</ul>",
         "updated_at": 1637100534
+    },
+    "octopus_tanabata_blue": {
+        "blueprint": "2022/allies/octopus_tanabata_blue/c_c_octopus_tanabata_blue_ui.png",
+        "category": "Store",
+        "desc": "Lighting the way with a friendly blue glow.",
+        "designer": "Trove Team",
+        "file": "Pets",
+        "filename": "collections/pet/octopus_tanabata_blue",
+        "mastery": "0",
+        "mastery_geode": "0",
+        "name": "Blue Lantern",
+        "powerrank": "0",
+        "tooltip": "",
+        "updated_at": 1647370256
+    },
+    "octopus_tanabata_orange": {
+        "blueprint": "2022/allies/octopus_tanabata_orange/c_c_octopus_tanabata_orange_ui.png",
+        "category": "Store",
+        "desc": "Lighting the way with a friendly orange glow.",
+        "designer": "Trove Team",
+        "file": "Pets",
+        "filename": "collections/pet/octopus_tanabata_orange",
+        "mastery": "0",
+        "mastery_geode": "0",
+        "name": "Orange Lantern",
+        "powerrank": "0",
+        "tooltip": "",
+        "updated_at": 1647370256
     },
     "panda": {
         "blueprint": "c_c_panda_basic_ui[comply].png",
@@ -5150,6 +5346,20 @@
         "powerrank": "75",
         "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>25 Lasermancy</li>\r\n</ul>\r\n<p>Gain 2.2% health each time you damage an enemy.</p>",
         "updated_at": 1637100534
+    },
+    "panda_teddybear": {
+        "blueprint": "2022/allies/panda_teddybear/c_c_panda_teddybear_ui.png",
+        "category": "Store",
+        "desc": "Let it lie.",
+        "designer": "Trove Team",
+        "file": "Pets",
+        "filename": "collections/pet/panda_teddybear",
+        "mastery": "20",
+        "mastery_geode": "0",
+        "name": "Sleeping Bear",
+        "powerrank": "20",
+        "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>10 Jump</li>\r\n</ul>",
+        "updated_at": 1647370256
     },
     "panda_winston": {
         "blueprint": "c_c_panda_winston_ui[fasti].png",
@@ -5466,12 +5676,12 @@
         "designer": "LOWERCASED",
         "file": "Pets",
         "filename": "collections/pet/poop_thumper",
-        "mastery": "0",
+        "mastery": "20",
         "mastery_geode": "0",
         "name": "Tiny Thumper",
-        "powerrank": "0",
-        "tooltip": "",
-        "updated_at": 1637100534
+        "powerrank": "20",
+        "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>50 Light</li>\r\n<li>25 Lasermancy</li>\r\n</ul>",
+        "updated_at": 1647370256
     },
     "punchbot_avarem": {
         "blueprint": "c_c_punchbot_avarem_ui[avarem].png",
@@ -5573,7 +5783,7 @@
     },
     "punchbot_dreadbomb": {
         "blueprint": "c_c_punchbot_dreadbomb_ui.png",
-        "category": "Shadow Tower",
+        "category": "Shadow Arena",
         "desc": "Dr. Darknik abandoned this particular piece of research in favor of higher-yield single warhead weapons.",
         "designer": "Trove Team",
         "file": "Pets",
@@ -5583,11 +5793,11 @@
         "name": "Dreadnought Clusterbomb Prototype",
         "powerrank": "75",
         "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>6.0% Physical Damage</li>\r\n<li>2.3% Critical Hit</li>\r\n<li>15.0% Critical Damage</li>\r\n</ul>",
-        "updated_at": 1637100534
+        "updated_at": 1647370256
     },
     "punchbot_dreadnought": {
         "blueprint": "c_c_punchbot_dreadnought_ui.png",
-        "category": "Shadow Tower",
+        "category": "Shadow Arena",
         "desc": "A standalone mobile platform proof-of-concept for several of the Dreadnought weapon systems.",
         "designer": "Trove Team",
         "file": "Pets",
@@ -5597,7 +5807,7 @@
         "name": "Dreadful Eyebot",
         "powerrank": "75",
         "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>6.0% Magic Damage</li>\r\n<li>2.3% Critical Hit</li>\r\n<li>15.0% Critical Damage</li>\r\n</ul>",
-        "updated_at": 1637100534
+        "updated_at": 1647370256
     },
     "punchbot_holiday": {
         "blueprint": "c_c_punchbotbaby_holiday_body.png",
@@ -6035,7 +6245,7 @@
     },
     "qubesly_egg_shadow": {
         "blueprint": "c_c_qubesly_egg_shadow_ui.png",
-        "category": "Shadow Tower",
+        "category": "Shadow Arena",
         "desc": "Maybe if you raise it right it won't turn evil...?",
         "designer": "Trove Team",
         "file": "Pets",
@@ -6045,7 +6255,7 @@
         "name": "Hatched Shadow Egg",
         "powerrank": "75",
         "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>8.0% Energy Regen</li>\r\n</ul>\r\n<p>Chance when a nearby enemy dies to gain a large damage and movement speed boost.</p>",
-        "updated_at": 1637100534
+        "updated_at": 1647370256
     },
     "qubesly_explorer": {
         "blueprint": "c_c_qubesly_explorer_ui.png",
@@ -6637,7 +6847,7 @@
     },
     "qubesly_shadow_bro": {
         "blueprint": "c_c_qubesly_shadow_bro_ui.png",
-        "category": "Shadow Tower",
+        "category": "Shadow Arena",
         "desc": "A pocket-sized shadow of beastly bearing.",
         "designer": "Trove Team",
         "file": "Pets",
@@ -6647,7 +6857,7 @@
         "name": "Bitty Shadow Bro",
         "powerrank": "75",
         "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>8.0% Physical Damage</li>\r\n</ul>\r\n<p>Chance when nearby enemy dies to gain a large damage and movement speed boost.</p>",
-        "updated_at": 1637100534
+        "updated_at": 1647370256
     },
     "qubesly_shadow_chick": {
         "blueprint": "c_c_qubesly_shadow_chick_ui.png",
@@ -6665,7 +6875,7 @@
     },
     "qubesly_shadow_knight": {
         "blueprint": "c_c_qubesly_shadow_knight_ui.png",
-        "category": "Shadow Tower",
+        "category": "Shadow Arena",
         "desc": "A pocket-sized shadow with knightly poise.",
         "designer": "Trove Team",
         "file": "Pets",
@@ -6675,11 +6885,11 @@
         "name": "Novice Shadow Knight",
         "powerrank": "75",
         "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>-8.0% Incoming Damage</li>\r\n</ul>\r\n<p>Chance when a nearby enemy dies to gain a large damage and movement speed boost.</p>",
-        "updated_at": 1637100534
+        "updated_at": 1647370256
     },
     "qubesly_shadow_vendor": {
         "blueprint": "c_c_qubesly_shadow_vendor_ui.png",
-        "category": "Shadow Tower",
+        "category": "Shadow Arena",
         "desc": "A pocket-sized shadow with heapings of hustle.",
         "designer": "Trove Team",
         "file": "Pets",
@@ -6689,7 +6899,7 @@
         "name": "Teensy Shadow Trader",
         "powerrank": "75",
         "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>8.0% Magic Damage</li>\r\n</ul>\r\n<p>Chance when a nearby enemy dies to gain a large damage and movement speed boost.</p>",
-        "updated_at": 1637100534
+        "updated_at": 1647370256
     },
     "qubesly_sinpie": {
         "blueprint": "c_c_qubesly_sinpie_ui[s0ftersin].png",
@@ -6707,7 +6917,7 @@
     },
     "qubesly_spikebot": {
         "blueprint": "c_c_qubesly_spikebot_ui.png",
-        "category": "Shadow Tower",
+        "category": "Shadow Arena",
         "desc": "Some say watch out for the pointy end, but every end is the pointy. end",
         "designer": "Trove Team",
         "file": "Pets",
@@ -6717,7 +6927,7 @@
         "name": "Personal Spikebot",
         "powerrank": "75",
         "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>-6.0% Incoming Damage</li>\r\n<li>15.0% Critical Damage</li>\r\n<li>4 Jump</li>\r\n</ul>",
-        "updated_at": 1637100534
+        "updated_at": 1647370256
     },
     "qubesly_steakmaster": {
         "blueprint": "c_c_qubesly_steakmaster_ui[graffixg].png",
@@ -6903,7 +7113,7 @@
     },
     "raptor_eye": {
         "blueprint": "c_c_raptor_eye_ui[skyrider3217].png",
-        "category": "Shadow Tower",
+        "category": "Shadow Arena",
         "desc": "Its eye is bigger than its stomach, so it tends to make itself sick by overeating.",
         "designer": "SkyRider3217",
         "file": "Pets",
@@ -6913,7 +7123,7 @@
         "name": "Greedy Gazeraptor Pup",
         "powerrank": "75",
         "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>5 Movement Speed</li>\r\n<li>10 Jump</li>\r\n<li>8.0% Attack Speed</li>\r\n</ul>",
-        "updated_at": 1637100534
+        "updated_at": 1647370256
     },
     "raptor_fae": {
         "blueprint": "c_c_raptor_fae_head.png",
@@ -7281,7 +7491,7 @@
     },
     "rooster_prestige": {
         "blueprint": "2021/allies/rooster_prestige/c_c_rooster_ui.png",
-        "category": "Paragon",
+        "category": "Prestige",
         "desc": "Nothing can dull Starbyrd's shine.",
         "designer": "Trove Team",
         "file": "Pets",
@@ -7291,7 +7501,7 @@
         "name": "Starbyrd",
         "powerrank": "75",
         "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>400 Light</li>\r\n<li>2.0% Critical Hit</li>\r\n<li>20.0% Critical Damage</li>\r\n<li>10 Jump</li>\r\n</ul>",
-        "updated_at": 1637244619
+        "updated_at": 1647370256
     },
     "rooster_pride_peacock": {
         "blueprint": "2021/allies/rooster_pride_peacock/c_c_rooster_pride_peacock_ui.png",
@@ -7365,7 +7575,7 @@
     },
     "seahorse_chaos": {
         "blueprint": "c_c_seahorse_chaos_ui[skythevirus].png",
-        "category": "Shadow Tower",
+        "category": "Shadow Arena",
         "desc": "Its ilk are Thallasion's bane, always stirring up trouble with the tides.",
         "designer": "SkyTheVirus",
         "file": "Pets",
@@ -7375,7 +7585,7 @@
         "name": "Tiny Wave Whipper",
         "powerrank": "75",
         "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>5.0% Attack Speed</li>\r\n<li>2.0% Critical Hit</li>\r\n<li>15.0% Critical Damage</li>\r\n</ul>",
-        "updated_at": 1637100534
+        "updated_at": 1647370256
     },
     "seahorse_freerange": {
         "blueprint": "2021/allies/seahorse_freerange/c_c_seahorse_ui.png",
@@ -7505,7 +7715,7 @@
     },
     "snake_prestige": {
         "blueprint": "2021/allies/snake_prestige/c_c_snake_ui.png",
-        "category": "Paragon",
+        "category": "Prestige",
         "desc": "When King Koba Sss's you ssss how ssssss.",
         "designer": "Trove Team",
         "file": "Pets",
@@ -7515,7 +7725,7 @@
         "name": "King Koba",
         "powerrank": "75",
         "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>400 Light</li>\r\n<li>10 Movement Speed</li>\r\n</ul>\r\n<p>Chance to reduce ability cooldowns when a nearby enemy dies.</p>",
-        "updated_at": 1637244619
+        "updated_at": 1647370256
     },
     "snake_train": {
         "blueprint": "2021/allies/snake_train/c_c_snake_train_ui[_futurehero_,airrider].png",
@@ -7852,6 +8062,20 @@
         "powerrank": "20",
         "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>1 Maximum Energy</li>\r\n<li>10.0% Physical Damage</li>\r\n</ul>",
         "updated_at": 1637100534
+    },
+    "tato_sunflower": {
+        "blueprint": "2022/allies/tato_sunflower/c_c_tato_sunflower_ui.png",
+        "category": "Promo",
+        "desc": "The sun will always shine when you're with true blue friends.",
+        "designer": "Trove Team",
+        "file": "Pets",
+        "filename": "collections/pet/tato_sunflower",
+        "mastery": "0",
+        "mastery_geode": "0",
+        "name": "Sunny Sunflower",
+        "powerrank": "0",
+        "tooltip": "",
+        "updated_at": 1647370256
     },
     "tentacle_apple": {
         "blueprint": "c_c_tentacle_apple_ui[delicious].png",
@@ -8227,9 +8451,9 @@
         "mastery": "0",
         "mastery_geode": "0",
         "name": "Luxisquish",
-        "powerrank": "0",
-        "tooltip": "",
-        "updated_at": 1637100534
+        "powerrank": "20",
+        "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>3% Attack Speed</li>\r\n<li>3 Movement Speed</li>\r\n</ul>",
+        "updated_at": 1647370256
     },
     "wheel_cannon": {
         "blueprint": "c_c_wheel_cannon_ui[magicmate].png",

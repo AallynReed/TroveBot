@@ -15,7 +15,7 @@ class Partner(commands.Cog):
         self.bot = bot
 
     @commands.command(message_command=False, slash_command=True, slash_command_guilds=[118027756075220992], name="reportbug", help="Report an ingame bug to developers.")
-    @commands.cooldown(1, 1800, commands.BucketType.guild)
+    @commands.max_concurrency(1, per=commands.BucketType.guild)
     async def _report_a_bug(self, ctx):
         if ctx.channel.id not in [832582272011599902]:
             return await ctx.reply("You can't use this command in this channel.", ephemeral=True)
@@ -48,7 +48,6 @@ class Partner(commands.Cog):
         msg = await ctx.send(embed=e, view=confirmation)
         await confirmation.wait()
         if confirmation.value is None:
-            ctx.command.reset_cooldown(ctx)
             return await self.bot.utils.eedit(msg, content=f"Time Out {ctx.author.mention}, you didn't answer in time", embed=None, view=None, delete_after=15)
         if not confirmation.value:
             return await self.bot.utils.eedit(msg, content=f"{ctx.author.mention} cancelled the bug report.", embed=None, view=None, delete_after=15)
@@ -63,7 +62,6 @@ class Partner(commands.Cog):
         e.description = "**Platform**\n\nWhat platform did you experience this bug on?"
         picker = OptionPicker(ctx, servers)
         if not await self.bot.utils.eedit(msg, embed=e, view=picker):
-            ctx.command.reset_cooldown(ctx)
             return await ctx.send("An error occured while reporting your bug please try again.", ephemeral=True)
         e.color = discord.Color.random()
         await picker.wait()
@@ -76,7 +74,6 @@ class Partner(commands.Cog):
         e.set_footer(text="Type cancel to stop report.")
         e.color = discord.Color.random()
         if not await self.bot.utils.eedit(msg, embed=e, view=None):
-            ctx.command.reset_cooldown(ctx)
             return await ctx.send("An error occured while reporting your bug please try again.", delete_after=15)
         def check4(m):
             if not m.author.bot and m.channel.id == ctx.channel.id and (not [r.id for r in m.author.roles if r.id in [533024164039098371, 125277653199618048]] or m.author == ctx.author):
@@ -88,7 +85,6 @@ class Partner(commands.Cog):
             if m.content.lower() == "cancel":
                 return await self.bot.utils.eedit(msg, content="You've cancelled the bug report.", embed=None, view=None, delete_after=15)
         except:
-            ctx.command.reset_cooldown(ctx)
             return await self.bot.utils.eedit(msg, content=f"Time Out {ctx.author.mention}, you didn't answer in time", embed=None, view=None, delete_after=15)
         final_e.add_field(name="Trove IGN", value=m.content)
         data["trove_name"] = m.content
@@ -96,7 +92,6 @@ class Partner(commands.Cog):
         e.description = "**Time frame** [2 minutes]\n\nHow long ago was the last time you experienced the bug? [Limit: 1 Week]\n\nIt doesn't need to be 100% accurate, try to get as close as possible as times help devs find logs and data more quickly in order to tackle the possible issue.```5 minutes\n4 hours 37 minutes\n7 days```"
         e.color = discord.Color.random()
         if not await self.bot.utils.eedit(msg, embed=e):
-            ctx.command.reset_cooldown(ctx)
             return await ctx.send("An error occured while reporting your bug please try again.", delete_after=15)
         def check3(m):
             if not m.author.bot and m.channel.id == ctx.channel.id and (not [r.id for r in m.author.roles if r.id in [533024164039098371, 125277653199618048]] or m.author == ctx.author):
@@ -108,7 +103,6 @@ class Partner(commands.Cog):
             if m.content.lower() == "cancel":
                 return await self.bot.utils.eedit(msg, content="You've cancelled the bug report.", embed=None, view=None, delete_after=15)
         except:
-            ctx.command.reset_cooldown(ctx)
             return await self.bot.utils.eedit(msg, content=f"Time Out {ctx.author.mention}, you didn't answer in time", embed=None, view=None, delete_after=15)
         time_ago = timedelta(seconds=self.bot.utils.time_str(m.content.lower())[0])
         final_e.add_field(name="Time", value=datetime.utcnow().replace(microsecond=0) - time_ago)
@@ -135,7 +129,6 @@ class Partner(commands.Cog):
         e.description = "**Expected Result** [3 minutes]\n\nWhat was the expected behaviour?"
         e.color = discord.Color.random()
         if not await self.bot.utils.eedit(msg, embed=e):
-            ctx.command.reset_cooldown(ctx)
             return await ctx.send("An error occured while reporting your bug please try again.", delete_after=15)
         try:
             m = await self.bot.wait_for("message", check=check6, timeout=180)
@@ -144,7 +137,6 @@ class Partner(commands.Cog):
                 await self.bot.utils.ssend(ctx.author, content="This report was cancelled but here it is, in case you want to retry.", embed=final_e)
                 return await self.bot.utils.eedit(msg, content="You've cancelled the bug report.", embed=None, view=None, delete_after=15)
         except:
-            ctx.command.reset_cooldown(ctx)
             return await self.bot.utils.eedit(msg, content=f"Time Out {ctx.author.mention}, you didn't answer in time", embed=None, view=None, delete_after=15)
         final_e.add_field(name="Expected", value=m.content if len(m.content) <= 1024 else m.content[:1024-45] + "...\n**[Text visually redacted due to size]**", inline=False)
         data["expected"] = m.content
@@ -152,7 +144,6 @@ class Partner(commands.Cog):
         e.description = "**Observed Result** [3 minutes]\n\nWhat actually happened?"
         e.color = discord.Color.random()
         if not await self.bot.utils.eedit(msg, embed=e):
-            ctx.command.reset_cooldown(ctx)
             return await ctx.send("An error occured while reporting your bug please try again.", delete_after=15, ephemeral=True)
         try:
             m = await self.bot.wait_for("message", check=check6, timeout=180)
@@ -161,7 +152,6 @@ class Partner(commands.Cog):
                 await self.bot.utils.ssend(ctx.author, content="This report was cancelled but here it is, in case you want to retry.", embed=final_e)
                 return await self.bot.utils.eedit(msg, content="You've cancelled the bug report.", embed=None, view=None, delete_after=15)
         except:
-            ctx.command.reset_cooldown(ctx)
             return await self.bot.utils.eedit(msg, content=f"Time Out {ctx.author.mention}, you didn't answer in time", embed=None, view=None, delete_after=15)
         final_e.add_field(name="Observed", value=m.content if len(m.content) <= 1024 else m.content[:1024-45] + "...\n**[Text visually redacted due to size]**", inline=False)
         data["result"] = m.content
@@ -169,7 +159,6 @@ class Partner(commands.Cog):
         e.description = "**Reproduction Steps** [5 minutes]\n\nPlease give a brief description of what are the steps to make this bug happen, include all information you find valuable towards the bug **only**.\n\nThis step is very important, it tells devs how to make the bug happen so they can better understand what's happening in their testing environments."
         e.color = discord.Color.random()
         if not await self.bot.utils.eedit(msg, embed=e):
-            ctx.command.reset_cooldown(ctx)
             return await ctx.send("An error occured while reporting your bug please try again.", delete_after=15)
         try:
             m = await self.bot.wait_for("message", check=check6, timeout=300)
@@ -178,7 +167,6 @@ class Partner(commands.Cog):
                 await self.bot.utils.ssend(ctx.author, content="This report was cancelled but here it is, in case you want to retry.", embed=final_e)
                 return await self.bot.utils.eedit(msg, content="You've cancelled the bug report.", embed=None, view=None, delete_after=15)
         except:
-            ctx.command.reset_cooldown(ctx)
             return await self.bot.utils.eedit(msg, content=f"Time Out {ctx.author.mention}, you didn't answer in time", embed=None, view=None, delete_after=15)
         final_e.add_field(name="Reproduction Steps", value=m.content if len(m.content) <= 1024 else m.content[:1024-45] + "...\n**[Text visually redacted due to size]**", inline=False)
         data["reproduction"] = m.content
@@ -195,7 +183,6 @@ class Partner(commands.Cog):
                 break
             e.color = discord.Color.random()
             if not await self.bot.utils.eedit(msg, embed=e):
-                ctx.command.reset_cooldown(ctx)
                 return await ctx.send("An error occured while reporting your bug please try again.", delete_after=15)
             try:
                 m = await self.bot.wait_for("message", check=check5, timeout=120)
@@ -211,40 +198,37 @@ class Partner(commands.Cog):
                     e.description += "**Media Links:**\n"
                 e.description += "\n".join(["<" + link + ">" for link in links])
             except:
-                ctx.command.reset_cooldown(ctx)
                 return await self.bot.utils.eedit(msg, content=f"Time Out {ctx.author.mention}, you didn't answer in time", embed=None, view=None, delete_after=15)
         if data["media_links"]:
             final_e.add_field(name="Media", value="\n".join(data["media_links"]), inline=False)
        # Finalization
         await msg.delete(silent=True)
-        reporti = await ctx.send(embed=final_e)
         conf_e = CEmbed(description="This is the final look at your bug report, do you want to submit?\n\nThis action can't be undone.", color=discord.Color.random())
         conf_e.set_author(name=ctx.author, icon_url=ctx.author.avatar)
         confirmation = Confirm(ctx, 90)
+        reporti = await ctx.send(embed=final_e)
         msg = await ctx.send(embed=conf_e, view=confirmation)
         await confirmation.wait()
+        await reporti.delete(silent=True)
+        await msg.delete(silent=True)
         if not confirmation.value:
-            ctx.command.reset_cooldown(ctx)
             await self.bot.utils.ssend(ctx.author, content="This report was cancelled but here it is, in case you want to retry.", embed=final_e)
-            await reporti.delete(silent=True)
-            await msg.delete(silent=True)
             if confirmation.value is None:
                 return await self.bot.utils.eedit(msg, content=f"Time Out {ctx.author.mention}, you didn't answer in time", embed=None, view=None, delete_after=15)
             return await self.bot.utils.eedit(msg, content="You've cancelled the bug report.", embed=None, view=None, delete_after=15)
         final_e.set_footer(text="Reported via Bot")
-        report = await self.bot.get_channel(859440482195341323).send(embed=final_e)
+        report = await self.bot.get_channel(812354696320647238).send(embed=final_e)
         data["message_id"] = report.id
         data["message_jump"] = report.jump_url
         async with self.bot.AIOSession.post("https://trovesaurus.com/discord/issues", data={"payload": json.dumps(data), "Token": self.bot.keys["Trovesaurus"]["Token"]}) as request:
             if request.status == 200:
-                await ctx.send(f"{ctx.author.mention} Bug report submitted successfully.")#, delete_after=15)
+                await ctx.send(f"{ctx.author.mention} Bug report submitted successfully.")
                 final_e.add_field(name="\u200b", value=f"[View on Trovesaurus Issue Tracker]({await request.text()})")
                 await report.edit(embed=final_e)
             else:
                 await report.delete(silent=True)
                 await self.bot.utils.ssend(ctx.author, content="This report failed to be sent to Trovesaurus, so here it is for you to retry.", embed=final_e)
                 await ctx.send(f"{ctx.author.mention} Bug report wasn't submitted, an error occured.")
-        ctx.command.reset_cooldown(ctx)
 
     @commands.command(slash_command=True, name="calendar", aliases=["events"], help="Check out Trovesaurus calendar.")
     async def _show_events(self, ctx):

@@ -17,6 +17,10 @@ class Ally():
         return self._data["filename"].split("/")[-1]
 
     @property
+    def image(self):
+        return f"https://trovesaurus.com/data/catalog/{self._data['blueprint']}"
+
+    @property
     def url(self):
         return "https://trovesaurus.com/collections/pet/"+self.qualified_name
 

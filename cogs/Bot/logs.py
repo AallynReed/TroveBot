@@ -102,23 +102,19 @@ class Logs(commands.Cog):
             if ctx.command.slash_command and (ctx.command.slash_command_guilds is None or ctx.guild.id in ctx.command.slash_command_guilds):
                 extra += "\nUse slash command version instead"
             await ctx.send(f"**{ctx.command}** is currently disabled!" + extra, delete_after=10)#, ephemeral=True)
+        elif isinstance(error, commands.MaxConcurrencyReached):
+            await ctx.message.delete(silent=True)
+            return await channel.send("This command is already in use. Please wait a moment before using it.", delete_after=15)
         elif isinstance(error, commands.CommandOnCooldown):
-            if ctx.command.name == "reportbug":
-                try:
-                    await ctx.message.delete()
-                except:
-                    pass
-                return await channel.send("This command is already in use. Please wait a moment before you report your bug.", delete_after=15)
+            m, s = divmod(error.retry_after, 60)
+            h, m = divmod(m, 60)
+            if h == 0:
+                time = "%d minutes %d seconds" % (m, s)
+            elif h == 0 and m == 0:
+                time = "%d seconds" % (s)
             else:
-                m, s = divmod(error.retry_after, 60)
-                h, m = divmod(m, 60)
-                if h == 0:
-                    time = "%d minutes %d seconds" % (m, s)
-                elif h == 0 and m == 0:
-                    time = "%d seconds" % (s)
-                else:
-                    time = "%d hours %d minutes %d seconds" % (h, m, s)
-                return await channel.send("This command is on cooldown! Try again in {}".format(time), delete_after=10)
+                time = "%d hours %d minutes %d seconds" % (h, m, s)
+            return await channel.send("This command is on cooldown! Try again in {}".format(time), delete_after=10)
         elif isinstance(error, commands.MissingRequiredArgument) or isinstance(error, commands.BadArgument):
             ctx.command.reset_cooldown(ctx)
             command_name = str(ctx.command)

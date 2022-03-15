@@ -8,6 +8,8 @@ from discord import Embed
 from discord.embeds import EmptyEmbed
 from pytz import UTC
 
+from utils.others import RandomID
+
 _TimestampStyle = Literal['f', 'F', 'd', 'D', 't', 'T', 'R']
 
 class CEmbed(Embed):
@@ -22,6 +24,40 @@ class CEmbed(Embed):
 
     def set_image(self, *, url):
         return super().set_image(url=url or Embed.Empty)
+
+class Sage:
+    def __init__(self, data=None, **kwargs):
+        self.sanity(data or kwargs)
+
+    def sanity(self, data):
+        fields = [
+            "name",
+            "content",
+            "author"
+        ]
+        missing = [f for f in fields if f not in data.keys()]
+        if missing:
+            raise ValueError(", ".join(missing) + " fields are missing to build a sage")
+        data["_id"] = data.get("_id")
+        if not data["_id"]:
+            data["_id"] = RandomID()
+        data["approved"] = data.get("approved", False)
+        data["deleted"] = data.get("deleted", False)
+        data["created_at"] = data.get("created_at", datetime.utcnow().timestamp())
+        data["image"] = data.get("image", None)
+        data["uses"] = data.get("uses", 0)
+        self.__dict__.update(data)
+
+    def use(self):
+        self.uses += 1
+
+    @property
+    def data(self):
+        return self.__dict__
+
+    @property
+    def creation_date(self):
+        return datetime.utcfromtimestamp(self.created_at)
 
 class TimeConverter():
     def __init__(self, input, fuzzy=True):

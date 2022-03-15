@@ -35,10 +35,10 @@ class SearchCommand(SlashCommand, name="search", description="What to search on 
         for key, value in items[:8]:
             raw = key.split("/")[-1]
             e.description += f"[`{value['type']}/{value['name']}`](https://trovesaurus.com/{key}) `{raw}`\n"
-            if len(items) > 8:
-                e.description += f"... and more\n"
-            if len(items) == 1 and value["icon"]:
-                e.set_thumbnail(url=value["icon"])
+        if len(items) > 8:
+            e.description += f"\n... and more\n"
+        if len(items) == 1 and items[0][1]["icon"]:
+            e.set_thumbnail(url=value["icon"])
         e.description += f"\nGet more results for this search at [Trovesaurus](https://trovesaurus.com/search/{self.query.replace(' ', '%20')})"
         await ctx.send(embed=e)
     

@@ -40,6 +40,8 @@ class SearchAllyCommand(SlashCommand, name="search_ally", description="Search fo
             e.description = ""
             e.color = discord.Color.random()
             for ally in raw_page:
+                if len(allies) == 1:
+                    e.set_thumbnail(url=ally.image)
                 e.description += f"[**{ally.name}**]({ally.url})" + ("\nStats: " + " | ".join([f"**{stat}={value}**" for stat, value in ally.stats.items()]) if ally.stats else "") + ("\nAbilities: " + "\n".join(ally.abilities) if ally.abilities else "") + "\n\n"
         if not view.count:
             return await ctx.send(f"No allies found. Use `{ctx.prefix}feedback <my feedback>` to send a missing or wrong ally.")

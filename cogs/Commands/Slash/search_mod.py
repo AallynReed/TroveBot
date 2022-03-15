@@ -19,7 +19,7 @@ class SearchModCommand(SlashCommand, name="search_mod", description="Search for 
         ctx = await self.get_context()
         if len(self.query) < 3:
             return await ctx.send("Query string too small.")
-        await self._get_mods_list(self.query)
+        await self._get_mods_list()
         view = Pager(ctx, start_end=False, step_10=True)
         i = 0
         for mod in ctx.bot.Trove.mods_list:
@@ -42,7 +42,7 @@ class SearchModCommand(SlashCommand, name="search_mod", description="Search for 
             return await ctx.send("No mods match that query.")
         view.message = await view.selected_page.send(ctx.send, view=view.start())
 
-    async def _get_mods_list(self, query):
+    async def _get_mods_list(self):
         if not hasattr(self.client.Trove, "mods_list") or datetime.utcnow().timestamp() - self.client.Trove.mods_list_update > 1800:
             mods_list = await self.client.AIOSession.post(self.client.keys["Trovesaurus"]["Mods"])
             mods_list = await mods_list.json()
@@ -50,14 +50,14 @@ class SearchModCommand(SlashCommand, name="search_mod", description="Search for 
             self.client.Trove.mods_list_update = datetime.utcnow().timestamp()
 
     async def autocomplete(self, options, focused):
+        await self._get_mods_list()
         response = ACResponse()
         query = options[focused]
         query = query.lower()
-        await self._get_mods_list(query)
         if len(query) < 3:
             return response
         for mod in self.client.Trove.mods_list:
-            if re.findall(f"(?:\W|^)({query.lower()})", mod["name"].lower()):
+            if re.findall(f"(?:\W|^)({re.escape(query)})", mod["name"].lower()):
                 response.add_option(f"{mod['name']} | by {mod['author']}", mod["name"])
         return response[:25]
 
