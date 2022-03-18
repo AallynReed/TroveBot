@@ -104,7 +104,7 @@ class Logs(commands.Cog):
             await ctx.send(f"**{ctx.command}** is currently disabled!" + extra, delete_after=10)#, ephemeral=True)
         elif isinstance(error, commands.MaxConcurrencyReached):
             await ctx.message.delete(silent=True)
-            return await channel.send("This command is already in use. Please wait a moment before using it.", delete_after=15)
+            return await ctx.send("This command is already in use. Please wait a moment before using it.", delete_after=15, ephemeral=True)
         elif isinstance(error, commands.CommandOnCooldown):
             m, s = divmod(error.retry_after, 60)
             h, m = divmod(m, 60)

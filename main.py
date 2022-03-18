@@ -177,11 +177,17 @@ class Trove(commands.AutoShardedBot):
             350322003040927745, # Toff
             565097923025567755  # Sly
         ]
+        self.sage_moderators = {
+            565097923025567755, # Sly
+            163788520836694016, # Tom
+            350322003040927745, # Toff
+            953591740621803550  # Trovesaurus Role
+        }
         self.comment = 0x000080
         self.success = 0x008000
         self.error = 0x800000
         self.progress = 0xf9d71c
-        self.version = "3.5.15", 1647384665
+        self.version = "3.5.24", 1647637556
         self.time = TroveTime()
         self.uptime = datetime.utcnow().timestamp()
         self._last_exception = None

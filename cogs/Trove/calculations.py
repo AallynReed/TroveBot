@@ -21,7 +21,7 @@ class Calculations(commands.Cog):
         except Exception as e:
             return await ctx.send(str(e))
         if len(augmentation["gems"]) > 6:
-            return await ctx.send("You can only do up to 6 gems at a time.")
+            return await ctx.send("You can only do up to 6 gems at a time.", ephemeral=True)
         def get_gem_cost(gem):
             gem_cost = {}
             gem_completions = []
@@ -81,7 +81,7 @@ class Calculations(commands.Cog):
             e.add_field(name=f"---------------------------------------------------\n**Total Cost**", value=cost_text, inline=False)
         elif not gems:
             e.add_field(name="No valid gems given.", value="\u200b")
-        await ctx.send(embed=e)
+        await ctx.send(embed=e, ephemeral=True)
 
     @commands.command(slash_command=True, help="Calculate a math expression", aliases=["calc"])
     async def calculate(

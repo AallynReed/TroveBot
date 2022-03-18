@@ -1,4 +1,5 @@
 import asyncio
+import json
 import re
 from copy import copy
 from datetime import datetime
@@ -17,7 +18,266 @@ from utils.CustomObjects import CEmbed, Dict, Sage
 class Dummy():
     ...
 
+class BaseView(discord.ui.View):
+    def __init__(self, timeout=120):
+        super().__init__(
+            timeout=timeout
+        )
+
+    async def interaction_check(self, _, interaction: discord.Interaction):
+        if self.ctx.author == interaction.user:
+            return True
+        else:
+            await interaction.response.send_message("You can't interact with these buttons as you weren't the one using the command.", ephemeral=True)
+            return False
+
+    async def on_timeout(self):
+        try:
+            await self.message.edit(view=None)
+        except Exception:
+            pass
+
+    async def on_error(self, error, item, interaction:discord.Interaction):
+        if isinstance(error, discord.errors.NotFound) and error.text == "Unknown interaction":
+            ...
+        else:
+            await super().on_error(error, item, interaction)
+
 # Modals
+
+class BugReportModal(discord.ui.Modal):
+    def __init__(self, view, indentify=False):
+        super().__init__("Bug Report Form")
+        self.view = view
+        user = self.view.ctx.author
+        if indentify:
+            server_roles = {
+                819195729234362378, # PC
+                920807897770917959, # PS4
+                920807969980051536, # XBOX
+                920808044768669717  # Switch
+            }
+            platforms = {r.id for r in user.roles}.intersection(server_roles)
+            platform = user.guild.get_role(list(platforms)[0]).name if platforms else None
+            prefill_name = user.display_name
+            if not re.match(r"^([a-z_0-9]{2,19})$", prefill_name, re.IGNORECASE):
+                prefill_name = None
+            items = [
+                discord.ui.TextInput(
+                    custom_id="trove_name",
+                    label="Your in-game name?",
+                    style=discord.TextInputStyle.short,
+                    min_length=2,
+                    max_length=19,
+                    value=self.view.data["trove_name"] or prefill_name
+                ),
+                discord.ui.TextInput(
+                    custom_id="platform",
+                    label="Your platform?",
+                    style=discord.TextInputStyle.short,
+                    min_length=2,
+                    max_length=12,
+                    value=self.view.data["platform"] or platform
+                ),
+                discord.ui.TextInput(
+                    custom_id="exploit",
+                    label="Is this bug report an exploit? Y | N",
+                    style=discord.TextInputStyle.short,
+                    min_length=1,
+                    max_length=1,
+                    value="Y" if self.view.data["exploit"] else "N"
+                )
+            ]
+        else:
+            items = [
+                discord.ui.TextInput(
+                    custom_id="description",
+                    label="Short description of bug",
+                    placeholder="e.g. My Charatacter doesn't mount in the Hub",
+                    style=discord.TextInputStyle.short,
+                    min_length=0,
+                    max_length=190,
+                    value=self.view.data["description"]
+                ),
+                discord.ui.TextInput(
+                    custom_id="result",
+                    label="What were you doing?",
+                    placeholder="e.g. Standing around in hub",
+                    style=discord.TextInputStyle.long,
+                    min_length=90,
+                    value=self.view.data["result"]
+                ),
+                discord.ui.TextInput(
+                    custom_id="expected",
+                    label="What did you expect to happen?",
+                    placeholder="e.g. The mount to come out as usual",
+                    style=discord.TextInputStyle.long,
+                    min_length=40,
+                    value=self.view.data["expected"]
+                ),
+                discord.ui.TextInput(
+                    custom_id="reproduction",
+                    label="How can we reproduce this bug?",
+                    placeholder="e.g. Go to an Hub World\nTry to mount",
+                    style=discord.TextInputStyle.long,
+                    min_length=90,
+                    value=self.view.data["reproduction"]
+                ),
+                discord.ui.TextInput(
+                    custom_id="media_links",
+                    label="Do you have any media? [Max: 10]",
+                    placeholder="Only Youtube and Imgur URL's are allowed",
+                    style=discord.TextInputStyle.long,
+                    required=False,
+                    value=self.view.data["media_links"]
+                )
+            ]
+        for item in items:
+            self.add_item(item)
+
+    async def callback(self, interaction):
+        if await self.check_fields(interaction):
+            self.view.manage_buttons()
+            await self.view.message.edit(embed=self.view.build_embed(), view=self.view)
+            await interaction.response.send_message("Successfully filled form.", ephemeral=True)
+
+    async def check_fields(self, interaction):
+        try:
+            for child in self.children:
+                if child.custom_id == "trove_name":
+                    nick = re.match(r"^([a-z_0-9]{2,19})$", child.value, re.IGNORECASE)
+                    if not nick:
+                        raise Exception("Trove IGN invalid.")
+                    self.view.data[child.custom_id] = child.value
+                elif child.custom_id == "exploit":
+                    self.view.data[child.custom_id] = child.value.lower() == "y"
+                elif child.custom_id == "media_links":
+                    yt_regex = r"(?:https?:\/\/)?(?:www\.)?youtu(?:be\.com/watch\?(?:.*?&(?:amp;)?)?v=|\.be/)(?:[\w\-]+)(?:&(?:amp;)?[\w\?=]*)?"
+                    imgur_regex = r"(?:https?:\/\/)?(?:i\.)?imgur.com\/(?:(?:gallery\/)(?:\w+)|(?:a\/)(?:\w+)#?)?(?:\w*)"
+                    if child.value:
+                        links = set(re.findall(yt_regex, child.value))
+                        links.update(set(re.findall(imgur_regex, child.value)))
+                        if not links:
+                            raise Exception("No valid YouTube or Imgur links were detected in your media input however you can click again to fix these.")
+                        self.view.data["media_links"] = list(links)[:10]
+                else:
+                    self.view.data[child.custom_id] = child.value
+        except Exception as e:
+            await interaction.response.send_message(str(e), ephemeral=True)
+            return False
+        return True
+
+class BugReportView(BaseView):
+    def __init__(self, ctx):
+        super().__init__(timeout=900)
+        self.ctx = ctx
+        user = ctx.author
+        self.data = {
+            "user": {
+                "id": user.id,
+                "avatar_url": str(user.avatar.replace(format="webp") if user.avatar else user.default_avatar),
+                "name": user.name,
+                "nickname": user.nick,
+                "discriminator": user.discriminator,
+                "display_name": str(user)
+            },
+            "trove_name": None,
+            "platform": None,
+            "exploit": False,
+            "description": None,
+            "result": None,
+            "expected": None,
+            "reproduction": None,
+            "media_links": [],
+            "message_id": None,
+            "message_jump": None
+        }
+
+    def manage_buttons(self):
+        if self.data["trove_name"] and self.data["platform"]:
+            self.identify.style = discord.ButtonStyle.success
+            self.report_form.disabled = False
+        if (self.data["description"] and
+            self.data["result"] and
+            self.data["expected"] and
+            self.data["reproduction"]):
+            self.report_form.style = discord.ButtonStyle.success
+        if (self.identify.style == discord.ButtonStyle.success and
+            self.report_form.style == discord.ButtonStyle.success):
+            self.submit.disabled = False
+
+    @discord.ui.button(label='Identification', style=discord.ButtonStyle.secondary)
+    async def identify(self, _, interaction):
+        await interaction.response.send_modal(BugReportModal(self, True))
+
+    @discord.ui.button(label='Report Form', style=discord.ButtonStyle.secondary, disabled=True)
+    async def report_form(self, _, interaction):
+        await interaction.response.send_modal(BugReportModal(self))
+
+    def build_embed(self):
+        description = self.data["description"] or "Empty"
+        expected = self.data["expected"] or "Empty"
+        result = self.data["result"] or "Empty"
+        repro = self.data["reproduction"] or "Empty"
+        media_links = self.data["media_links"] or ["Empty"]
+        e = CEmbed(color=discord.Color.random(), timestamp=datetime.utcnow())
+        e.set_author(name=f"Bug report by {self.ctx.author}", icon_url=self.ctx.author.avatar)
+        e.description = "**Context**\n" + (description if len(description) <= 1024 else description[:1024-45] + "...\n**[Text visually redacted due to size]**")
+        e.add_field(name="Trove IGN", value=self.data["trove_name"] or "Empty")
+        e.add_field(name="Platform", value=self.data["platform"] or "Empty")
+        e.add_field(
+            name="Expected",
+            value=expected if len(expected) <= 1024 else expected[:1024-45] + "...\n**[Text visually redacted due to size]**",
+            inline=False)
+        e.add_field(
+            name="Observed",
+            value=result if len(result) <= 1024 else result[:1024-45] + "...\n**[Text visually redacted due to size]**",
+            inline=False)
+        e.add_field(
+            name="Reproduction Steps",
+            value=repro if len(repro) <= 1024 else repro[:1024-45] + "...\n**[Text visually redacted due to size]**",
+            inline=False)
+        e.add_field(name="Media", value="\n".join(media_links), inline=False)
+        e.set_footer(text="Reported via Bot")
+        return e
+
+    @discord.ui.button(label='Submit', style=discord.ButtonStyle.primary, disabled=True, row=1)
+    async def submit(self, _, interaction):
+        final_e = self.build_embed()
+        if not self.data["exploit"]:
+            report = await self.ctx.bot.get_channel(812354696320647238).send(embed=final_e)
+            self.data["message_id"] = report.id
+            self.data["message_jump"] = report.jump_url
+        async with self.ctx.bot.AIOSession.post(
+            "https://trovesaurus.com/discord/issues",
+            data={"payload": json.dumps(self.data),
+            "Token": self.ctx.bot.keys["Trovesaurus"]["Token"]}) as request:
+            if request.status == 200:
+                if not self.data["exploit"]:
+                    final_e.add_field(name="\u200b", value=f"[View on Trovesaurus Issue Tracker]({await request.text()})")
+                    await report.edit(embed=final_e)
+                await interaction.response.send_message(
+                    f"Your bug report was submitted to Trovesaurus.",
+                    ephemeral=True
+                )
+            else:
+                if not self.data["exploit"]:
+                    await report.delete(silent=True)
+                await interaction.response.send_message(
+                    f"Bug report wasn't submitted, an error occured.",
+                    ephemeral=True
+                )
+        self.stop()
+
+    @discord.ui.button(label='Cancel', style=discord.ButtonStyle.danger, row=1)
+    async def send(self, _, interaction):
+        await self.message.delete(silent=True)
+        await interaction.response.send_message(
+            f"Your bug report was cancelled.",
+            ephemeral=True
+        )
+        self.stop()
+
 class SageModal(discord.ui.Modal):
     def __init__(self, bot, name=None, content=None, image=None, update=False):
         super().__init__("Submit New Sage")
@@ -59,14 +319,15 @@ class SageModal(discord.ui.Modal):
             await self.bot.db.db_tags.delete_one({"_id": self.update._id})
             sage = Sage(self.update.data)
             sage.name = self.children[0].value
-            sage.content=self.children[1].value
-            sage.image=image
+            sage.content = self.children[1].value
+            sage.image = image
         else:
             sage = Sage(
                 name=self.children[0].value,
                 content=self.children[1].value,
                 image=image,
-                author=interaction.user.id
+                author=interaction.user.id,
+                category=None
             )
         author = await self.bot.try_user(sage.author)
         e = CEmbed(description=sage.content)
@@ -94,8 +355,9 @@ class SageModal(discord.ui.Modal):
                 embed=e,
                 ephemeral=True    
             )
-        if 125277653199618048 in [r.id for r in interaction.user.roles]:
-            sage.approved = True
+        roles = {r.id for r in interaction.user.roles}
+        roles.update({interaction.user.id})
+        sage.approved = bool(self.bot.sage_moderators.intersection(roles))
         await self.bot.db.db_tags.insert_one(sage.data)
         await self.bot.get_channel(944381733850214440).send(embed=e)
         await interaction.response.send_message(
@@ -105,31 +367,6 @@ class SageModal(discord.ui.Modal):
         )
 
 # Base
-
-class BaseView(discord.ui.View):
-    def __init__(self, timeout=120):
-        super().__init__(
-            timeout=timeout
-        )
-
-    async def interaction_check(self, _, interaction: discord.Interaction):
-        if self.ctx.author == interaction.user:
-            return True
-        else:
-            await interaction.response.send_message("You can't interact with these buttons as you weren't the one using the command.", ephemeral=True)
-            return False
-
-    async def on_timeout(self):
-        try:
-            await self.message.edit(view=None)
-        except Exception:
-            pass
-
-    async def on_error(self, error, item, interaction:discord.Interaction):
-        if isinstance(error, discord.errors.NotFound) and error.text == "Unknown interaction":
-            ...
-        else:
-            await super().on_error(error, item, interaction)
 
 class Page(Embed):
     def __init__(self, content=None, files=None, embed=True, **kwargs):
@@ -211,7 +448,7 @@ class Pager(BaseView):
         return self.selected_page
 
     def add_buttons(self, change=None):
-        non_page_buttons = [item for item in self.children if not isinstance(item, PagerButton)]
+        non_page_buttons = [item for item in self.children if not isinstance(item, PagerButton) or not item.original]
         if self.children:
             self.clear_items()
 
@@ -241,6 +478,7 @@ class Pager(BaseView):
 
 class PagerButton(discord.ui.Button["Pager"]):
     def __init__(self, **kwargs):
+        self.original = kwargs.pop("original", True)
         super().__init__(style=discord.ButtonStyle.secondary, **kwargs)
 
     async def callback(self, _: discord.Interaction):
@@ -282,6 +520,139 @@ class Traceback(discord.ui.View):
             await interaction.followup.send(f"```py\n{self.exception[1990:3980]}```", ephemeral=True)
         else:
             await interaction.response.send_message(f"```py\n{self.exception}```", ephemeral=True)
+
+class SageManage(BaseView):
+    def __init__(self, ctx, sage, categories, timeout=180):
+        super().__init__(
+            timeout=timeout
+        )
+        self.ctx = ctx
+        self.sage = sage
+        self.categories = categories
+        self.disable_buttons(first=True)
+
+    def disable_buttons(self, first=False):
+        self.approve.disabled = self.sage.approved or self.sage.deleted
+        self.deny.disabled = not self.sage.approved or self.sage.deleted
+        self.remove.disabled = self.sage.deleted
+        self.recover.disabled = not self.sage.deleted
+        self.delete.disabled = not self.sage.deleted
+        for item in self.children:
+            if isinstance(item, SageSelect):
+                self.remove_item(item)
+        self.add_item(SageSelect(self))
+
+    @discord.ui.button(label='Approve', style=discord.ButtonStyle.primary, row=0)
+    async def approve(self, _, interaction):
+        self.sage.approved = True
+        await self.ctx.bot.db.db_tags.update_one({"_id": self.sage._id}, {"$set": self.sage.data})
+        self.disable_buttons()
+        await self.message.edit(view=self)
+        await interaction.response.send_message(
+            f"Sage **{self.sage.name}** with id `{self.sage._id}` was approved.",
+            ephemeral=True
+        )
+
+    @discord.ui.button(label='Deny', style=discord.ButtonStyle.secondary, row=0)
+    async def deny(self, _, interaction):
+        self.sage.approved = False
+        await self.ctx.bot.db.db_tags.update_one({"_id": self.sage._id}, {"$set": self.sage.data})
+        self.disable_buttons()
+        await self.message.edit(view=self)
+        await interaction.response.send_message(
+            f"Sage **{self.sage.name}** with id `{self.sage._id}` was denied.",
+            ephemeral=True
+        )
+
+    @discord.ui.button(label='Disable', style=discord.ButtonStyle.danger, row=0)
+    async def remove(self, _, interaction):
+        self.sage.deleted = True
+        await self.ctx.bot.db.db_tags.update_one({"_id": self.sage._id}, {"$set": self.sage.data})
+        self.disable_buttons()
+        await self.message.edit(view=self)
+        await interaction.response.send_message(
+            f"Sage **{self.sage.name}** with id `{self.sage._id}` was disabled.",
+            ephemeral=True
+        )
+
+    @discord.ui.button(label='Enable', style=discord.ButtonStyle.success, row=0)
+    async def recover(self, _, interaction):
+        self.sage.deleted = False
+        await self.ctx.bot.db.db_tags.update_one({"_id": self.sage._id}, {"$set": self.sage.data})
+        self.disable_buttons()
+        await self.message.edit(view=self)
+        await interaction.response.send_message(
+            f"Sage **{self.sage.name}** with id `{self.sage._id}` was enabled.",
+            ephemeral=True
+        )
+
+    @discord.ui.button(label='Delete', style=discord.ButtonStyle.danger, row=0)
+    async def delete(self, _, interaction):
+        await self.message.delete(silent=True)
+        await self.ctx.bot.db.db_tags.delete_one({"_id": self.sage._id})
+        await interaction.response.send_message(
+            f"Sage **{self.sage.name}** with id `{self.sage._id}` was permanently deleted.",
+            ephemeral=True
+        )
+        self.stop()
+
+    @discord.ui.button(label='Create Category', style=discord.ButtonStyle.primary, row=1)
+    async def create_category(self, _, interaction):
+        modal = SageCategoryModal(self)
+        await interaction.response.send_modal(modal)
+
+class SageSelect(discord.ui.Select):
+    def __init__(self, view):
+        options = [
+            discord.SelectOption(label=category, default=category==view.sage.category)
+            for category in view.categories[:24]
+        ]
+        options.append(discord.SelectOption(label="No Category", default=view.sage.category is None))
+        super().__init__(placeholder="Pick a category", options=options, row=2)
+
+    async def callback(self, interaction: discord.Interaction):
+        category = self.values[0]
+        if category == "No Category":
+            category = None
+        self.view.sage.category = category
+        await self.view.ctx.bot.db.db_tags.update_one({"_id": self.view.sage._id}, {"$set": self.view.sage.data})
+        self.view.disable_buttons()
+        await self.view.message.edit(view=self.view)
+        await interaction.response.send_message(
+            f'Sage **{self.view.sage.name}** with id `{self.view.sage._id}` category is now **{category}**.',
+            ephemeral=True
+        )
+
+class SageCategoryModal(discord.ui.Modal):
+    def __init__(self, view):
+        self.view = view
+        super().__init__("Create a new sage category")
+        self.add_item(
+            discord.ui.TextInput(
+                label="New category name",
+                placeholder="This field is case sensitive",
+                style=discord.TextInputStyle.short,
+                min_length=4,
+                max_length=20
+            )
+        )
+
+    async def callback(self, interaction):
+        category = self.children[0].value
+        if category == "No Category":
+            return await interaction.response.send_message(
+            f'Invalid category name.',
+            ephemeral=True
+        )
+        self.view.sage.category = category
+        await self.view.ctx.bot.db.db_tags.update_one({"_id": self.view.sage._id}, {"$set": self.view.sage.data})
+        self.view.categories = await self.view.ctx.bot.db.db_tags.find({"category": {"$ne": None}}).distinct("category")
+        self.view.disable_buttons()
+        await self.view.message.edit(view=self.view)
+        await interaction.response.send_message(
+            f'Sage **{self.view.sage.name}** with id `{self.view.sage._id}` newly created category is now **{category}**.',
+            ephemeral=True
+        )
 
 ## Dynamic
 

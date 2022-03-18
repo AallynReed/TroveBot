@@ -33,7 +33,8 @@ class Sage:
         fields = [
             "name",
             "content",
-            "author"
+            "author",
+            "category"
         ]
         missing = [f for f in fields if f not in data.keys()]
         if missing:
@@ -41,9 +42,10 @@ class Sage:
         data["_id"] = data.get("_id")
         if not data["_id"]:
             data["_id"] = RandomID()
+        data["category"] = data.get("category", None)
         data["approved"] = data.get("approved", False)
         data["deleted"] = data.get("deleted", False)
-        data["created_at"] = data.get("created_at", datetime.utcnow().timestamp())
+        data["created_at"] = data.get("created_at", int(datetime.utcnow().timestamp()))
         data["image"] = data.get("image", None)
         data["uses"] = data.get("uses", 0)
         self.__dict__.update(data)

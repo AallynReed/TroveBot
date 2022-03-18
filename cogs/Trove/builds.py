@@ -87,7 +87,7 @@ class Builds(commands.Cog):
         view.message = await ctx.reply(
             content="Builds will only be calculated once all **Required** fields are filled in." if not build else f"Loaded **{build_data['code']}** by {creator.mention}",
             view=view,
-            allowed_mentions=discord.AllowedMentions.none()    
+            allowed_mentions=discord.AllowedMentions.none()
         )
 
     @commands.group(slash_command=True, aliases=["build_list", "builds_list"], help="Manage and show saved builds")
