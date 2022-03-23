@@ -270,7 +270,6 @@ class WebSockets(commands.Cog):
         e.set_author(name=data["Author"])
         e.add_field(name="Platform", value=data["Platform"])
         e.add_field(name="Trove IGN", value=data["Author"])
-        #e.add_field(name="Time", value=)
         e.add_field(name="Expected", value=data["Expected"] if data["Expected"] else "Not provided", inline=False)
         e.add_field(name="Observed", value=data["Context"] if data["Context"] else "Not provided", inline=False)
         e.add_field(name="Reproduction Steps", value=data["Reproduce"] if data["Reproduce"] else "Not provided", inline=False)

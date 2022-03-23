@@ -104,7 +104,7 @@ class BugReportModal(discord.ui.Modal):
                     label="What were you doing?",
                     placeholder="e.g. Standing around in hub",
                     style=discord.TextInputStyle.long,
-                    min_length=90,
+                    min_length=30,
                     value=self.view.data["result"]
                 ),
                 discord.ui.TextInput(
@@ -112,7 +112,7 @@ class BugReportModal(discord.ui.Modal):
                     label="What did you expect to happen?",
                     placeholder="e.g. The mount to come out as usual",
                     style=discord.TextInputStyle.long,
-                    min_length=40,
+                    min_length=30,
                     value=self.view.data["expected"]
                 ),
                 discord.ui.TextInput(
@@ -120,13 +120,13 @@ class BugReportModal(discord.ui.Modal):
                     label="How can we reproduce this bug?",
                     placeholder="e.g. Go to an Hub World\nTry to mount",
                     style=discord.TextInputStyle.long,
-                    min_length=90,
+                    min_length=30,
                     value=self.view.data["reproduction"]
                 ),
                 discord.ui.TextInput(
                     custom_id="media_links",
                     label="Do you have any media? [Max: 10]",
-                    placeholder="Only Youtube and Imgur URL's are allowed",
+                    placeholder="Only Youtube, Imgur or Twitch Clip URL's are allowed",
                     style=discord.TextInputStyle.long,
                     required=False,
                     value=self.view.data["media_links"]
@@ -154,11 +154,15 @@ class BugReportModal(discord.ui.Modal):
                 elif child.custom_id == "media_links":
                     yt_regex = r"(?:https?:\/\/)?(?:www\.)?youtu(?:be\.com/watch\?(?:.*?&(?:amp;)?)?v=|\.be/)(?:[\w\-]+)(?:&(?:amp;)?[\w\?=]*)?"
                     imgur_regex = r"(?:https?:\/\/)?(?:i\.)?imgur.com\/(?:(?:gallery\/)(?:\w+)|(?:a\/)(?:\w+)#?)?(?:\w*)"
+                    twitch_regex = r"(?:https?:\/\/)(?:www\.)twitch\.tv\/\w+\/clip\/\w+(?:-\w+)?"
+                    discord_regex = r"(?:https?:\/\/cdn\.discordapp\.com\/attachments\/[0-9]+\/[0-9]+\/\w+\.[a-z0-9]{1,4})"
                     if child.value:
                         links = set(re.findall(yt_regex, child.value))
                         links.update(set(re.findall(imgur_regex, child.value)))
+                        links.update(set(re.findall(twitch_regex, child.value)))
+                        links.update(set(re.findall(discord_regex, child.value)))
                         if not links:
-                            raise Exception("No valid YouTube or Imgur links were detected in your media input however you can click again to fix these.")
+                            raise Exception("No valid YouTube, Imgur, Discord or Twitch Clip links were detected in your media input however you can click again to fix these.")
                         self.view.data["media_links"] = list(links)[:10]
                 else:
                     self.view.data[child.custom_id] = child.value

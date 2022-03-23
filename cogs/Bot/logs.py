@@ -14,6 +14,19 @@ class Logs(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+    @commands.Cog.listener("on_slash_command")
+    async def slash_command(self, interaction: discord.Interaction, command):
+        embed1 = CEmbed(title="Command Executed!", colour=interaction.guild.owner.color, timestamp=datetime.utcnow())
+        embed1.set_author(name=f"{interaction.guild.name} [{interaction.guild.id}]", icon_url=self.bot.user.avatar)
+        embed1.set_thumbnail(url=interaction.guild.icon)
+        embed1.set_footer(text=f"Member Count: {interaction.guild.member_count}")
+        embed1.add_field(name="Channel", value="Channel Name: `#{}`\nChannel ID: `{}`".format(interaction.channel.name, str(interaction.channel.id)), inline=False)
+        embed1.add_field(name="Author", value="Author: `@{}`\nAuthor ID: `{}`".format(interaction.user, interaction.user.id), inline=False)
+        embed1.add_field(name="Command", value="`{}`".format(command._name_), inline=False)
+        embeds = []
+        logger = self.bot.slash_commands_logger
+        await logger.send(embeds=[embed1] + embeds, username="Command Logs")
+
     @commands.Cog.listener("on_guild_join")
     async def guild_join(self, guild):
         await self.bot.db.database_check(guild.id)

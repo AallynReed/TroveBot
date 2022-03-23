@@ -56,6 +56,9 @@ class SlashCommand(app.SlashCommand):
         await ctx.defer(ephemeral=ephemeral)
         return ctx
 
+    async def callback(self):
+        self.client.dispatch("slash_command", self.interaction, self)
+
     async def error(self, error):
         if isinstance(error, discord.errors.NotFound) and error.text == "Unknown interaction":
             ...

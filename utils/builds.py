@@ -2,6 +2,8 @@ import itertools
 import re
 from datetime import datetime
 
+from tabulate import tabulate
+
 from utils.CustomObjects import CEmbed, Colorize
 from utils.objects import GameClass
 
@@ -189,10 +191,17 @@ class BuildsMaker():
                 ("\n**Gear** " + ("Crystal 5" if crystal5 else "Crystal 4")) +
                 (f"\n**Filter Builds** {filt}" if filt else "")
             )
-            e.description += "\n\n`👍` Cheap\n`💸` Expensive"
+            #e.description += "\n\n`👍` Cheap\n`💸` Expensive"
             e.description += ("\n\nElemental Format: `DMG/CD/DMG/CD`\nCosmic Format: `DMG/CD/<LIGHT> DMG/CD/<LIGHT>`" if build_type != 'health' else "\n\nFormat: `HP/HP%/HP/HP%`") + "\n```ansi\n"
             x = i * 10
+            table = [
+                ["#", "Build", "Coeff" if build_type != "health" else "Health"]
+            ]
+            if build_type not in ["coeff", "health"]:
+                table[0].append("Light")
+            table[0].append("Cheap")
             for b in page:
+                row = []
                 x += 1
                 boosts = []
                 [boosts.extend(i) for i in b[1]]
@@ -201,18 +210,28 @@ class BuildsMaker():
                     del boosts[8]
                 if not light and build_type not in ["coeff", "health"]:
                     boosts = boosts[:4]
-                text = f"{str(x) + '.': <4}{self.build_text(boosts, True)} -> §$3#0<%{b[0]}%>" + (f" [{b[3]}]" if build_type != "health" and mod else "") + (f" | §$7#0<%{b[2]}%> Light" if build_type not in ["coeff", "health"] else "")
+                row.append(str(x))
+                row.append(self.build_text(boosts, True))
+                row.append(f"{b[0]}") # f"§$3#0<%{b[0]}%>"
+                if build_type not in ["coeff", "health"]:
+                    row.append(f"{b[2]}") # f"§$7#0<%{b[2]}%> Light"
+                (f" | " )
                 build_rolls = b[1]
                 if (3 <= build_rolls[0][0] <= 6 and
                     3 <= build_rolls[0][1] <= 6 and 
                     6 <= build_rolls[1][0] <= 12 and 
                     6 <= build_rolls[1][1] <= 12):
-                    text += " 👍\n"
+                    row.append("✅")
                 else:
-                    text += " 💸\n"
-                e.description += text
+                    row.append("❌")
+                table.append(row)
+            e.description += tabulate(
+                tabular_data=table,
+                headers='firstrow',
+                numalign="left"
+            )
             e.description += f"```\nLearn more about builds with `{self.ctx.prefix}help build`"
-            e.description = str(Colorize(e.description, True))
+            e.description = str(Colorize(e.description, False))
             e.set_author(name=f"Top 100 Gem Builds for {_class.name} | Page {i+1} of {len(builds)}", icon_url=_class.image)
             page = {
                 "page": i,
@@ -309,11 +328,14 @@ class BuildsMaker():
     def build_text(self, build, with_ansi=False):
         text = ""
         if with_ansi:
-            text += f"§$6#0<%{'/'.join([str(i) for i in build][:4]): <8}%>"
+            #text += f"§$6#0<%{'/'.join([str(i) for i in build][:4]): <8}%>"
+            text += f"{'/'.join([str(i) for i in build][:4]): <8}"
             if len(build) == 8:
-                text += " + §$2#0<%" + "/".join([str(i) for i in build][4:]) + "%>"
+                #text += " + §$2#0<%" + "/".join([str(i) for i in build][4:]) + "%>"
+                text += " + " + "/".join([str(i) for i in build][4:])
             elif len(build) == 10:
-                text += " + §$2#0<%" + "/".join([str(i) for i in build][4:7]) + "%> §$2#0<%" + "/".join([str(i) for i in build][7:10]) + "%>"
+                #text += " + §$2#0<%" + "/".join([str(i) for i in build][4:7]) + "%> §$2#0<%" + "/".join([str(i) for i in build][7:10]) + "%>"
+                text += " + " + "/".join([str(i) for i in build][4:7]) + " " + "/".join([str(i) for i in build][7:10])
         else:
             text += f"{'/'.join([str(i) for i in build][:4]): <8}"
             if len(build) == 8:

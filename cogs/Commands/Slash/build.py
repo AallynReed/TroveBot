@@ -7,6 +7,7 @@ from utils.objects import ACResponse, SlashCommand
 class BuildCommand(SlashCommand, name="build", description="Show gem builds for a class."):
     build_id = Option(description="Load your's or someone's saved build", default=None, autocomplete=True)
     async def callback(self):
+        await super().callback()
         ctx = await self.get_context()
         build_id = self.build_id
         build = None

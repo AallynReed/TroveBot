@@ -39,7 +39,7 @@ class General(commands.Cog):
         e.description += "\nOnly use this link if the bot is already in your server but doesn't have slash commands, **you do not need to remove bot and readd**"
         await ctx.send(embed=e)
 
-    @commands.command(slash_command=True, help="Display informtion about the bot", aliases=["bot_info"])
+    @commands.command(slash_command=True, help="Display information about the bot", aliases=["bot_info"])
     async def botinfo(self, ctx):
         e = CEmbed()
         e.color = discord.Color.random()
@@ -181,11 +181,11 @@ class General(commands.Cog):
         e.set_author(name=ctx.author, icon_url=ctx.author.avatar)
         e.timestamp = datetime.utcnow()
         await self.bot.get_channel(859433409016496128).send(embed=e)
-        await ctx.send("Feedback sent.")
+        await ctx.send("Feedback sent.", ephemeral=True)
 
     @commands.command(slash_command=True, help="Get an invite to bot support server")
-    async def support(self, ctx):
-        await ctx.send("Join support.\nhttps://discord.gg/YAY3jz4rNG", ephemeral=True)
+    async def botsupport(self, ctx):
+        await ctx.send("Join bot support.\nhttps://discord.gg/YAY3jz4rNG", ephemeral=True)
 
     @commands.command(slash_command=True, aliases=["ji"], help="Show information about a user's join to the server.")
     @commands.bot_has_permissions(embed_links=1)
