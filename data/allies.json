@@ -412,12 +412,12 @@
         "designer": "DGater",
         "file": "Pets",
         "filename": "collections/pet/boot_hero",
-        "mastery": "0",
+        "mastery": "20",
         "mastery_geode": "0",
         "name": "Crimefighter Kicker",
-        "powerrank": "0",
-        "tooltip": "",
-        "updated_at": 1637100534
+        "powerrank": "20",
+        "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>5.0% Critical Damage</li>\r\n<li>8% Physical Damage</li>\r\n</ul>",
+        "updated_at": 1649164475
     },
     "boot_magic": {
         "blueprint": "custom/sorcerous_shoe.png",
@@ -2442,12 +2442,12 @@
         "designer": "Trove Team",
         "file": "Pets",
         "filename": "collections/pet/dragonfly_carps",
-        "mastery": "0",
+        "mastery": "20",
         "mastery_geode": "0",
         "name": "Carp Kite",
-        "powerrank": "0",
-        "tooltip": "",
-        "updated_at": 1647370256
+        "powerrank": "20",
+        "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>30 Magic Find</li>\r\n<li>15 Jump</li>\r\n</ul>\r\n<p>Has a chance to recover one flask charge when a nearby enemy dies.</p>",
+        "updated_at": 1649164475
     },
     "dragonfly_firefly_purple": {
         "blueprint": "c_c_dragonfly_firefly_purple_ui.png",
@@ -4444,12 +4444,12 @@
         "designer": "Trove Team",
         "file": "Pets",
         "filename": "collections/pet/mimic_bike",
-        "mastery": "0",
+        "mastery": "20",
         "mastery_geode": "0",
         "name": "Biron Bicycle",
-        "powerrank": "0",
-        "tooltip": "",
-        "updated_at": 1647370256
+        "powerrank": "20",
+        "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>5 Flask Capacity</li>\r\n<li>5 Movement Speed</li>\r\n</ul>\r\n<p>Chance when a nearby enemy dies to gain a large damage and movement speed boost.</p>",
+        "updated_at": 1649164475
     },
     "mimic_builderbook": {
         "blueprint": "2021/allies/mimic_builderbook/c_c_mimic_builderbook_ui[evilagician,ylva].png",
@@ -4542,12 +4542,12 @@
         "designer": "Trove Team",
         "file": "Pets",
         "filename": "collections/pet/mimic_foolsgold",
-        "mastery": "0",
+        "mastery": "10",
         "mastery_geode": "0",
         "name": "Fool's Chest",
-        "powerrank": "0",
-        "tooltip": "",
-        "updated_at": 1647370256
+        "powerrank": "20",
+        "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>2 Flask Capacity</li>\r\n<li>5 Movement Speed</li>\r\n</ul>",
+        "updated_at": 1649164475
     },
     "mimic_jaws": {
         "blueprint": "2021/allies/mimic_jaws/c_c_mimic_jaws_ui.png",
@@ -5270,12 +5270,12 @@
         "designer": "Trove Team",
         "file": "Pets",
         "filename": "collections/pet/octopus_tanabata_blue",
-        "mastery": "0",
+        "mastery": "20",
         "mastery_geode": "0",
         "name": "Blue Lantern",
-        "powerrank": "0",
-        "tooltip": "",
-        "updated_at": 1647370256
+        "powerrank": "20",
+        "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>10% Magic Damage</li>\r\n<li>-8% Incoming Damage</li>\r\n<li>8% Maximum Health</li>\r\n<li>15 Superstition</li>\r\n</ul>\r\n<p>Damaging enemies has a chance to blast them with fire.</p>",
+        "updated_at": 1649164475
     },
     "octopus_tanabata_orange": {
         "blueprint": "2022/allies/octopus_tanabata_orange/c_c_octopus_tanabata_orange_ui.png",
@@ -5284,12 +5284,12 @@
         "designer": "Trove Team",
         "file": "Pets",
         "filename": "collections/pet/octopus_tanabata_orange",
-        "mastery": "0",
+        "mastery": "20",
         "mastery_geode": "0",
         "name": "Orange Lantern",
-        "powerrank": "0",
-        "tooltip": "",
-        "updated_at": 1647370256
+        "powerrank": "20",
+        "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>10% Physical Damage</li>\r\n<li>-8% Incoming Damage</li>\r\n<li>8% Maximum Health</li>\r\n<li>15 Superstition</li>\r\n</ul>\r\n<p>Damaging enemies has a chance to blast them with fire.</p>",
+        "updated_at": 1649164475
     },
     "panda": {
         "blueprint": "c_c_panda_basic_ui[comply].png",
@@ -6082,12 +6082,12 @@
         "designer": "Trove Team",
         "file": "Pets",
         "filename": "collections/pet/qubesly_bunfest",
-        "mastery": "20",
+        "mastery": "10",
         "mastery_geode": "0",
         "name": "Bunsly",
         "powerrank": "20",
         "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>15 Health Regen</li>\r\n<li>35 Physical Damage</li>\r\n</ul>",
-        "updated_at": 1637100534
+        "updated_at": 1649164475
     },
     "qubesly_capnflint": {
         "blueprint": "c_c_qubesly_capnflint_ui[capn_flint].png",

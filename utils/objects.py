@@ -84,9 +84,39 @@ class UserCommandContext():
         return await self.interaction.followup.send(content=content, **kwargs)
 
 class UserCommand(app.UserCommand):
-    async def get_context(self):
+    async def get_context(self, ephemeral=False):
         ctx = UserCommandContext(self)
-        await ctx.defer()
+        await ctx.defer(ephemeral=ephemeral)
+        return ctx
+
+    async def error(self, error):
+        if isinstance(error, discord.errors.NotFound) and error.text == "Unknown interaction":
+            ...
+        else:
+            await super().error(error)
+
+class MessageCommandContext():
+    def __init__(self, command):
+        self.command = command
+        self.interaction = command.interaction
+        self.channel = self.interaction.channel
+        self.author = self.interaction.user
+        self.guild = self.interaction.guild
+        self.bot = command.client
+        self.defer = self.interaction.response.defer
+        self.prefix = "/"
+        self.on_message_command()
+
+    def on_message_command(self):
+        self.bot.dispatch("app_message", self)
+
+    async def send(self, content=None, **kwargs):
+        return await self.interaction.followup.send(content=content, **kwargs)
+
+class MessageCommand(app.MessageCommand):
+    async def get_context(self, ephemeral=False):
+        ctx = MessageCommandContext(self)
+        await ctx.defer(ephemeral=ephemeral)
         return ctx
 
     async def error(self, error):

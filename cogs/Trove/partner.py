@@ -18,8 +18,6 @@ class Partner(commands.Cog):
     )
     @commands.max_concurrency(1, per=commands.BucketType.user)
     async def _report_a_bug(self, ctx):
-        if ctx.channel.id not in [832582272011599902,941107547287482398,812354696320647238,859440482195341323]:
-            return await ctx.reply("You can't use this command in this channel.", ephemeral=True)
         view = BugReportView(ctx)
         view.message = await ctx.send(embed=view.build_embed(), view=view, ephemeral=True)
         await view.wait()

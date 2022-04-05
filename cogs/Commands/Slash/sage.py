@@ -4,7 +4,7 @@ import re
 import discord
 from discord.app import Option
 from utils.CustomObjects import CEmbed, Sage
-from utils.buttons import Pager, PagerButton, SageManage, SageModal
+from utils.buttons import MarkHelpful, Pager, PagerButton, SageManage, SageModal
 from utils.objects import ACResponse, SlashCommand
 
 
@@ -37,7 +37,8 @@ class SageCommand(SlashCommand, name="sage", description="Send a sage into chat"
         e.set_footer(text=f"{author} | SageID: {sage._id} | Created", icon_url=author.avatar)
         e.set_image(url=sage.image)
         await self.client.db.db_tags.update_one({"_id": sage._id}, {"$set": sage.data})
-        await ctx.send(embed=e)
+        view = MarkHelpful(ctx, sage)
+        view.message = await ctx.send(embed=e, view=view)
 
     async def autocomplete(self, options, focused):
         response = ACResponse()
@@ -48,12 +49,12 @@ class SageCommand(SlashCommand, name="sage", description="Send a sage into chat"
                 {"deleted": False},
                 {"$or": [
                     {"_id": value}, 
-                    {"name": {"$regex": f"(?:\W|^)({re.escape(value)})"}}, 
+                    {"name": {"$regex": f"(?i)(?:\W|^)({re.escape(value)})"}}, 
                 ]}
             ]}
-        ).sort("uses", -1)
+        ).sort([["helpful", -1], ["uses", -1]])
         async for sage in data:
-            response.add_option(f'{sage["name"]} | Uses x{sage["uses"]}', sage["_id"])
+            response.add_option(f'{sage["name"]} | +{len(sage["helpful"])}', sage["_id"])
         return response[:25]
 
 class AddSageCommand(SlashCommand, name="sage_add", description="Create a sage"):
@@ -96,7 +97,7 @@ class UpdateSageCommand(SlashCommand, name="sage_update", description="Update a 
                 {"deleted": False},
                 {"$or": [
                     {"_id": value}, 
-                    {"name": {"$regex": f"(?:\W|^)({re.escape(value)})"}}, 
+                    {"name": {"$regex": f"(?i)(?:\W|^)({re.escape(value)})"}}, 
                 ]}
             ]}
         ).sort("uses", -1)
@@ -171,7 +172,7 @@ class ManageSageCommand(SlashCommand, name="sage_manage", description="Manage a 
         data = self.client.db.db_tags.find(
             {"$or": [
                 {"_id": value}, 
-                {"name": {"$regex": f"(?:\W|^)({re.escape(value)})"}}, 
+                {"name": {"$regex": f"(?i)(?:\W|^)({re.escape(value)})"}}, 
             ]}
         ).sort("uses", -1)
         async for sage in data:
@@ -204,8 +205,9 @@ class IndexSageCommand(SlashCommand, name="sage_index", description="List sages 
         categories = await self.client.db.db_tags.find(
             {
                 "$and": [
+                    {"deleted": False},
                     {"category": {"$ne": None}},
-                    {"category": {"$regex": f"(?:\W|^)({re.escape(value)})"}}
+                    {"category": {"$regex": f"(?i)(?:\W|^)({re.escape(value)})"}}
                 ]
             }).distinct("category")
         for category in categories:

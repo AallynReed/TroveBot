@@ -48,6 +48,7 @@ class Sage:
         data["created_at"] = data.get("created_at", int(datetime.utcnow().timestamp()))
         data["image"] = data.get("image", None)
         data["uses"] = data.get("uses", 0)
+        data["helpful"] = data.get("helpful", [])
         self.__dict__.update(data)
 
     def use(self):

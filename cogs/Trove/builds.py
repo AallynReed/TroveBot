@@ -97,7 +97,7 @@ class Builds(commands.Cog):
     @builds.command(slash_command=True, name="list", help="List of all your saved builds.")
     async def _build_list_list(self, ctx):
         data = await self.bot.db.db_users.find_one({"_id": ctx.author.id}, {"builds": 1})
-        if not data["builds"]["saved"]:
+        if not data or not data["builds"]["saved"]:
             return await ctx.reply("You have no saved builds.")
         pages = await self._build_list_pages(data["builds"]["saved"])
         view = Paginator(ctx, pages, start_end=True)

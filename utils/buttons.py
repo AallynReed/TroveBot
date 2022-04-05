@@ -13,6 +13,8 @@ from discord.embeds import EmptyEmbed
 
 from utils.builds import BuildsMaker
 from utils.CustomObjects import CEmbed, Dict, Sage
+from utils.CustomObjects import TimeConverter
+from utils.others import RandomID
 
 
 class Dummy():
@@ -147,7 +149,7 @@ class BugReportModal(discord.ui.Modal):
                 if child.custom_id == "trove_name":
                     nick = re.match(r"^([a-z_0-9]{2,19})$", child.value, re.IGNORECASE)
                     if not nick:
-                        raise Exception("Trove IGN invalid.")
+                        raise Exception("Trove In-Game name invalid.")
                     self.view.data[child.custom_id] = child.value
                 elif child.custom_id == "exploit":
                     self.view.data[child.custom_id] = child.value.lower() == "y"
@@ -274,7 +276,7 @@ class BugReportView(BaseView):
         self.stop()
 
     @discord.ui.button(label='Cancel', style=discord.ButtonStyle.danger, row=1)
-    async def send(self, _, interaction):
+    async def cancel(self, _, interaction):
         await self.message.delete(silent=True)
         await interaction.response.send_message(
             f"Your bug report was cancelled.",
@@ -369,6 +371,207 @@ class SageModal(discord.ui.Modal):
             embed=e,
             ephemeral=True
         )
+
+class LFGModal(discord.ui.Modal):
+    def __init__(self, view):
+        super().__init__("Create a new Group Listing")
+        self.view = view
+        prefill_name = view.user.display_name
+        if not re.match(r"^([a-z_0-9]{2,19})$", prefill_name, re.IGNORECASE):
+            prefill_name = None
+        items = [
+            discord.ui.TextInput(
+                custom_id="player",
+                label="Your in-game nickname",
+                style=discord.TextInputStyle.short,
+                min_length=2,
+                max_length=19,
+                value=view.data["player"] or prefill_name
+            ),
+            discord.ui.TextInput(
+                custom_id="name",
+                label="Group Name",
+                style=discord.TextInputStyle.short,
+                min_length=6,
+                max_length=32,
+                value=view.data["name"]
+            ),
+            discord.ui.TextInput(
+                custom_id="description",
+                label="Group Description",
+                style=discord.TextInputStyle.long,
+                min_length=6,
+                max_length=1024,
+                placeholder="Describe what you want this group to do.\nJust play\nFarm Delves\nBuild a club\netc...",
+                value=view.data["description"]
+            ),
+            discord.ui.TextInput(
+                custom_id="requirements",
+                label="Group Requirements",
+                style=discord.TextInputStyle.long,
+                max_length=300,
+                value=view.data["requirements"],
+                placeholder="Power Rank: 36000+\nLevel 30+\nLight: 8000+\nMad Skillz at not dying\netc...",
+                required=False
+            ),
+            discord.ui.TextInput(
+                custom_id="expire",
+                label="Group Expiration",
+                style=discord.TextInputStyle.short,
+                max_length=64,
+                value=str(TimeConverter(view.data["expire"]-view.data["created_at"])) if view.data["expire"] else None,
+                placeholder="1 hour | 1 day | 1 week",
+                required=False
+            )
+        ]
+        for item in items:
+            self.add_item(item)
+
+    async def callback(self, interaction):
+        for child in self.children:
+            if child.custom_id == "player":
+                nick = re.match(r"^([a-z_0-9]{2,19})$", child.value, re.IGNORECASE)
+                if not nick:
+                    return await self.interaction.response.send_message(
+                        "Trove In-Game name invalid.",
+                        ephemeral=True
+                    )
+            self.view.data[child.custom_id] = child.value
+            if child.custom_id == "expire":
+                time = int(TimeConverter(child.value))
+                if not time > 0:
+                    return await interaction.response.send_message(
+                        "Expiration time invalid.",
+                        ephemeral=True
+                    )
+                elif time > 2629800 :
+                    return await interaction.response.send_message(
+                        "Expiration time must be up to a month.",
+                        ephemeral=True
+                    )
+                self.view.data[child.custom_id] = self.view.data["created_at"] + time
+        self.view.manage_buttons()
+        await self.view.message.edit(embed=self.view.build_embed(), view=self.view)
+        await interaction.response.send_message(
+            "LFG form filled successfully.",
+            ephemeral=True
+        )
+
+class LFGView(BaseView):
+    def __init__(self, ctx):
+        super().__init__(timeout=600)
+        self.ctx = ctx
+        self.user = ctx.author
+        self.data = {
+            "_id": RandomID(8),
+            "player": None,
+            "creator": self.user.id,
+            "name": None,
+            "description": None,
+            "platform": None,
+            "requirements": None,
+            "expire": None,
+            "deleted": False,
+            "created_at": int(datetime.utcnow().timestamp()),
+        }
+        self.manage_buttons()
+    
+    def manage_buttons(self):
+        required = [
+            "player",
+            "name",
+            "description",
+            "platform"
+        ]
+        for required_field in required:
+            if required_field is None:
+                self.submit.disabled = True
+        for item in self.children:
+            if isinstance(item, LFGPlatformSelect):
+                self.remove_item(item)
+        self.add_item(LFGPlatformSelect(self))
+    
+    def build_embed(self):
+        embed = CEmbed(
+            description=self.data["description"] or "New Group",
+            timestamp=datetime.utcfromtimestamp(self.data["created_at"])
+        )
+        embed.set_author(name=self.data["name"] or "Empty")
+        embed.set_footer(text=f"Created by {self.user.name}", icon_url=self.user.avatar)
+        embed.add_field(name="Player", value=self.data["player"] or "Empty")
+        embed.add_field(name="Platform", value=self.data["platform"] or "Empty")
+        embed.add_field(
+            name="Expiration",
+            value=str(TimeConverter(self.data["expire"]-self.data["created_at"])) if self.data["expire"] else "No Expiration"
+        )
+        embed.add_field(name="Requirements", value=self.data["requirements"] or "No Requirements", inline=False)
+        return embed        
+
+    @discord.ui.button(label='Fill details', style=discord.ButtonStyle.primary, row=0)
+    async def fill(self, _, interaction):
+        modal = LFGModal(self)
+        await interaction.response.send_modal(modal)
+
+    @discord.ui.button(label='Create', style=discord.ButtonStyle.success, row=2)
+    async def submit(self, _, interaction):
+        await self.ctx.bot.db.db_lfg.insert_one(self.data)
+        self.ctx.bot.dispatch("lfg_create", self.data)
+        await interaction.response.send_message(
+            f"LFG created with ID **{self.data['_id']}**, it'll now show in the LFG listing",
+            ephemeral=True
+        )
+    
+    @discord.ui.button(label='Cancel', style=discord.ButtonStyle.danger, row=2)
+    async def cancel(self, _, interaction):
+        await self.message.delete(silent=True)
+        await interaction.response.send_message(
+            f"Your LFG creation was cancelled.",
+            ephemeral=True
+        )
+        self.stop()
+
+class LFGPlatformSelect(discord.ui.Select):
+    def __init__(self, view):
+        platforms = [
+            "PC",
+            "Xbox",
+            "PS4-EU",
+            "PS4-NA",
+            "Switch"
+        ]
+        options = [
+            discord.SelectOption(label=platform, default=platform==view.data["platform"])
+            for platform in platforms
+        ]
+        super().__init__(placeholder="Pick a platform", options=options, row=1)
+
+    async def callback(self, interaction: discord.Interaction):
+        platform = self.values[0]
+        self.view.data["platform"] = platform
+        self.view.manage_buttons()
+        await self.view.message.edit(embed=self.view.build_embed(), view=self.view)
+        await interaction.response.send_message(f'Platform changed to **{platform}**.', ephemeral=True)
+
+class MarkHelpful(BaseView):
+    def __init__(self, ctx, sage):
+        super().__init__(timeout=180)
+        self.ctx = ctx
+        self.sage = sage
+    
+    async def interaction_check(self, _, interaction):
+        if interaction.user.id in self.sage.helpful:
+            await interaction.response.send_message("You've already marked this sage as helpful.", ephemeral=True)
+            return False
+        return True
+
+    @discord.ui.button(label='Mark as Helpful', emoji="<:plus1:325430109043556352>", style=discord.ButtonStyle.success)
+    async def mark(self, _, interaction):
+        self.sage.helpful.append(interaction.user.id)
+        await self.ctx.bot.db.db_tags.update_one(
+            {"_id": self.sage._id},
+            {"$set": {"helpful": self.sage.helpful}}
+        )
+        await interaction.response.send_message("You've marked this sage as helpful.", ephemeral=True)
 
 # Base
 

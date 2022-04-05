@@ -187,7 +187,7 @@ class Trove(commands.AutoShardedBot):
         self.success = 0x008000
         self.error = 0x800000
         self.progress = 0xf9d71c
-        self.version = "3.5.33", 1648066178
+        self.version = "3.5.43", 1649183547
         self.time = TroveTime()
         self.uptime = datetime.utcnow().timestamp()
         self._last_exception = None
