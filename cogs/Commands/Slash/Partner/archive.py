@@ -1,12 +1,14 @@
 # Priority: 1
+import re
 from datetime import datetime
-import discord
-from discord.utils import get
-from discord import Option
-from utils.buttons import Pager
-from utils.objects import ACResponse, SlashCommand
 from typing import Literal
+
+import discord
+from discord import Option
+from discord.utils import get
+from utils.buttons import Pager
 from utils.CustomObjects import TimeConverter
+from utils.objects import ACResponse, SlashCommand
 
 
 class Archive(SlashCommand, name="archive", guilds=[118027756075220992, 834505270075457627]):
@@ -59,6 +61,8 @@ class Open(SlashCommand, name="open", description="Open an archive channel.",par
         for archive in sorted(category.text_channels, key=lambda x: -x.created_at.timestamp()):
             if not archive.permissions_for(target).view_channel:
                 if archive.permissions_for(guild.me).manage_permissions:
+                    if not re.findall(f"(?:\W|^)({re.escape(value)})", archive.name, re.IGNORECASE):
+                        continue
                     response.add_option(archive.name, str(archive.id))
         return response[:25]
 
@@ -75,8 +79,9 @@ class Close(SlashCommand, name="close", description="Close an archive channel.",
         archive = await ctx.bot.db.db_ts_archives.find_one({"_id": channel.id})
         if not archive:
             return await ctx.send("That archive isn't open.")
-        if archive["opened_by"] != ctx.author.id:
-            return await ctx.send("You can only close an archive you opened.")
+        if ctx.author.id not in [117951235423731712, 565097923025567755]:
+            if archive["opened_by"] != ctx.author.id:
+                return await ctx.send("You can only close an archive you opened.")
         target = guild.default_role
         await ctx.bot.db.db_ts_archives.delete_one({"_id": channel.id})
         if not channel.permissions_for(target).view_channel:
@@ -92,7 +97,10 @@ class Close(SlashCommand, name="close", description="Close an archive channel.",
         value = value.lower()
         guild = self.client.get_guild(118027756075220992)
         category = guild.get_channel(772434558330601542)
-        opened_archives = self.client.db.db_ts_archives.find({"opened_by": self.interaction.user.id})
+        if self.interaction.user.id in [117951235423731712, 565097923025567755]:
+            opened_archives = self.client.db.db_ts_archives.find({})
+        else:
+            opened_archives = self.client.db.db_ts_archives.find({"opened_by": self.interaction.user.id})
         if not opened_archives:
             return response
         async for archive in opened_archives:

@@ -307,7 +307,7 @@ class Owner(commands.Cog):
             additional["fem"] = ctx.channel.fetch_message
             additional["dlt"] = ctx.message.delete
             additional["now"] = datetime.utcnow()
-            additional["nowts"] = datetime.utcnow().timestamp()
+            additional["nowts"] = int(datetime.utcnow().timestamp())
             additional["ctx"] = ctx
             additional["sd"] = ctx.send
             additional["channel"] = ctx.channel
