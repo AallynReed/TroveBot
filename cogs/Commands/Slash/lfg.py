@@ -1,8 +1,9 @@
 # Priority: 1
-from utils.buttons import LFGView, Pager, Page
+from utils.buttons import Pager, Page
 from utils.objects import SlashCommand
 from discord.app import Option
 from utils.CustomObjects import CEmbed, TimeConverter
+from utils.partner import LFGView
 from datetime import datetime
 
 class LFGCommand(SlashCommand, name="lfg", description="Find groups to play with."):

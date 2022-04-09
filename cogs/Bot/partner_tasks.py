@@ -61,9 +61,7 @@ class PartnerTasks(commands.Cog):
                 location = get(self.bot.get_guild(118027756075220992).text_channels, name=location.strip()[1:])
                 if location:
                     location = location.mention
-            location = location
             if event_name not in events:
-                print(event_name)
                 await self.bot.http.create_guild_scheduled_event(
                     118027756075220992,
                     channel_id=None,

@@ -4682,12 +4682,12 @@
         "designer": "Trove Team",
         "file": "Pets",
         "filename": "collections/pet/monkey_bunsmasher",
-        "mastery": "0",
+        "mastery": "10",
         "mastery_geode": "0",
         "name": "Baby Bunsmasher",
-        "powerrank": "0",
-        "tooltip": "",
-        "updated_at": 1647370256
+        "powerrank": "20",
+        "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>8% Maximum Health</li>\r\n<li>10 Magic Find</li>\r\n<li>-4% Incoming Damage</li>\r\n</ul>\r\n<p>Chance to reduce ability cooldowns when a nearby enemy dies.</p>",
+        "updated_at": 1649525195
     },
     "monkey_carys": {
         "blueprint": "2021/allies/monkey_carys/c_c_monkey_ui.png",

@@ -2,6 +2,7 @@
 import asyncio
 from random import randint
 
+import discord
 from discord.ext import commands
 
 from utils.CustomObjects import CEmbed
@@ -118,7 +119,13 @@ class CommandHandler(commands.Cog):
     @commands.Cog.listener("on_dm_message")
     async def _dm_message(self, ctx, message):
         files = [await f.to_file() for f in message.attachments]
-        await self.bot.dm_logger.send(content=message.content, files=files, username=str(message.author) + f" [{message.author.id}]", avatar_url=message.author.avatar)
+        await self.bot.dm_logger.send(
+            content=message.content,
+            files=files,
+            username=str(message.author) + f" [{message.author.id}]",
+            avatar_url=message.author.avatar,
+            allowed_mentions=discord.AllowedMentions.none()
+        )
         if ctx.valid:
             await ctx.send("Commands don't work in DM's please use them in a server.")
      

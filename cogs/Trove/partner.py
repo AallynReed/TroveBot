@@ -1,7 +1,6 @@
 # Priority: 1
 
 from discord.ext import commands
-from utils.buttons import BugReportView
 from utils.CustomObjects import CEmbed
 
 
@@ -9,18 +8,6 @@ class Partner(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(
-        message_command=False,
-        slash_command=True,
-        slash_command_guilds=[118027756075220992,834505270075457627],
-        name="reportbug",
-        help="Report an ingame bug to developers."
-    )
-    @commands.max_concurrency(1, per=commands.BucketType.user)
-    async def _report_a_bug(self, ctx):
-        view = BugReportView(ctx)
-        view.message = await ctx.send(embed=view.build_embed(), view=view, ephemeral=True)
-        await view.wait()
 
     @commands.command(slash_command=True, name="calendar", aliases=["events"], help="Check out Trovesaurus calendar.")
     async def _show_events(self, ctx):
