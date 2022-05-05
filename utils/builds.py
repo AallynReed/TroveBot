@@ -148,7 +148,7 @@ class BuildsMaker():
         food = self.arguments.food
         deface = self.arguments.deface
         filt = self.build_part(self.arguments.filter)[1] if self.arguments.filter else self.arguments.filter
-        last_updated = datetime.utcfromtimestamp(1640180877)
+        last_updated = datetime.utcfromtimestamp(1651733968)
         if self.arguments.build:
             for build in builds:
                 if build[1] != self.arguments.build:
@@ -286,7 +286,7 @@ class BuildsMaker():
 
     @property
     def cd_dragons(self):
-        return 80
+        return 90
 
     @property
     def bonus_dmg(self):
@@ -302,7 +302,7 @@ class BuildsMaker():
             "Face": 28600,
             "Hat": 28600,
             "Ring": 14475,
-            "Dragons": 39000,
+            "Dragons": 40000,
             "Torch": 10000
         }
 

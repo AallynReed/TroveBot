@@ -23,15 +23,16 @@ class Open(SlashCommand, name="open", description="Open an archive channel.",par
     async def callback(self):
         await super().callback()
         ctx = await self.get_context(ephemeral=True)
-        if await ctx.bot.db.db_ts_archives.count_documents({"opened_by": ctx.author.id}) >= 2:
+        if await ctx.bot.db.db_ts_archives.count_documents({"opened_by": ctx.author.id}) >= 3:
             return await ctx.send("You already have 2 open archives, you must close one with `/archive close`.")
         guild = ctx.bot.get_guild(118027756075220992)
-        category = guild.get_channel(772434558330601542)
+        categories = [772434558330601542, 908664374619668510]
+        channels = [ch for c in [guild.get_channel(c) for c in categories] for ch in c.text_channels]
         target = guild.default_role
-        channel = get(category.text_channels, id=int(self.channel))
+        channel = get(channels, id=int(self.channel))
         if not channel:
             return await ctx.send("No archive found.")
-        closed_archives = [a for a in category.text_channels if not a.permissions_for(target).view_channel]
+        closed_archives = [a for a in channels if not a.permissions_for(target).view_channel]
         if channel not in closed_archives:
             return await ctx.send("This archive is already open.")
         new_overwrites = channel.overwrites
@@ -49,16 +50,17 @@ class Open(SlashCommand, name="open", description="Open an archive channel.",par
 
             }
         )
-        return await ctx.send(f"Archive {channel.mention} has been opened for the next hour.")
+        return await ctx.send(f"Archive {channel.mention} has been opened for {TimeConverter(duration)}.")
 
     async def autocomplete(self, options, focused):
         response = ACResponse()
         value = options[focused]
         value = value.lower()
         guild = self.client.get_guild(118027756075220992)
-        category = guild.get_channel(772434558330601542)
+        categories = [772434558330601542, 908664374619668510]
+        channels = [ch for c in [guild.get_channel(c) for c in categories] for ch in c.text_channels]
         target = guild.default_role
-        for archive in sorted(category.text_channels, key=lambda x: -x.created_at.timestamp()):
+        for archive in sorted(channels, key=lambda x: -x.created_at.timestamp()):
             if not archive.permissions_for(target).view_channel:
                 if archive.permissions_for(guild.me).manage_permissions:
                     if not re.findall(f"(?:\W|^)({re.escape(value)})", archive.name, re.IGNORECASE):
@@ -72,8 +74,9 @@ class Close(SlashCommand, name="close", description="Close an archive channel.",
         await super().callback()
         ctx = await self.get_context(ephemeral=True)
         guild = ctx.bot.get_guild(118027756075220992)
-        category = guild.get_channel(772434558330601542)
-        channel = get(category.text_channels, id=int(self.channel))
+        categories = [772434558330601542, 908664374619668510]
+        channels = [ch for c in [guild.get_channel(c) for c in categories] for ch in c.text_channels]
+        channel = get(channels, id=int(self.channel))
         if not channel:
             return await ctx.send("No archive found.")
         archive = await ctx.bot.db.db_ts_archives.find_one({"_id": channel.id})
@@ -96,7 +99,8 @@ class Close(SlashCommand, name="close", description="Close an archive channel.",
         value = options[focused]
         value = value.lower()
         guild = self.client.get_guild(118027756075220992)
-        category = guild.get_channel(772434558330601542)
+        categories = [772434558330601542, 908664374619668510]
+        channels = [ch for c in [guild.get_channel(c) for c in categories] for ch in c.text_channels]
         if self.interaction.user.id in [117951235423731712, 565097923025567755]:
             opened_archives = self.client.db.db_ts_archives.find({})
         else:
@@ -104,7 +108,7 @@ class Close(SlashCommand, name="close", description="Close an archive channel.",
         if not opened_archives:
             return response
         async for archive in opened_archives:
-            archive = get(category.text_channels, id=archive["_id"])
+            archive = get(channels, id=archive["_id"])
             if not archive:
                 continue
             response.add_option(archive.name, str(archive.id))
@@ -115,11 +119,12 @@ class List(SlashCommand, name="list", description="List all archive channels.",p
         await super().callback()
         ctx = await self.get_context(ephemeral=True)
         guild = ctx.bot.get_guild(118027756075220992)
-        category = guild.get_channel(772434558330601542)
+        categories = [772434558330601542, 908664374619668510]
+        channels = [ch for c in [guild.get_channel(c) for c in categories] for ch in c.text_channels]
         target = guild.default_role
-        if not category:
+        if not channels:
             return await ctx.send("Looks like something went terribly wrong. Contact developer.")
-        archives = [a for a in category.text_channels]
+        archives = [a for a in channels]
         archives.sort(key=lambda x: x.overwrites[target].view_channel, reverse=True)
         view = Pager(ctx, start_end=True)
         pages = ctx.bot.utils.chunks(archives, 10)

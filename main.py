@@ -154,8 +154,8 @@ class Trove(commands.AutoShardedBot):
         setattr(self.Trove, "values", Values())
         setattr(self.Trove, "time", TroveTime())
         setattr(self.Trove, "sheets", {})
-        setattr(self.Trove, "daily_data", json.load(open("/home/sly/nucleo/data/daily_buffs.json")))
-        setattr(self.Trove, "weekly_data", json.load(open("/home/sly/nucleo/data/weekly_buffs.json")))
+        setattr(self.Trove, "daily_data", json.load(open(f"/home/{keys['Bot']['User']}/nucleo/data/daily_buffs.json")))
+        setattr(self.Trove, "weekly_data", json.load(open(f"/home/{keys['Bot']['User']}/nucleo/data/weekly_buffs.json")))
         db_bot = (await self.db.db_bot.find_one({"_id": "0511"}, {"mastery": 1}))["mastery"]
         for key, value in db_bot.items():
             if key.startswith("max"):
@@ -187,7 +187,7 @@ class Trove(commands.AutoShardedBot):
         self.success = 0x008000
         self.error = 0x800000
         self.progress = 0xf9d71c
-        self.version = "3.5.54", 1649525452
+        self.version = "3.5.77", 1651748924
         self.time = TroveTime()
         self.uptime = datetime.utcnow().timestamp()
         self._last_exception = None

@@ -23,6 +23,10 @@ class BaseView(discord.ui.View):
             timeout=timeout
         )
 
+    def deactivate(self):
+        for item in self.items:
+            item.disabled = True
+
     async def interaction_check(self, _, interaction: discord.Interaction):
         if self.ctx.author == interaction.user:
             return True
@@ -161,6 +165,14 @@ class Page(Embed):
         self.embed = embed
         self.content = content
         self.attachments = files or []
+
+    @classmethod
+    def from_dict(cls, data, content=None, files=None, embed=True):
+        embed = super().from_dict(data)
+        embed.embed = embed
+        embed.content = content
+        embed.attachments = files or []
+        return embed
 
     async def send(self, messageable, view=None):
         return await messageable(content=self.content, files=self.attachments, embed=self if self.embed else None, view=view)

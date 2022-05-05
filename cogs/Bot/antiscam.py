@@ -168,16 +168,17 @@ class ScamLogs(commands.Cog):
     async def _message_filter(self, message):
         if message.author.id == self.bot.user.id:
             return
-        if not message.guild:
+        results = re.findall(self.domain_regex, message.content, re.IGNORECASE)
+        if not results:
             return
+        if not message.guild:
+            return self.bot.dispatch("link_post", None, None, message, results)
         ctx = await self.bot.get_context(message)
         server_data = await ctx.get_guild_data(anti_scam=1)
         settings = server_data["anti_scam"]["settings"]
         if not settings["toggle"]:
             return
-        results = re.findall(self.domain_regex, message.content, re.IGNORECASE)
-        if results:
-            self.bot.dispatch("link_post", settings, server_data["anti_scam"], message, results)
+        self.bot.dispatch("link_post", settings, server_data["anti_scam"], message, results)
 
     @commands.Cog.listener("on_message_edit")
     async def _message_edit_filter(self, _, message):
@@ -199,17 +200,19 @@ class ScamLogs(commands.Cog):
         confirmed = []
         api_confirmed = await self.check_domain(message.content)
         confirmed.extend(api_confirmed)
-        for match in matches:
-            for custom_domain in settings["custom_domains"]:
-                if self.match_domain(match, custom_domain):
-                    confirmed.append(custom_domain)
+        if settings:
+            for match in matches:
+                for custom_domain in settings["custom_domains"]:
+                    if self.match_domain(match, custom_domain):
+                        confirmed.append(custom_domain)
         if not confirmed:
             return
-        for domain in list(set(confirmed)):
-            if not keys["domains"].get(domain):
-                keys["domains"][domain] = 0
-            keys["domains"][domain] += 1
-        await self.bot.db.db_servers.update_one({"_id": message.guild.id}, {"$inc": {"anti_scam.hit_count": 1}, "$set": {"anti_scam.domains": keys["domains"]}})
+        if keys:
+            for domain in list(set(confirmed)):
+                if not keys["domains"].get(domain):
+                    keys["domains"][domain] = 0
+                keys["domains"][domain] += 1
+            await self.bot.db.db_servers.update_one({"_id": message.guild.id}, {"$inc": {"anti_scam.hit_count": 1}, "$set": {"anti_scam.domains": keys["domains"]}})
         await message.delete(silent=True)
         if message.author.id not in self.warned_users:
             self.warned_users.append(message.author.id)
@@ -224,28 +227,51 @@ class ScamLogs(commands.Cog):
                 await message.author.send(warning)
             except:
                 ...
-        if settings["mode"] == -1:
-            ...
-        elif settings["mode"] == 0:
-            try:
-                await message.author.ban(reason="Sending scam links.")
-            except:
+            if not message.guild:
+                dmd = []
+                user_guilds = {g for g in self.bot.guilds if g.get_member(message.author.id)}
+                for guild in self.bot.guilds:
+                    if guild.owner.id in dmd:
+                        continue
+                    owner_guilds = {g for g in self.bot.guilds if guild.owner.id == g.owner.id and g.get_member(message.author.id)}
+                    intersection = user_guilds.intersection(owner_guilds)
+                    if intersection:
+                        try:
+                            dmd.append(guild.owner.id)
+                            warning = f"The user `{message.author}` **[{message.author.id}]** sent a DM link through bot DM's.\n"
+                            warning += "This is usually a sign of mass DM'ing of scam links to hack and take over accounts\n"
+                            warning += "You are being DM'd this because you are the proud owner of the following servers in which this user is in:\n"
+                            warning += "\n".join([f"    • **{g.name}**" for g in intersection])
+                            warning += "\nThis warning is just informational, if you wish to stop receiving them, type `I don't want DM Scam Notifications`"
+                            warning += "I will disable on a case basis as requested.\n\nHave a great day and stay safe."
+                            await guild.owner.send(warning)
+                        except:
+                            ...
+        channel = None
+        if settings:
+            if settings["mode"] == -1:
                 ...
-        elif settings["mode"] > 0:
-            try:
-                await message.author.edit(timeout_until=message.created_at + timedelta(seconds=settings["mode"]), reason="Sending scam links.")
-            except:
-                ...
-        channel = self.bot.get_channel(settings["log_channel"])
+            elif settings["mode"] == 0:
+                try:
+                    await message.author.ban(reason="Sending scam links.")
+                except:
+                    ...
+            elif settings["mode"] > 0:
+                try:
+                    await message.author.edit(timeout_until=message.created_at + timedelta(seconds=settings["mode"]), reason="Sending scam links.")
+                except:
+                    ...
+            channel = self.bot.get_channel(settings["log_channel"])
         e = discord.Embed(description="", color=0xff0000)
         e.timestamp = message.created_at
         e.set_author(name="Malicious domains detected")
-        e.description += f"In `#{message.channel.name}`\nby {message.author.mention} | `{message.author}`\n"
+        channel_name = message.channel.name if not isinstance(message.channel, discord.DMChannel) else '**Direct Messages**'
+        e.description += f"In `#{channel_name}`\nby {message.author.mention} | `{message.author}`\n"
         scam_domains = "\n".join(confirmed)
         e.description += f"```ansi\n{scam_domains or 'None'}\n```"
         elapsed = int((datetime.utcnow().timestamp() - e.timestamp.timestamp()) * 1000)
         e.add_field(name="Time elapsed", value=f"{elapsed}ms")
-        await self.bot.get_channel(924623456291680296).send(content=f"Server: **{message.guild.name}** [{message.guild.id}]", embed=e)
+        await self.bot.get_channel(924623456291680296).send(content=f"Server: **{message.guild.name}** [{message.guild.id}]" if message.guild else "**Direct Messages**", embed=e)
         if not channel:
             #await message.channel.send(f"{message.author.mention} sent a scam link.\nEnable logs with `{(await self.bot.prefix(self.bot, message))[0]}anti_scam log_channel #Channel`", delete_after=15)
             return

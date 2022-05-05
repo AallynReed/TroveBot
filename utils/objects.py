@@ -351,8 +351,8 @@ class Values():
         self.dragons
         if load_classes:
             self.classes = self._classes()
-        self.gear_builds = json.loads(open("/home/sly/nucleo/data/builds.json", "r").read())
-        self._allies_raw = json.loads(open("/home/sly/nucleo/data/allies.json", "r").read())
+        self.gear_builds = json.loads(open("/home/gVQZjCoEIG/nucleo/data/builds.json", "r").read())
+        self._allies_raw = json.loads(open("/home/gVQZjCoEIG/nucleo/data/allies.json", "r").read())
         self.allies = [Ally(data) for data in self._allies_raw.values()]
 
     def update_gear_builds(self):
@@ -438,7 +438,7 @@ class Values():
                 build["gems"] += ["/".join([text_format(i) for i in wb["R"+row].value.split(" or ")])]
             build["gems"].append(wb["S"+row].value + " (Cosmic)")
 
-        json.dump(gear, open("/home/sly/nucleo/data/builds.json", "w+"), indent=4)
+        json.dump(gear, open("/home/gVQZjCoEIG/nucleo/data/builds.json", "w+"), indent=4)
         self._preload(False)
 
     @property
@@ -495,7 +495,7 @@ class Values():
     @property
     def base_mf(self):
         items = {
-            "dragons": 2500,
+            "dragons": 2550,
             "dragon_badges": 450,
             "hat": 260,
             "weapon": 260,
@@ -511,7 +511,7 @@ class Values():
     def dragons(self):
         self.pd_dragons = 6400
         self.md_dragons = 5900
-        self.cd_dragons = 80
+        self.cd_dragons = 90
 
     @property
     def bonus_dmg(self):
@@ -529,7 +529,7 @@ class Values():
             "face": 28600,
             "hat": 28600,
             "ring": 14475,
-            "dragons": 39000,
+            "dragons": 40000,
             "torch": 10000
         }
         return sum(items.values())
@@ -552,7 +552,7 @@ class Values():
             "weapon": 1698,
             "face": 1698,
             "gems": 24769,
-            "dragons": 1620,
+            "dragons": 1650,
             "banner": 350,
             "ring": 1513,
             "ally": 75,
@@ -805,8 +805,14 @@ class Values():
             url_mr = "https://i.imgur.com/sYTJNHU.png"
         if 750 <= totalmr <= 799:
             url_mr = "https://i.imgur.com/jpx5SZE.png"
-        if 800 <= totalmr:
+        if 800 <= totalmr <= 849:
             url_mr = "https://i.imgur.com/6kS2qH3.png"
+        if 850 <= totalmr <= 899:
+            url_mr = "https://i.imgur.com/Vs4uSe6.png"
+        if 900 <= totalmr <= 949:
+            url_mr = "https://i.imgur.com/E3m0hsR.png"
+        if 950 <= totalmr:
+            url_mr = "https://i.imgur.com/9Q2IfXG.png"
         # Power
         if 1 <= pr <= 249:
             url_pr = "https://i.imgur.com/ytgFQJq.png"

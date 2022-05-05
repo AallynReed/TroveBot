@@ -197,6 +197,7 @@ class Calculations(commands.Cog):
 + Borr. Luck  |  {round((mf+250)*1.5)}  |  {round((mf+250)*2*1.5)} |
 + Sunday      |  {round((mf+100+250)*1.5)}  |  {round((mf+200+250)*2*1.5)} |
 + Clov & Elix |  {round((mf+100+75+50+250)*1.5)}  |  {round((mf+200+75+50+250)*2*1.5)} |
++ Store Boost |  {round((mf+100+75+50+250+1000)*1.5)}  |  {round((mf+200+75+50+250+1000)*2*1.5)} |
 ```
 """
         e.add_field(name="Live Max Magic Find", value=mastery_table(live_mf), inline=False)

@@ -2001,6 +2001,20 @@
         "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>68 Physical Damage</li>\r\n<li>121 Maximum Health</li>\r\n</ul>",
         "updated_at": 1637100534
     },
+    "dog_labrador": {
+        "blueprint": "2022/allies/dog_labrador/c_c_dog_labrador_ui.png",
+        "category": "Event",
+        "desc": "Trained to sniff out and follow valuables.",
+        "designer": "Trove Team",
+        "file": "Pets",
+        "filename": "collections/pet/dog_labrador",
+        "mastery": "0",
+        "mastery_geode": "0",
+        "name": "Pinzo's Puppy",
+        "powerrank": "0",
+        "tooltip": "",
+        "updated_at": 1651748003
+    },
     "dog_logicwolf": {
         "blueprint": "c_c_dog_logicwolf_ui[logic_wolf].png",
         "category": "Streamer Dream 3",
@@ -2126,6 +2140,34 @@
         "powerrank": "75",
         "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>2.0% Critical Hit</li>\r\n</ul>\r\n<p>Increases cooldown recovery speed by 10%.</p>\r\n<p>Damaging enemies has a chance to blast them with fire.</p>",
         "updated_at": 1637100534
+    },
+    "dragon_baby_bomberroyale_rubber": {
+        "blueprint": "2022/allies/dragon_baby_bomberroyale_rubber/c_c_dragon_baby_bomberroyale_rubber_ui.png",
+        "category": "BomberRoyale",
+        "desc": "A true student of war.",
+        "designer": "Trove Team",
+        "file": "Pets",
+        "filename": "collections/pet/dragon_baby_bomberroyale_rubber",
+        "mastery": "0",
+        "mastery_geode": "0",
+        "name": "Kyrithite",
+        "powerrank": "0",
+        "tooltip": "",
+        "updated_at": 1651748003
+    },
+    "dragon_baby_bomberroyale_sticky": {
+        "blueprint": "2022/allies/dragon_baby_bomberroyale_sticky/c_c_dragon_baby_bomberroyale_sticky_ui.png",
+        "category": "BomberRoyale",
+        "desc": "Zynny is less interested in the fighting and more interested in the blasts.",
+        "designer": "Trove Team",
+        "file": "Pets",
+        "filename": "collections/pet/dragon_baby_bomberroyale_sticky",
+        "mastery": "0",
+        "mastery_geode": "0",
+        "name": "Zynny",
+        "powerrank": "0",
+        "tooltip": "",
+        "updated_at": 1651748003
     },
     "dragon_beard": {
         "blueprint": "c_c_dragon_baby_beard_ui.png",
@@ -2491,6 +2533,20 @@
         "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>5.0% Attack Speed</li>\r\n<li>5 Energy Regen</li>\r\n</ul>",
         "updated_at": 1637100534
     },
+    "dragonfly_frostwaspider": {
+        "blueprint": "2022/allies/dragonfly_frostwaspider/c_c_dragonfly_frostwaspider_ui.png",
+        "category": "Event",
+        "desc": "The larval stage of an invasive species well outside of its optimal temperature zone.",
+        "designer": "Trove Team",
+        "file": "Pets",
+        "filename": "collections/pet/dragonfly_frostwaspider",
+        "mastery": "20",
+        "mastery_geode": "0",
+        "name": "Maymidge",
+        "powerrank": "20",
+        "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>6% Attack Speed</li>\r\n<li>4 Flask Capacity</li>\r\n</ul>\r\n<p>Increases cooldown recovery speed by 10%</p>",
+        "updated_at": 1651748003
+    },
     "dragonfly_hellbug": {
         "blueprint": "2022/allies/dragonfly_hellbug/c_c_dragonfly_hellbug_ui.png",
         "category": "Store",
@@ -2603,6 +2659,20 @@
         "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>15.0% Health Regen</li>\r\n<li>60 Magic Find</li>\r\n</ul>",
         "updated_at": 1637100534
     },
+    "dragonserpent_quetzalcoatl": {
+        "blueprint": "2022/allies/dragonserpent_quetzalcoatl/c_c_dragonserpent_quetzalcoatl_ui[skythevirus].png",
+        "category": "Store",
+        "desc": "Flashes a different color from every angle.",
+        "designer": "SkyTheVirus",
+        "file": "Pets",
+        "filename": "collections/pet/dragonserpent_quetzalcoatl",
+        "mastery": "20",
+        "mastery_geode": "0",
+        "name": "Colorful Quetzalcoatl",
+        "powerrank": "20",
+        "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>15% Health Regen</li>\r\n<li>50 Magic Find</li>\r\n</ul>",
+        "updated_at": 1651748003
+    },
     "dreambro_basic": {
         "blueprint": "c_c_dreambro_armored_ui[comply].png",
         "category": "Extra Life",
@@ -2714,6 +2784,20 @@
         "powerrank": "75",
         "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>2 Flask Capacity</li>\r\n<li>30 Superstition</li>\r\n</ul>\r\n<p>Chance when a nearby enemy dies to gain a large damage and movement speed boost.</p>\r\n<p>Gain 1% health each time you damage an enemy.</p>",
         "updated_at": 1637100534
+    },
+    "duodrak_twoheads_battle": {
+        "blueprint": "2022/allies/duodrak_twoheads_battle/c_c_duodrak_twoheads_battle_ui.png",
+        "category": "BomberRoyale",
+        "desc": "San and Cynguine quick to prove that they are just as powerful as their older sibling.",
+        "designer": "Trove Team",
+        "file": "Pets",
+        "filename": "collections/pet/duodrak_twoheads_battle",
+        "mastery": "0",
+        "mastery_geode": "0",
+        "name": "San and Cynguine, Burgeoning Virulence",
+        "powerrank": "0",
+        "tooltip": "",
+        "updated_at": 1651748003
     },
     "egg": {
         "blueprint": "c_c_egg_chicky_ui[tyrynn].png",
@@ -2868,6 +2952,20 @@
         "powerrank": "20",
         "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>10 Jump</li>\r\n<li>40 Magic Find</li>\r\n</ul>",
         "updated_at": 1647370256
+    },
+    "fae_lunarling": {
+        "blueprint": "2022/allies/fae_lunarling/c_c_fae_lunarling_ui[thestimergames].png",
+        "category": "Chaotic",
+        "desc": "Spawned by condensed rays of moonlight springing spontaneously to life.",
+        "designer": "TheStimerGames",
+        "file": "Pets",
+        "filename": "collections/pet/fae_lunarling",
+        "mastery": "0",
+        "mastery_geode": "0",
+        "name": "Lunarling",
+        "powerrank": "0",
+        "tooltip": "",
+        "updated_at": 1651748003
     },
     "fae_mini_elysia": {
         "blueprint": "2020/c_c_fae_mini_elysia_ui.png",
@@ -3037,6 +3135,20 @@
         "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>6% Magic Damage</li>\r\n<li>30 Energy Regen</li>\r\n</ul>",
         "updated_at": 1637100534
     },
+    "floateye_inflatable_chuckp": {
+        "blueprint": "2022/allies/floateye_inflatable_chuckp/c_c_floateye_inflatable_chuckp_ui.png",
+        "category": "Event",
+        "desc": "Liberated from Chuck Pinzo, who uses these to attract attention.",
+        "designer": "Trove Team",
+        "file": "Pets",
+        "filename": "collections/pet/floateye_inflatable_chuckp",
+        "mastery": "0",
+        "mastery_geode": "0",
+        "name": "Pinzo Popup",
+        "powerrank": "0",
+        "tooltip": "",
+        "updated_at": 1651748003
+    },
     "floateye_onion": {
         "blueprint": "2022/allies/floateye_onion/c_c_floateye_onion_ui.png",
         "category": "Store",
@@ -3078,6 +3190,34 @@
         "powerrank": "75",
         "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>15.0% Critical Damage</li>\r\n<li>4.0% Attack Speed</li>\r\n</ul>",
         "updated_at": 1637100534
+    },
+    "floateye_skull": {
+        "blueprint": "2022/allies/floateye_skull/c_c_floateye_skull_ui[cyekie].png",
+        "category": "Chaotic",
+        "desc": "Named for the constant reactions of others when meeting him.",
+        "designer": "Cyekie",
+        "file": "Pets",
+        "filename": "collections/pet/floateye_skull",
+        "mastery": "0",
+        "mastery_geode": "0",
+        "name": "Gasper",
+        "powerrank": "0",
+        "tooltip": "",
+        "updated_at": 1651748003
+    },
+    "floateye_treesapling": {
+        "blueprint": "2022/allies/floateye_treesapling/c_c_floateye_treesapling_ui.png",
+        "category": "Promo",
+        "desc": "This little happy friend is far too energetic to grow up yet - he'd much rather follow you around on your adventures!",
+        "designer": "Trove Team",
+        "file": "Pets",
+        "filename": "collections/pet/floateye_treesapling",
+        "mastery": "0",
+        "mastery_geode": "0",
+        "name": "Hyper Tree Friend",
+        "powerrank": "0",
+        "tooltip": "",
+        "updated_at": 1651748003
     },
     "flytoaster_flappyflask": {
         "blueprint": "2021/allies/cc_flytoaster_flappyflask/c_c_flytoaster_flappyflask_ui[tfmhisztike].png",
@@ -3148,6 +3288,20 @@
         "powerrank": "20",
         "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>7 Jump</li>\r\n<li>35 Magic Find</li>\r\n</ul>",
         "updated_at": 1637100534
+    },
+    "frog_lifeguard_tysorion": {
+        "blueprint": "2022/allies/frog_lifeguard_tysorion/c_c_frog_lifeguard_tysorion_ui.png",
+        "category": "Store",
+        "desc": "No running around the water!",
+        "designer": "Trove Team",
+        "file": "Pets",
+        "filename": "collections/pet/frog_lifeguard_tysorion",
+        "mastery": "0",
+        "mastery_geode": "0",
+        "name": "Tysorion Pool Patrol",
+        "powerrank": "0",
+        "tooltip": "",
+        "updated_at": 1651748003
     },
     "frog_lucky": {
         "blueprint": "c_c_frog_lucky_ui.png",
@@ -3246,6 +3400,20 @@
         "powerrank": "20",
         "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>60 Magic Find</li>\r\n<li>-8% Incoming Damage</li>\r\n</ul>",
         "updated_at": 1637100534
+    },
+    "gleemur_crocodile": {
+        "blueprint": "2022/allies/gleemur_crocodile/c_c_gleemur_crocodile_ui[skythevirus].png",
+        "category": "Chaotic",
+        "desc": "Watch yourself or you get snapped!",
+        "designer": "SkyTheVirus",
+        "file": "Pets",
+        "filename": "collections/pet/gleemur_crocodile",
+        "mastery": "0",
+        "mastery_geode": "0",
+        "name": "Lil' Snapper",
+        "powerrank": "0",
+        "tooltip": "",
+        "updated_at": 1651748003
     },
     "goat_banana": {
         "blueprint": "c_c_goat_banana_ui[asanabanana].png",
@@ -3667,6 +3835,20 @@
         "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>5 Jump</li>\r\n<li>40 Magic Find</li>\r\n<li>1 Flask Capacity</li>\r\n</ul>",
         "updated_at": 1637100534
     },
+    "griffon_phoenix": {
+        "blueprint": "2022/allies/griffon_phoenix/c_c_griffon_phoenix_ui[skythevirus].png",
+        "category": "Chaotic",
+        "desc": "Its smoldering gaze can melt ice. Or maybe that's just the flames... it's probably the flames.",
+        "designer": "SkyTheVirus",
+        "file": "Pets",
+        "filename": "collections/pet/griffon_phoenix",
+        "mastery": "0",
+        "mastery_geode": "0",
+        "name": "Lil' Smolder",
+        "powerrank": "0",
+        "tooltip": "",
+        "updated_at": 1651748003
+    },
     "griffon_rainbowcorn": {
         "blueprint": "c_c_griffon_rainbowcorn_ui.png",
         "category": "Extra Life",
@@ -3744,12 +3926,12 @@
         "designer": "TFMHisztike",
         "file": "Pets",
         "filename": "collections/pet/guineapig_astronaut",
-        "mastery": "0",
+        "mastery": "20",
         "mastery_geode": "0",
         "name": "Pigstronaut",
         "powerrank": "0",
-        "tooltip": "",
-        "updated_at": 1637100534
+        "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>5 Jump</li>\r\n<li>25 Lasermancy</li>\r\n</ul>",
+        "updated_at": 1651748003
     },
     "guineapig_cuy": {
         "blueprint": "c_c_guineapig_cuy_ui[nullmouse].png",
@@ -4745,6 +4927,20 @@
         "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>8.0% Attack Speed</li>\r\n<li>8 Movement Speed</li>\r\n</ul>",
         "updated_at": 1637100534
     },
+    "monkey_chuckp": {
+        "blueprint": "2022/allies/monkey_chuckp/c_c_monkey_chuckp_ui.png",
+        "category": "Event",
+        "desc": "Definitely will get everything he's owed any day now.",
+        "designer": "Trove Team",
+        "file": "Pets",
+        "filename": "collections/pet/monkey_chuckp",
+        "mastery": "0",
+        "mastery_geode": "0",
+        "name": "Pinzo's Patsy",
+        "powerrank": "0",
+        "tooltip": "",
+        "updated_at": 1651748003
+    },
     "monkey_corn": {
         "blueprint": "c_c_monkey_corn_ui.png",
         "category": "Store",
@@ -4758,6 +4954,20 @@
         "powerrank": "5",
         "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>6 Jump</li>\r\n<li>20 Magic Find</li>\r\n</ul>",
         "updated_at": 1637100534
+    },
+    "monkey_fire_man": {
+        "blueprint": "2022/allies/monkey_fire_man/c_c_monkey_fire_man_ui[cyekie].png",
+        "category": "Chaotic",
+        "desc": "Sinder's stare is enough to know to not ask questions.",
+        "designer": "Cyekie",
+        "file": "Pets",
+        "filename": "collections/pet/monkey_fire_man",
+        "mastery": "0",
+        "mastery_geode": "0",
+        "name": "Sinder",
+        "powerrank": "0",
+        "tooltip": "",
+        "updated_at": 1651748003
     },
     "monkey_gnome": {
         "blueprint": "c_c_monkey_gnome_ui[undiegnome].png",
@@ -5109,6 +5319,20 @@
         "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>20 Crafting Speed</li>\r\n</ul>",
         "updated_at": 1637100534
     },
+    "octopus_blimp": {
+        "blueprint": "2022/allies/octopus_blimp/c_c_octopus_blimp_ui.png",
+        "category": "Store",
+        "desc": "Floats a lot better than a lead balloon, but keep it away from combustion.",
+        "designer": "Trove Team",
+        "file": "Pets",
+        "filename": "collections/pet/octopus_blimp",
+        "mastery": "0",
+        "mastery_geode": "0",
+        "name": "Blimp",
+        "powerrank": "0",
+        "tooltip": "",
+        "updated_at": 1651748003
+    },
     "octopus_fizpink": {
         "blueprint": "c_c_octopus_fizpink_ui[fizzinc].png",
         "category": "Extra Life",
@@ -5375,6 +5599,20 @@
         "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>8 Jump</li>\r\n</ul>",
         "updated_at": 1637100534
     },
+    "papercrane_lifeguard_carys": {
+        "blueprint": "2022/allies/papercrane_lifeguard_carys/c_c_papercrane_lifeguard_carys_ui.png",
+        "category": "Store",
+        "desc": "No eating while swimming!",
+        "designer": "Trove Team",
+        "file": "Pets",
+        "filename": "collections/pet/papercrane_lifeguard_carys",
+        "mastery": "0",
+        "mastery_geode": "0",
+        "name": "Carysian Pool Patrol",
+        "powerrank": "0",
+        "tooltip": "",
+        "updated_at": 1651748003
+    },
     "papercrane_lilship": {
         "blueprint": "2021/allies/cc_papercrane_lilship/c_c_papercrane_lilship_ui[eterne].png",
         "category": "Chaotic",
@@ -5416,6 +5654,34 @@
         "powerrank": "20",
         "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>1 Flask Capacity</li>\r\n</ul>",
         "updated_at": 1637100534
+    },
+    "papercrane_surfboard": {
+        "blueprint": "2022/allies/papercrane_surfboard/c_c_papercrane_surfboard_ui.png",
+        "category": "Event",
+        "desc": "Maybe a little too small to actually surf the colors of the wind.",
+        "designer": "Trove Team",
+        "file": "Pets",
+        "filename": "collections/pet/papercrane_surfboard",
+        "mastery": "0",
+        "mastery_geode": "0",
+        "name": "Colors of the Breezesurfer",
+        "powerrank": "0",
+        "tooltip": "",
+        "updated_at": 1651748003
+    },
+    "papercrane_wonderboat": {
+        "blueprint": "2022/allies/papercrane_wonderboat/c_c_papercrane_wonderboat_ui[eterne].png",
+        "category": "Store",
+        "desc": "Hopes that some day it'll grow up to be big and strong and sell Trove of Wonders.",
+        "designer": "Eterne",
+        "file": "Pets",
+        "filename": "collections/pet/papercrane_wonderboat",
+        "mastery": "20",
+        "mastery_geode": "0",
+        "name": "Dinghy of Wonders",
+        "powerrank": "20",
+        "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>1 Flask Capacity</li>\r\n<li>50 Magic Find</li>\r\n</ul>",
+        "updated_at": 1651748003
     },
     "papercrane_woodenhorse": {
         "blueprint": "2021/allies/papercrane_woodenhorse/c_c_papercrane_ui.png",
@@ -5543,6 +5809,20 @@
         "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>15.0% Magic Damage</li>\r\n</ul>",
         "updated_at": 1637100534
     },
+    "parrot_scuba": {
+        "blueprint": "2022/allies/parrot_scuba/c_c_parrot_scuba_ui.png",
+        "category": "Event",
+        "desc": "Polly wants an underwater adventure.",
+        "designer": "Trove Team",
+        "file": "Pets",
+        "filename": "collections/pet/parrot_scuba",
+        "mastery": "0",
+        "mastery_geode": "0",
+        "name": "Amphibious Avian",
+        "powerrank": "0",
+        "tooltip": "",
+        "updated_at": 1651748003
+    },
     "pebble_alien": {
         "blueprint": "2021/allies/pebble_alien/c_c_pebble_alien_ui.png",
         "category": "Promo",
@@ -5654,6 +5934,20 @@
         "powerrank": "5",
         "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>8.0% Energy Regen</li>\r\n<li>-6.0% Incoming Damage</li>\r\n</ul>",
         "updated_at": 1637100534
+    },
+    "poop_pocketwatch": {
+        "blueprint": "2022/allies/poop_pocketwatch/c_c_poop_pocketwatch_ui.png",
+        "category": "Store",
+        "desc": "Keep track of time by keeping this watch chained down.",
+        "designer": "Trove Team",
+        "file": "Pets",
+        "filename": "collections/pet/poop_pocketwatch",
+        "mastery": "0",
+        "mastery_geode": "0",
+        "name": "Perky Pocketwatch",
+        "powerrank": "0",
+        "tooltip": "",
+        "updated_at": 1651748003
     },
     "poop_suitcase": {
         "blueprint": "c_c_poop_suitcase_ui.png",
@@ -5976,6 +6270,20 @@
         "powerrank": "0",
         "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>1.5% Critical Hit</li>\r\n</ul>",
         "updated_at": 1637100534
+    },
+    "quarble_chaos": {
+        "blueprint": "2022/allies/quarble_chaos/c_c_quarble_chaos_ui[skythevirus].png",
+        "category": "Chaotic",
+        "desc": "Like it's not hard enough to find something in the dark.",
+        "designer": "SkyTheVirus",
+        "file": "Pets",
+        "filename": "collections/pet/quarble_chaos",
+        "mastery": "0",
+        "mastery_geode": "0",
+        "name": "Chameleye",
+        "powerrank": "0",
+        "tooltip": "",
+        "updated_at": 1651748003
     },
     "quarble_hedgehog": {
         "blueprint": "c_c_quarble_hedgehog_ui.png",
@@ -6690,6 +6998,20 @@
         "powerrank": "0",
         "tooltip": "",
         "updated_at": 1637100534
+    },
+    "qubesly_pi": {
+        "blueprint": "2022/allies/qubesly_pi/c_c_qubesly_pi_ui[0sita].png",
+        "category": "Store",
+        "desc": "Rated a perfect 22/7.",
+        "designer": "0sita",
+        "file": "Pets",
+        "filename": "collections/pet/qubesly_pi",
+        "mastery": "20",
+        "mastery_geode": "0",
+        "name": "Piece of Pi",
+        "powerrank": "20",
+        "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>3 Jump</li>\r\n<li>14 Health</li>\r\n</ul>",
+        "updated_at": 1651748003
     },
     "qubesly_pizzanati": {
         "blueprint": "c_c_qubesly_pizzanati_ui[tribe].png",
@@ -7517,6 +7839,20 @@
         "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>45 Magic Find</li>\r\n<li>3 Movement Speed</li>\r\n</ul>",
         "updated_at": 1637100534
     },
+    "rooster_rainbow": {
+        "blueprint": "2022/allies/rooster_rainbow/c_c_rooster_rainbow_ui.png",
+        "category": "Store",
+        "desc": "Struts in the sunlight to show off reflective and radiant plumage.",
+        "designer": "Trove Team",
+        "file": "Pets",
+        "filename": "collections/pet/rooster_rainbow",
+        "mastery": "0",
+        "mastery_geode": "0",
+        "name": "Rainbow Rooster",
+        "powerrank": "0",
+        "tooltip": "",
+        "updated_at": 1651748003
+    },
     "rooster_sandpiper": {
         "blueprint": "c_c_rooster_sandpiper_ui.png",
         "category": "InProgress",
@@ -7657,6 +7993,20 @@
         "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>3 Jump</li>\r\n<li>13 Superstition</li>\r\n</ul>\r\n<p>Gain 2.2% health each time you damage an enemy.</p>",
         "updated_at": 1637100534
     },
+    "snake_amperium": {
+        "blueprint": "2022/allies/snake_amperium/c_c_snake_amperium_ui[tfmhisztike].png",
+        "category": "Chaotic",
+        "desc": "Pretty concerning as to where 00-19 are....",
+        "designer": "TFMHisztike",
+        "file": "Pets",
+        "filename": "collections/pet/snake_amperium",
+        "mastery": "0",
+        "mastery_geode": "0",
+        "name": "SN3K-20",
+        "powerrank": "0",
+        "tooltip": "",
+        "updated_at": 1651748003
+    },
     "snake_brown": {
         "blueprint": "c_c_snake_brown_ui[skyrider3217].png",
         "category": "Extra Life",
@@ -7727,6 +8077,20 @@
         "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>400 Light</li>\r\n<li>10 Movement Speed</li>\r\n</ul>\r\n<p>Chance to reduce ability cooldowns when a nearby enemy dies.</p>",
         "updated_at": 1647370256
     },
+    "snake_rainbow": {
+        "blueprint": "2022/allies/snake_rainbow/c_c_snake_rainbow_ui[cyekie].png",
+        "category": "Store",
+        "desc": "Clearly extremely venomous based on the coloration.",
+        "designer": "Cyekie",
+        "file": "Pets",
+        "filename": "collections/pet/snake_rainbow",
+        "mastery": "20",
+        "mastery_geode": "0",
+        "name": "Vivid Viper",
+        "powerrank": "20",
+        "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>1.0% Critical Hit</li>\r\n<li>10.0% Critical Damage</li>\r\n</ul>",
+        "updated_at": 1651748003
+    },
     "snake_train": {
         "blueprint": "2021/allies/snake_train/c_c_snake_train_ui[_futurehero_,airrider].png",
         "category": "Chaotic",
@@ -7796,6 +8160,20 @@
         "powerrank": "20",
         "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>3 Movement Speed</li>\r\n<li>7 Jump</li>\r\n</ul>",
         "updated_at": 1637100534
+    },
+    "spidermonkey_candycorn": {
+        "blueprint": "2022/allies/spidermonkey_candycorn/c_c_spidermonkey_candycorn_ui[skythevirus].png",
+        "category": "Chaotic",
+        "desc": "You thought a world made of candy sounded fun huh? Don't forget to check your boots.",
+        "designer": "SkyTheVirus",
+        "file": "Pets",
+        "filename": "collections/pet/spidermonkey_candycorn",
+        "mastery": "0",
+        "mastery_geode": "0",
+        "name": "Candy Corpion",
+        "powerrank": "0",
+        "tooltip": "",
+        "updated_at": 1651748003
     },
     "spidermonkey_faespider": {
         "blueprint": "2021/allies/fae_spider/c_c_spidermonkey_faespider_ui.png",
@@ -7950,6 +8328,48 @@
         "powerrank": "20",
         "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>1 Maximum Energy</li>\r\n<li>4 Energy Regen</li>\r\n</ul>",
         "updated_at": 1637100534
+    },
+    "stack_starfish_carys": {
+        "blueprint": "2022/allies/stack_starfish_carys/c_c_stack_starfish_carys_ui.png",
+        "category": "Store",
+        "desc": "Twinkles like a crown jewel.",
+        "designer": "Trove Team",
+        "file": "Pets",
+        "filename": "collections/pet/stack_starfish_carys",
+        "mastery": "0",
+        "mastery_geode": "0",
+        "name": "Carysian Crown Star",
+        "powerrank": "0",
+        "tooltip": "",
+        "updated_at": 1651748003
+    },
+    "stack_starfish_panatea": {
+        "blueprint": "2022/allies/stack_starfish_panatea/c_c_stack_starfish_panatea_ui.png",
+        "category": "Store",
+        "desc": "Keep the party going at any depth.",
+        "designer": "Trove Team",
+        "file": "Pets",
+        "filename": "collections/pet/stack_starfish_panatea",
+        "mastery": "0",
+        "mastery_geode": "0",
+        "name": "Panatean Party Star",
+        "powerrank": "0",
+        "tooltip": "",
+        "updated_at": 1651748003
+    },
+    "stack_starfish_tysorion": {
+        "blueprint": "2022/allies/stack_starfish_tysorion/c_c_stack_starfish_tysorion_ui.png",
+        "category": "Store",
+        "desc": "Twinkles like any gem found in a trove.",
+        "designer": "Trove Team",
+        "file": "Pets",
+        "filename": "collections/pet/stack_starfish_tysorion",
+        "mastery": "0",
+        "mastery_geode": "0",
+        "name": "Tysorion Twinkle Star",
+        "powerrank": "0",
+        "tooltip": "",
+        "updated_at": 1651748003
     },
     "stack_taco": {
         "blueprint": "c_c_stack_taco_ui[kiroknightbow].png",
@@ -8217,6 +8637,20 @@
         "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>7.0% Attack Speed</li>\r\n<li>1.5% Critical Hit</li>\r\n</ul>",
         "updated_at": 1637100534
     },
+    "tentacle_snowman": {
+        "blueprint": "2022/allies/tentacle_snowman/c_c_tentacle_snowman_ui.png",
+        "category": "Event",
+        "desc": "Don't tell him what will inevitably happen during summer vacation.",
+        "designer": "Trove Team",
+        "file": "Pets",
+        "filename": "collections/pet/tentacle_snowman",
+        "mastery": "20",
+        "mastery_geode": "0",
+        "name": "Thawing Snowboy",
+        "powerrank": "20",
+        "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>5 Energy Regen</li>\r\n<li>10% Health Regen</li>\r\n<li>10% Maximum Health</li>\r\n</ul>",
+        "updated_at": 1651748003
+    },
     "tentacle_tree": {
         "blueprint": "c_c_tentacle_tree_ui.png",
         "category": "Store",
@@ -8314,6 +8748,34 @@
         "powerrank": "20",
         "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>5.0% Maximum Health</li>\r\n<li>25 Lasermancy</li>\r\n</ul>",
         "updated_at": 1637100534
+    },
+    "turtle_pvp_beetle_blue": {
+        "blueprint": "2022/allies/beetle_pvp_blue/c_c_turtle_pvp_beetle_blue_ui.png",
+        "category": "BomberRoyale",
+        "desc": "A beetle born in the heart of the permafrost and forged by the fires of Bomber Royale.",
+        "designer": "Trove Team",
+        "file": "Pets",
+        "filename": "collections/pet/turtle_pvp_beetle_blue",
+        "mastery": "0",
+        "mastery_geode": "0",
+        "name": "Blue Battle Beetle",
+        "powerrank": "0",
+        "tooltip": "",
+        "updated_at": 1651748003
+    },
+    "turtle_pvp_beetle_red": {
+        "blueprint": "2022/allies/beetle_pvp_red/c_c_turtle_pvp_beetle_red_ui.png",
+        "category": "BomberRoyale",
+        "desc": "A beetle native to the lava of Dragonfire Peaks and tempered by the blasts of Bomber royale.",
+        "designer": "Trove Team",
+        "file": "Pets",
+        "filename": "collections/pet/turtle_pvp_beetle_red",
+        "mastery": "0",
+        "mastery_geode": "0",
+        "name": "Red Battle Beetle",
+        "powerrank": "0",
+        "tooltip": "",
+        "updated_at": 1651748003
     },
     "turtle_rosebud": {
         "blueprint": "2021/allies/turtle_rosebud/c_c_turtle_ui.png",
@@ -8651,6 +9113,20 @@
         "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>10.0% Maximum Health</li>\r\n<li>10.0% Health Regen</li>\r\n</ul>",
         "updated_at": 1637100534
     },
+    "wheel_skeleton": {
+        "blueprint": "2022/allies/wheel_skeleton/c_c_wheel_skeleton_ui[0sita].png",
+        "category": "Chaotic",
+        "desc": "How Ricky escaped the control of a Tombraiser is unimportant. What is important is where did Ricky find something with wheel shaped bones?",
+        "designer": "0sita",
+        "file": "Pets",
+        "filename": "collections/pet/wheel_skeleton",
+        "mastery": "0",
+        "mastery_geode": "0",
+        "name": "Ricky the Rad",
+        "powerrank": "0",
+        "tooltip": "",
+        "updated_at": 1651748003
+    },
     "wheel_springflower": {
         "blueprint": "c_c_wheel_springflower_ui.png",
         "category": "Pinata",
@@ -8945,6 +9421,20 @@
         "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>2 Jump</li>\r\n<li>9.0% Energy Regen</li>\r\n</ul>",
         "updated_at": 1637100534
     },
+    "zepperay_fruit": {
+        "blueprint": "2022/allies/zepperay_fruit/c_c_zepperay_fruit_ui[airrider].png",
+        "category": "Store",
+        "desc": "Stays on the move to avoid being part of a complete breakfast.",
+        "designer": "AirRider",
+        "file": "Pets",
+        "filename": "collections/pet/zepperay_fruit",
+        "mastery": "20",
+        "mastery_geode": "0",
+        "name": "Zesty Zepperay",
+        "powerrank": "20",
+        "tooltip": "<p>Ally</p>\r\n<ul>\r\n<li>8 Movement Speed</li>\r\n<li>5% Attack Speed</li>\r\n</ul>",
+        "updated_at": 1651748003
+    },
     "zepperay_heckbug": {
         "blueprint": "2022/allies/zepperay_heckbug/c_c_zepperay_hellbugred_ui.png",
         "category": "Event",
@@ -8958,6 +9448,20 @@
         "powerrank": "0",
         "tooltip": "",
         "updated_at": 1644676293
+    },
+    "zepperay_lifeguard_panatea": {
+        "blueprint": "2022/allies/zepperay_lifeguard_panatea/c_c_zepperay_lifeguard_panatea_ui.png",
+        "category": "Store",
+        "desc": "Party on, but don't party too hard in the water!",
+        "designer": "Trove Team",
+        "file": "Pets",
+        "filename": "collections/pet/zepperay_lifeguard_panatea",
+        "mastery": "0",
+        "mastery_geode": "0",
+        "name": "Panatean Pool Patrol",
+        "powerrank": "0",
+        "tooltip": "",
+        "updated_at": 1651748003
     },
     "zepperay_luckystar": {
         "blueprint": "2021/allies/zepperay_luckystar/c_c_zepperay_luckystar_ui.png",

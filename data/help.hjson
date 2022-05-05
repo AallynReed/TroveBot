@@ -375,16 +375,6 @@
         ],
         "hidden": false
     },
-    "depth_list": {
-        "module": "general",
-        "description": "Shows challenge delve depth finding data, such as memento, boss and biome.\nYou can also check here https://slynx.xyz/trove/depths/",
-        "example": "{prefix}depth_list",
-        "subcommands": {},
-        "aliases": [
-            "dl"
-        ],
-        "hidden": false
-    },
     "luxion": {
         "module": "general",
         "description": "Shows if and when and for how long is luxion is available.",
@@ -413,16 +403,6 @@
         "aliases": [
             "mg",
             "gm"
-        ],
-        "hidden": false
-    },
-    "memento_list": {
-        "module": "general",
-        "description": "Shows only challenge delve memento findings.\nYou can also check here https://slynx.xyz/trove/depths/",
-        "example": "{prefix}memento_list",
-        "subcommands": {},
-        "aliases": [
-            "ml"
         ],
         "hidden": false
     },

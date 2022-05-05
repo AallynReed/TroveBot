@@ -203,7 +203,7 @@ class Tooltip():
         self.height = self._check_height_add()
 
     def _setup_fonts(self):
-        self.font_location = "/home/sly/nucleo/data/fonts/OpenSans.ttf"
+        self.font_location = f"/home/{self.bot.keys['Bot']['User']}/nucleo/data/fonts/OpenSans.ttf"
         self.headerfont = ImageFont.truetype(self.font_location, 43, encoding="utf-8")
         self.powerfont = ImageFont.truetype(self.font_location, 38, encoding="utf-8")
         self.allyfont = ImageFont.truetype(self.font_location, 36, encoding="utf-8")

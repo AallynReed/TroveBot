@@ -8,6 +8,7 @@ from discord.ui import Modal, Select, TextInput
 from utils.others import RandomID
 from utils.buttons import BaseView
 from utils.CustomObjects import CEmbed, TimeConverter
+from copy import copy
 
 # Bug Report
 
@@ -491,7 +492,7 @@ class ClubAdventuresView(BaseView):
                 f"There was an error connecting to the Trovesaurus API, please try again later.\nError: **{await request.text()}**",
             )
         await interaction.response.send_message(
-            f"Club adventure submitted to Trovesaurus.",
+            f"Club adventure submitted to Trovesaurus.", # \n```json\n{json.dumps(self.data, indent=4)}```
             ephemeral=True
         )
         self.stop()
@@ -555,7 +556,7 @@ class ClubAdventuresModal(Modal):
 
 class ClubAdventurePicker(Select):
     def __init__(self, view):
-        adventures = [
+        adventures = copy([
             "4:Trigger Magic Find",
             "3:Collect a Chaos Chest",
             "3:Collect Water Gem Boxes",
@@ -577,7 +578,7 @@ class ClubAdventurePicker(Select):
             # "0:Defeat Dungeon Bosses In Fae Forest",
             # "0:Defeat Dungeon Bosses In Desert Frontier",
             # "0:Defeat Dungeon Bosses In Candoria"
-        ]
+        ])
         options = [
             discord.SelectOption(label=adventure[2:], value=adventure, default=adventure==view.data["adventure"])
             for adventure in adventures
@@ -626,7 +627,7 @@ class ClubAdventuresPlatformSelect(Select):
 # Club Advertise
 
 class ClubAdvertise(BaseView):
-    def __init__(self, ctx, channel):
+    def __init__(self, ctx, channel, platform=None):
         super().__init__()
         self.ctx = ctx
         self.channel = channel
@@ -634,7 +635,7 @@ class ClubAdvertise(BaseView):
             "club": None,
             "description": None,
             "invite": None,
-            "platform": None
+            "platform": platform
         }
         self.manage_buttons()
     
@@ -654,10 +655,12 @@ class ClubAdvertise(BaseView):
         embed.title = self.data["club"] or "No club name set."
         embed.description = self.data["description"] or "No description set."
         embed.timestamp = datetime.utcnow()
-        #embed.set_author(name="Club Advertisement")
         embed.add_field(name="Platform", value=self.data["platform"] or "No platform set.")
-        embed.add_field(name="Discord", value=self.data['invite'] or "No invite set.")
-        embed.set_footer(text=f"Advertised by {self.ctx.author} ({self.ctx.author.id})", icon_url=self.ctx.author.avatar)
+        if self.data["invite"]:
+            embed.set_thumbnail(url=self.data['invite'].guild.icon.url)
+            embed.add_field(name="Discord", value=f"[Join]({self.data['invite'].url})")
+            embed.add_field(name="Discord Members", value=self.data['invite'].approximate_member_count)
+        embed.set_footer(text=f"{self.ctx.author} used /club advert", icon_url=self.ctx.author.avatar)
         return embed
 
     @discord.ui.button(label='Fill advertisement', style=discord.ButtonStyle.secondary, row=0)
@@ -684,6 +687,7 @@ class ClubAdvertise(BaseView):
             f"Club advertisement submitted.",
             ephemeral=True
         )
+        await self.message.edit(view=None)
         self.stop()
     
     @discord.ui.button(label='Cancel', style=discord.ButtonStyle.danger, row=2)
@@ -693,6 +697,7 @@ class ClubAdvertise(BaseView):
             f"Your Club Advertisement form was cancelled.",
             ephemeral=True
         )
+        await self.message.edit(view=self)
         self.stop()
 
 class ClubAdvertiseModal(Modal):
@@ -734,13 +739,13 @@ class ClubAdvertiseModal(Modal):
         for child in self.children:
             if child.custom_id == "invite":
                 try:
-                    invite = (await self.view.ctx.bot.fetch_invite(child.value))
-                    if invite.max_age or invite.max_uses:
+                    invite = (await self.view.ctx.bot.fetch_invite(child.value, with_counts=True))
+                    if invite.max_age or invite.max_uses or invite.temporary:
                         return await interaction.response.send_message(
                             "The invite link can't expire nor have limited uses.",
                             ephemeral=True
                         )
-                    self.view.data["invite"] = invite.url
+                    self.view.data["invite"] = invite
                 except:
                     return await interaction.response.send_message(
                         "Invalid invite link.",

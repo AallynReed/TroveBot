@@ -36,7 +36,7 @@ class Logs(commands.Cog):
         e.add_field(name="Server Name", value=server.name, inline=False)
         e.add_field(name="Server ID", value=server.id, inline=False)
         e.add_field(name="Server Owner", value="{}\n{}".format(server.owner, server.owner.id), inline=False)
-        e.add_field(name="Total members", value="{} members".format(len(server.members)), inline=False)
+        e.add_field(name="Total members", value=f"{len(server.members)} members\n{len([m for m in server.members if not m.bot])} users\n{len([m for m in server.members if m.bot])} bots", inline=False)
         mutual = list(map(lambda x: x.name, sorted([x for x in self.bot.guilds if server.owner in x.members and x != server], key=lambda x: x.member_count, reverse=True)))
         if len(mutual) > 15:
             e.add_field(name="Mutual Servers (Owner)", value="\n".join(mutual[:15]) + "\n and {} more...".format(len(mutual)-15), inline=False)
@@ -59,7 +59,7 @@ class Logs(commands.Cog):
         except:
             ...
         limit = 20
-        if len([m for m in server.members if not m.bot]) < 20 and server.owner.id not in self.bot.owners:
+        if len([m for m in server.members if not m.bot]) < limit and server.owner.id not in self.bot.owners:
             try:
                 await dm.send(f"Unfortunately I am unable to join your server, **{limit}** members (non bots) are required for me to join.\nThis is due to Discord limiting bot to 100 servers, and me wainting bot to reach as many people as possible whilst not losing access to important data it relies on to work properly such as knowing what is in your message content to know whether you used or not a command and which one you used.\n\nApologies for the inconvenience.")
             except:

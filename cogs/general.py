@@ -21,9 +21,9 @@ class General(commands.Cog):
     @commands.command(hidden=True)
     @perms.owners()
     async def tooltip(self, ctx):
-        with ZipFile('/home/sly/website_files/tooltips/tooltips.zip', 'w') as zip:
+        with ZipFile(f"/home/{self.bot.keys['Bot']['User']}/website_files/tooltips/tooltips.zip", 'w') as zip:
             for ally in self.bot.Trove.values.allies:
-                _file = f"/home/sly/website_files/tooltips/{ally.qualified_name}.png"
+                _file = f"/home/{self.bot.keys['Bot']['User']}/website_files/tooltips/{ally.qualified_name}.png"
                 image = Tooltip(ally).generate_image()
                 with open(_file, "wb") as f:
                     f.write(image.getbuffer())

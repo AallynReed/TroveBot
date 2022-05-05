@@ -2,7 +2,7 @@
 from utils.objects import MessageCommand
 from googletrans import Translator
 
-class TranslateCommand(MessageCommand, name="translate"):
+class TranslateCommand(MessageCommand, name="Translate"):
     def __init__(self) -> None:
         super().__init__()
 

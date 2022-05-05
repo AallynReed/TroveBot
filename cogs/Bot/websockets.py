@@ -59,9 +59,6 @@ class WebSockets(commands.Cog):
         if data["method"] == "guilds":
             return await self.guilds(websocket, data)
 
-        if data["method"] == "mementos":
-            return await self.depth_list(websocket, data)
-
         if data["method"] == "posts":
             return await self.trove_posts(websocket, data)
 
@@ -147,99 +144,6 @@ class WebSockets(commands.Cog):
         text = await request.text()
         self.bot.dispatch("profile_create", text, None)
         return await websocket.send("200")
-
-    async def depth_list(self, websocket, data):
-        if not "memento_list" in self.bot.Trove.sheets:
-            return await websocket.send("503")
-        memento_list = self.bot.Trove.sheets["memento_list"]
-        sheets = []
-        for s in memento_list.sheetnames:
-            if s == "Oct 11 - 17":
-                break
-            if re.findall(r"^(Temp Sheet|[a-z]{3,5} [0-9]{1,2}-[0-9]{1,2})$", s, re.IGNORECASE):
-                sheets.append(s)
-        if data["sheet"] not in sheets:
-            return await websocket.send("404")
-        _filter = data["filter"].replace(" | ", "|").split("|") if data["filter"] else None
-        ml = memento_list[data["sheet"]]
-        depths = []
-        mount_bosses = {
-           # Shadow Towers
-            "Spike Walker": ["Mount: Spike Roller", "Mount: Spikewalker Hatchling"],
-            "Weeping Prophet": ["Mount: Prophet's Throne", "Mount: Twitching Tentacle"],
-            "Vengeful Pinata God": ["Mount: Skulpin Airswimmer", "Mount: Kami of Smoldering Scorn"],
-            "Shadow Hydrakken": ["Mount: Hydrasnek", "Mount: Hewn Hydrakken Head"],
-            "Darknik Dreadnought": ["Mount: De-Weaponized Worldender", "Mount: Dreadnought Mk I Prototype"],
-            "Daughter of the Moon": ["Mount: Moonsail Glider", "Mount: Moonbeam Gunship", "Mount: Lunaclipsia"],
-           # Levi
-            "Lobstroso": ["Mount: Whirlygig"],
-            "Timmense": ["Mount: Timminutive"],
-            "Ifera": ["Mount: Sproingy Iferan Spore Colony"],
-           # Fae
-            "Wild Fae King": ["Mount: Fae Throne", "Mount: Fae Wildride", "Ally: Fae Spider", "Ally: Fae Scavenger", "Ally: Fae Forest Spirit"],
-            "Wild Fae Queen": ["Mount: Fae Throne", "Mount: Fae Wildride", "Ally: Fae Spider", "Ally: Fae Scavenger", "Ally: Fae Forest Spirit"],
-            "Wild Fae Spider": ["Mount: Fae Throne", "Mount: Fae Wildride", "Ally: Fae Spider", "Ally: Fae Scavenger", "Ally: Fae Forest Spirit"],
-           # Others
-            "Ice Giant King": ["Mount: Icebreaker Tortoise"],
-            "Triceratops": ["Mount: Yoked Yolk"],
-            "Deep Waspider": ["Mount: Docile Waspider"],
-            "Refracted Balephantom": ["Mount: A Most Ancient Chain"],
-            "Quetzalcoatlus": ["Mount: Tamed Quetzel"],
-           # Shadow Eve
-            "Crimsin Crow": ["Mount: Crimsin"]
-        }
-        for i in range(141):
-            add = 2
-            ranges = ["C", "D", "E", "F"]
-            mementos = []
-            for rang in ranges:
-                memento = ml[f'{rang}{i+add}'].value
-                mementos.append(memento)
-            boss = ml[f'G{i+add}'].value
-            # if boss:
-            #     mementos.append(boss)
-            biome = ml[f'H{i+add}'].value
-            if biome == "#N/A":
-                biome = None
-            npc = ml[f'B{i+add}'].fill.start_color.index not in ["FF000000", "FF222222"]
-            # if not (i+1)%3 and biome:
-            #     mementos.append(biome)
-            if not [m for m in mementos if m] and not boss and not biome:
-                continue
-            else:
-                depth = {
-                    "level": 110+i,
-                    "mementos": mementos,
-                    "boss": boss if boss else "Unknown",
-                    "biome": biome if biome else "Unknown",
-                    "npc": npc
-                }
-                depth["has_mount"] = True if boss in mount_bosses.keys() else False
-                depth["mounts"] = mount_bosses[boss] if depth["has_mount"] else None
-                filter_data = [boss.lower() if boss else "", biome.lower() if biome else "", "mount" if depth["has_mount"] else ""]
-                filter_data.extend([m.lower() for m in mementos[:4] if m])
-                content = " ".join(filter_data)
-                if _filter:
-                    cont = True
-                    for filt in _filter:
-                        if filt in content:
-                            cont = False
-                            break
-                    if cont:
-                        continue
-                depths.append(depth)
-        depths.sort(key=lambda x: x["level"])
-        missing = []
-        if not _filter and depths:
-            missing = [f"{i}" for i in range(110, depths[-1]["level"]+1) if i not in [l["level"] for l in depths]]
-        output = {
-            "depths": depths,
-            "missing": missing,
-            "sheets": sheets
-        }
-        # outfile = io.BytesIO(str(json.dumps(output, indent=4)).encode())
-        # await self.bot.get_channel(859440482195341323).send(file=discord.File(outfile, filename="mementos.json"))
-        return await websocket.send(str(json.dumps(output)))
 
     async def trove_posts(self, websocket, data):
         post = await self.bot.db.db_forums.find_one({"_id": data["post_id"]})

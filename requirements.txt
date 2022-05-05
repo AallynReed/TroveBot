@@ -13,3 +13,5 @@ hjson
 psutil
 tabulate
 pushbullet.py==0.9.1
+ansicolors
+googletrans

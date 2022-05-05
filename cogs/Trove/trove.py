@@ -9,6 +9,7 @@ import utils.checks as perms
 from bs4 import BeautifulSoup
 from discord.ext import commands
 from utils.CustomObjects import CEmbed
+from io import BytesIO
 
 
 class Trove(commands.Cog):
@@ -297,38 +298,21 @@ class Trove(commands.Cog):
         self,
         ctx,
         powerrank: int=commands.Option(name="power_rank", description="Input power rank for sigil. [0-40000]"),
-        masteryrank: int=commands.Option(name="mastery_rank", description="Input mastery rank for sigil. [0-849]")):
+        masteryrank: int=commands.Option(name="mastery_rank", description="Input mastery rank for sigil. [0-999]")):
         if powerrank > 40000:
             await ctx.send("Power rank can't be that high. Max: 40000")
             return
-        if masteryrank > 849:
-            await ctx.send("Mastery rank can't be that high. Max: 849")
+        if masteryrank > 999:
+            await ctx.send("Mastery rank can't be that high. Max: 999")
             return
-        sigil = await self.bot.utils.get_sigil(powerrank, masteryrank)
+        sigil = await self.bot.AIOSession.get(f"https://trove.slynx.xyz/sigil/?power={powerrank}&mastery={masteryrank}")
+        sigil = BytesIO(await sigil.read())
         if not sigil:
             await ctx.send("That sigil is not in my database.")
             return
         e = CEmbed(color=self.bot.comment)
         e.set_image(url=f"attachment://sigil.png")
         await ctx.send(file=discord.File(sigil, filename="sigil.png"), embed=e)
-
-    @commands.command(
-        slash_command=True,
-        help="Shows list of mementos and their depths in delves.",
-        name="memento_list",
-        aliases=["ml"]
-    )
-    async def _memento_list(self, ctx):
-        return await ctx.send("https://trove.slynx.xyz/depths/")
-
-    @commands.command(
-        slash_command=True,
-        help="Shows list of depths in delves.",
-        name="depth_list",
-        aliases=["dl"]
-    )
-    async def _depth_list(self, ctx):
-        return await ctx.send("https://trove.slynx.xyz/depths/")
 
  # Settings Commands
 

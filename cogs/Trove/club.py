@@ -251,12 +251,14 @@ class Club(commands.Cog):
     async def club_commands(self, ctx):
         e = CEmbed(description="Some in-game club commands", color=self.bot.comment)
         e.add_field(name="Rename World", value="`/renameworld <new name>`", inline=False)
-        e.add_field(name="Promote/Demote members", value="`/club [pro|de]mote <playername> <clubname>`", inline=False)
+        e.add_field(name="Promote/Demote members", value="`/club promote|demote <playername> <clubname>`", inline=False)
         e.add_field(name="Zone Restrict", value="`/zonerestrict <basic/modify/expert/nobody>`", inline=False)
         e.add_field(name="Damage Protection", value="`/club setzonedamageable <0|1>`", inline=False)
         e.add_field(name="Kick", value="`/club kick <playerName> <clubName>`", inline=False)
-        e.add_field(name="Block", value="`/club [block/unblock] <clubname> <playername>`", inline=False)
+        e.add_field(name="Block", value="`/club block|unblock <clubname> <playername>`", inline=False)
+        e.add_field(name="Club Log", value="`/clublog [page 3] [player BRBot4566] [chest club MyClub]`", inline=False)
         e.set_author(name="Club Commands", icon_url=ctx.guild.icon)
+        e.set_footer(text="<> = required | [] = optional")
         await ctx.send(embed=e)
 
 def setup(bot):
