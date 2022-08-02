@@ -22,6 +22,20 @@ class Owner(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+    @commands.command(aliases=["delmsgs"])
+    @perms.admins()
+    async def delmsg(self, ctx, *, urls):
+        await ctx.message.delete(silent=True)
+        messages = re.findall(r"channels\/(?P<guild_id>[0-9]{16,24})\/(?P<channel_id>[0-9]{16,24})\/(?P<message_id>[0-9]{16,24})", urls, re.MULTILINE)
+        for message_data in messages:
+            if not (guild := self.bot.get_guild(int(message_data[0]))):
+                continue
+            if not (channel := guild.get_channel(int(message_data[1]))):
+                continue
+            if not (message := await channel.fetch_message(int(message_data[2]))):
+                continue
+            await message.delete(silent=True)
+
     @commands.command(slash_command=True)
     async def check_app(self, ctx, application: Union[discord.User, int]=commands.Option(description="Provide a user.")):
         if isinstance(application, discord.User):

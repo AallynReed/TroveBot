@@ -8,7 +8,10 @@ from utils.objects import SlashCommand
 class ImgurUploadCommand(SlashCommand, name="imgur_upload", description="Upload images to imgur."):
     image: discord.Attachment = Option(description="Upload an image to send to imgur.")
     async def callback(self):
-        await super().callback()
+        try:
+            await super().callback()
+        except:
+            return
         ctx = await self.get_context(ephemeral=True)
         contents = await self.image.read()
         response = await ctx.bot.AIOSession.post(

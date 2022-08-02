@@ -11,7 +11,10 @@ from utils.objects import ACResponse, SlashCommand
 class SageCommand(SlashCommand, name="sage", description="Send a sage into chat"):
     name = Option(description="What sage to send?", autocomplete=True)
     async def callback(self):
-        await super().callback()
+        try:
+            await super().callback()
+        except:
+            return
         data = await self.client.db.db_tags.find_one(
             {
                 "$and": [
@@ -59,14 +62,20 @@ class SageCommand(SlashCommand, name="sage", description="Send a sage into chat"
 
 class AddSageCommand(SlashCommand, name="sage_add", description="Create a sage"):
     async def callback(self):
-        await super().callback()
+        try:
+            await super().callback()
+        except:
+            return
         Modal = SageModal(self.client)
         await self.interaction.response.send_modal(Modal)
 
 class UpdateSageCommand(SlashCommand, name="sage_update", description="Update a sage"):
     name = Option(description="What sage to update?", autocomplete=True)
     async def callback(self):
-        await super().callback()
+        try:
+            await super().callback()
+        except:
+            return
         data = await self.client.db.db_tags.find_one(
             {
                 "$and": [
@@ -108,7 +117,10 @@ class UpdateSageCommand(SlashCommand, name="sage_update", description="Update a 
 class ManageSageCommand(SlashCommand, name="sage_manage", description="Manage a sage (Staff only)"):
     name = Option(description="What sage to manage?", default=None, autocomplete=True)
     async def callback(self):
-        await super().callback()
+        try:
+            await super().callback()
+        except:
+            return
         roles = {r.id for r in self.interaction.user.roles}
         roles.update({self.interaction.user.id})
         if not self.client.sage_moderators.intersection(roles):
@@ -182,7 +194,10 @@ class ManageSageCommand(SlashCommand, name="sage_manage", description="Manage a 
 class IndexSageCommand(SlashCommand, name="sage_index", description="List sages in categories"):
     category = Option(description="Name of the category", autocomplete=True, default=None)
     async def callback(self):
-        await super().callback()
+        try:
+            await super().callback()
+        except:
+            return
         sages = self.client.db.db_tags.find({"category": self.category})
         sages = [Sage(sage) async for sage in sages]
         if not sages:

@@ -8,11 +8,29 @@ from discord.ext import commands
 
 from utils.buttons import Traceback
 from utils.CustomObjects import CEmbed
+from pathlib import Path
 
 
 class Logs(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+
+    @commands.Cog.listener("on_message")
+    async def message_logs(self, message):
+        ctx = await self.bot.get_context(message)
+        if ctx.author == self.bot.user:
+            return
+        if ctx.message.attachments:
+            self.bot.dispatch("attachment_received", ctx)
+        
+    @commands.Cog.listener("on_attachment_received")
+    async def file_logs(self, ctx):
+        for attachment in ctx.message.attachments:
+            file_extension = Path(attachment.filename).suffix
+            if file_extension.lower() in [".ct"]:
+                e = CEmbed(description=f"Cheat Table sent in {ctx.channel}", timestamp=ctx.message.created_at)
+                e.set_author(name=f"{ctx.author} [{ctx.author.id}]")
+                await self.bot.get_channel(989171400529039401).send(embed=e, file=await attachment.to_file())
 
     @commands.Cog.listener("on_slash_command")
     async def slash_command(self, interaction: discord.Interaction, command):

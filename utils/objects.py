@@ -11,6 +11,7 @@ from PIL import Image
 
 from utils.CustomObjects import TimeConverter
 from utils.trove import Ally
+from utils.CustomObjects import CEmbed
 
 
 class ACResponse(app.AutoCompleteResponse):
@@ -57,6 +58,18 @@ class SlashCommand(app.SlashCommand):
         return ctx
 
     async def callback(self):
+        user = self.interaction.user
+        if user.id in self.client.blacklist:
+            e = CEmbed(description=f"{user} tried to use a command `{self._name_}`")
+            e.set_footer(text=getattr(self.interaction, "guild", "DMs"))
+            e.set_author(name="Blacklist", icon_url=user.avatar)
+            await self.client.blacklist_logger.send(embed=e)
+            try:
+                await user.send(f"You've been banned from using bot :) You can appeal at <https://trove.slynx.xyz/appeal>\nThe server is not associated with the bot so do not complain there about a bot blacklist as it won't make a better case futurely in an appeal attempt.\nHere's your ID: `{user.id}`")
+            except:
+                ...
+            await self.interaction.response.send_message("An error occured!", ephemeral=True)
+            raise Exception("Nope")
         self.client.dispatch("slash_command", self.interaction, self)
 
     async def error(self, error):
@@ -105,6 +118,7 @@ class MessageCommandContext():
         self.bot = command.client
         self.defer = self.interaction.response.defer
         self.prefix = "/"
+        self.message = command.message
         self.on_message_command()
 
     def on_message_command(self):
@@ -347,7 +361,8 @@ class Values():
         self._preload(load_classes)
 
     def _preload(self, load_classes):
-        self.gems
+        self.crystal_gems()
+        self.stellar_gems()
         self.dragons
         if load_classes:
             self.classes = self._classes()
@@ -398,8 +413,7 @@ class Values():
             if text == "Pyrodisk":
                 text = "Pyrodisc"
             return text
-
-        for i in range(3, 42):
+        for i in range(3, 44):
             row = str(i)
             _class = wb["B"+row].value
             if not _class:
@@ -441,17 +455,31 @@ class Values():
         json.dump(gear, open("/home/gVQZjCoEIG/nucleo/data/builds.json", "w+"), indent=4)
         self._preload(False)
 
-    @property
-    def gems(self):
-       # Light
+    def crystal_gems(self):
+    # Light
+        self.c_lesser_base_light = (475, 225) #
+        self.c_emp_base_light = (525, 275) #
+    # Damage
+        self.c_lesser_base_dmg = (10080, 4480) #
+        self.c_lesser_base_cd = (135, 60) #
+        self.c_emp_base_dmg = (11200, 5600) #
+        self.c_emp_base_cd = (135, 60) #
+    # Health
+        self.c_lesser_base_health = (33300, 15700) # 
+        self.c_lesser_base_healthper = (333, 157) #
+        self.c_emp_base_health = (36750, 19250) #
+        self.c_emp_base_healthper = (367.5, 192.5) #
+
+    def stellar_gems(self):
+    # Light
         self.lesser_base_light = (385, 200)
         self.emp_base_light = (451, 266)
-       # Damage
+    # Damage
         self.lesser_base_dmg = (5390, 2800)
         self.lesser_base_cd = (77, 40)
         self.emp_base_dmg = (6314, 3724)
         self.emp_base_cd = (90.2, 53.2)
-       # Health
+    # Health
         self.lesser_base_health = (19250, 10000)
         self.lesser_base_healthper = (192.5, 100)
         self.emp_base_health = (22550, 13300)
@@ -466,7 +494,7 @@ class Values():
             "banner": 900,
             "food": 300,
             "mastery": 1000,
-            "dragon": 50,
+            "dragon": 75,
             "ally": 300,
             "ring": 325
         }
@@ -523,13 +551,13 @@ class Values():
         return sum(items.values())
 
     @property
-    def base_health(self):
+    def base_health(self, crystal=True):
         items = {
             "weapon": 18876,
             "face": 28600,
             "hat": 28600,
             "ring": 14475,
-            "dragons": 40000,
+            "dragons": 44000 if crystal else 40000,
             "torch": 10000
         }
         return sum(items.values())
@@ -551,8 +579,8 @@ class Values():
             "hat": 1698,
             "weapon": 1698,
             "face": 1698,
-            "gems": 24769,
-            "dragons": 1650,
+            "gems": 34099,
+            "dragons": 1770,
             "banner": 350,
             "ring": 1513,
             "ally": 75,
@@ -584,7 +612,8 @@ class Values():
             ["PC", "Pirate Captain", "https://i.imgur.com/lXUABOn.png", "https://i.imgur.com/kofWx3X.png"],
             ["NN", "Neon Ninja", "https://i.imgur.com/k0gqiM2.png", "https://i.imgur.com/M2GRzim.png"],
             ["GS", "Gunslinger", "https://i.imgur.com/8DW31Et.png", "https://i.imgur.com/eOxgSgJ.png"],
-            ["BD", "Bard", "https://i.imgur.com/Fiam1k5.png", "https://i.imgur.com/HkwAqzR.png"]
+            ["BD", "Bard", "https://i.imgur.com/Fiam1k5.png", "https://i.imgur.com/HkwAqzR.png"],
+            ["SL", "Solarion", "https://i.imgur.com/oVbcqd9.png", "https://i.imgur.com/g8hjaTy.png"]
         ]
         return sorted([TroveClass(i) for i in classes], key=lambda x: x.name)
 
@@ -741,6 +770,16 @@ class Values():
                 "class_bonus": 0,
                 "emoji": "<:c_SH:876846872503943170>"
             },
+            "Solarion": {
+                "cd": 50,
+                "dmg": 2376,
+                "health": 0,
+                "healthper": 30,
+                "dmg_type": "PD",
+                "infinite_as": False,
+                "class_bonus": 10,
+                "emoji": "<:c_SL:985310345621020703>"
+            },
             "Tomb Raiser": {
                 "cd": 50,
                 "dmg": 2376,
@@ -811,8 +850,8 @@ class Values():
             url_mr = "https://i.imgur.com/Vs4uSe6.png"
         if 900 <= totalmr <= 949:
             url_mr = "https://i.imgur.com/E3m0hsR.png"
-        if 950 <= totalmr:
-            url_mr = "https://i.imgur.com/9Q2IfXG.png"
+        if 950 <= totalmr <= 999:
+            url_mr = "https://i.imgur.com/E3m0hsR.png"
         # Power
         if 1 <= pr <= 249:
             url_pr = "https://i.imgur.com/ytgFQJq.png"
@@ -842,8 +881,8 @@ class Values():
             url_pr = "https://i.imgur.com/x7EqPKj.png"
         if 35000 <= pr <= 39999:
             url_pr = "https://i.imgur.com/cdT2Hub.png"
-        if 40000 <= pr:
-            url_pr = "https://i.imgur.com/6m6jfYq.png"
+        if 40000 <= pr <= 44999:
+            url_pr = "https://i.imgur.com/cdT2Hub.png"
         if url_mr and url_pr:
             img1 = await self.get_image(session, url_mr)
             img2 = await self.get_image(session, url_pr)

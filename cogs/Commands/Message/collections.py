@@ -10,14 +10,14 @@ class CollectionMessageCommand(MessageCommand, name="Collection Board"):
     async def callback(self):
         await super().callback()
         ctx = await self.get_context(ephemeral=True)
-        collected = await self.bot.db.db_message_collections.find_one(
+        collected = await ctx.bot.db.db_message_collections.find_one(
             {
                 "message": self.message.id,
                 "saved_by": self.interaction.user.id
             }
         )
         if collected:
-            await self.bot.db.db_message_collections.delete_one(
+            await ctx.bot.db.db_message_collections.delete_one(
                 {
                     "message": self.message.id,
                     "saved_by": self.interaction.user.id
@@ -26,7 +26,7 @@ class CollectionMessageCommand(MessageCommand, name="Collection Board"):
             return await ctx.send(
                 "You removed this message from your Collection Board."
             )
-        await self.bot.db.db_message_collections.insert_one(
+        await ctx.bot.db.db_message_collections.insert_one(
             {
                 "guild": self.message.guild.id,
                 "channel": self.message.channel.id,

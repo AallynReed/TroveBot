@@ -16,7 +16,10 @@ htmlhandler.body_width = 0
 class SearchModCommand(SlashCommand, name="search_mod", description="Search for a mod at Trovesaurus"):
     query = Option(description="What mod to search on Trovesaurus", autocomplete=True)
     async def callback(self):
-        await super().callback()
+        try:
+            await super().callback()
+        except:
+            return
         ctx = await self.get_context()
         if len(self.query) < 3:
             return await ctx.send("Query string too small.")

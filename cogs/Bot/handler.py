@@ -62,10 +62,10 @@ class CommandHandler(commands.Cog):
             except:
                 ...
             return await ctx.send("An error occured!", delete_after=15)
-        # if message.content.lower() == "devally":
-        #     return self.bot.dispatch("giveaway_keyword")
+        if message.content.lower() == "#pride":
+            return self.bot.dispatch("giveaway_keyword", ctx)
+        self.bot.dispatch("giveaway", ctx)
         if ctx.valid:
-            # self.bot.dispatch("giveaway", ctx)
             await self.bot.process_commands(message)
         else:
             if ctx.channel.id == 832582272011599902 and not [r.id for r in ctx.author.roles if r.id in [533024164039098371, 125277653199618048,841729071854911568]]:
@@ -83,7 +83,7 @@ class CommandHandler(commands.Cog):
                 pass
             if len(ctx.message.mentions) == 1 and ctx.guild.me in ctx.message.mentions and not ctx.message.reference:
                 prefix = await self.bot.prefix(bot=self.bot, message=message)
-                return await ctx.send(f"Your prefix is `{prefix[2]}`\nUse `{prefix[2]}prefix self <prefix>` to change your prefix.", delete_after=15)
+                return await ctx.send(f"Your prefix is `{prefix[2]}`\nUse `{prefix[2]}prefix self <prefix>` to change your prefix.", delete_after=12)
 
     @commands.Cog.listener("on_message_edit")
     async def command_edit_handler(self, before, message):
@@ -107,14 +107,14 @@ class CommandHandler(commands.Cog):
             except:
                 ...
             return await ctx.send("An error occured!", delete_after=15)
-        # if message.content.lower() == "devally":
-        #     return self.bot.dispatch("giveaway_keyword")
+        if message.content.lower() == "#pride":
+            return self.bot.dispatch("giveaway_keyword", ctx)
         if ctx.valid:
             await self.bot.process_commands(message)
         else:
             if len(ctx.message.mentions) == 1 and ctx.guild.me in ctx.message.mentions and not ctx.message.reference:
                 prefix = await self.bot.prefix(bot=self.bot, message=message)
-                return await ctx.send(f"Your prefix is `{prefix[2]}`\nUse `{prefix[2]}prefix self <prefix>` to change your prefix.")        
+                return await ctx.send(f"Your prefix is `{prefix[2]}`\nUse `{prefix[2]}prefix self <prefix>` to change your prefix.")
 
     @commands.Cog.listener("on_dm_message")
     async def _dm_message(self, ctx, message):
@@ -131,24 +131,45 @@ class CommandHandler(commands.Cog):
      
     @commands.Cog.listener("on_giveaway_keyword")
     async def _handle_giveaway_entry(self, ctx):
+        return
         if ctx.author.id in self.bot.blacklist:
             return
         entries = (await self.bot.db.db_bot.find_one({"_id": "0511"}, {"giveaway": 1}))["giveaway"]
         if ctx.author.id in entries:
-            return await ctx.author.send("You've already entered the giveaway.", delete_after=12)
-        try:
-            await ctx.author.send("You've entered the giveaway.")
-        except:
-            return await ctx.send(f"I can't DM {ctx.author.mention}, being able to DM you is a requirement.\nOtherwise it will be immediatly rerolled.", delete_after=20)
+            return await ctx.send("You've already entered the giveaway.", delete_after=12)
+        await ctx.send("You've entered the giveaway.", delete_after=12)
         entries.append(ctx.author.id)
         await self.bot.db.db_bot.update_one({"_id": "0511"}, {"$set":{"giveaway": entries}})
         await ctx.message.add_reaction("<:done:844624767217958922>")
 
     @commands.Cog.listener("on_giveaway")
     async def _giveaway_notice(self, ctx):
-        giveaway_notice = randint(0,5)
-        if not giveaway_notice and ctx.guild.id != 118027756075220992:
-            await ctx.send(f"A giveaway for the ally `Action Pan` (Dev ally inspired on Dan aka Pantong) is being hosted by Trove bot, type `{ctx.prefix}giveaway` to learn more. https://i.imgur.com/9tcPuUu.png", delete_after=90)
+        return
+        giveaway_notice = randint(0,20)
+        if not giveaway_notice and ctx.guild.id == 836383545772998686:
+            await ctx.send(f"A giveaway for `10 Million flux` is being hosted by **Events & Giveaways** community in their annual Pride Event to shine light on being different and being proud be being so, type `/pride2022` to learn more. https://i.imgur.com/wzZi8MZ.gif", delete_after=12)
+
+    @commands.command(slash_command=True, help="Show information about the pride event giveaway from Events & Giveaways community")
+    @commands.bot_has_permissions(embed_links=1)
+    async def pride2022(self, ctx):
+        return
+        #return await ctx.reply("There's no giveaway currently going on.", delete_after=8)
+        e = CEmbed()
+        e.color = discord.Color.random()
+        e.set_author(name="10 Million Flux Giveaway.", icon_url=self.bot.user.avatar)
+        e.set_thumbnail(url="https://i.imgur.com/wzZi8MZ.gif")
+        e.description = "Trove Events and Giveaways has given Trove Bot flux to be given away"
+        e.description += "\n\n**To join the giveaway all you have to do is send the keyword**\n `#Pride`\n\n"
+        e.description += "Only a few rules to enter the giveaway:\n"
+        e.description += " -> You must share a server with the bot to join giveaway and use the provided keyword to join.\n"
+        e.description += " -> Organizers must be able to DM you in case you win, otherwise it may be rerolled.\n"
+        e.description += " -> You may only enter once the giveaway.\n\n"
+        e.description += "This giveaway begins at <t:1655355600:F> and will end <t:1655614799:R>"
+        e.description += "\n**2 winners** will be announced in [Events & Giveaways Server](https://discord.gg/mbkwsp4zHt) and winners will receive their rewards through DM's from one of the event organizers"
+        e.description += "\n**IMPORTANT NOTE:** Make sure your DM's are accessible so that you can be DM'd, failing to answer may lead to the loss of this giveaway reward."
+        entries = (await self.bot.db.db_bot.find_one({"_id": "0511"}, {"giveaway": 1}))["giveaway"]
+        e.set_footer(text=f"{len(entries)} people have joined the giveaway.")
+        await ctx.reply(embed=e, delete_after=300)
 
 def setup(bot):
     bot.add_cog(CommandHandler(bot))

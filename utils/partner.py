@@ -58,21 +58,22 @@ class BugReportModal(Modal):
         else:
             items = [
                 TextInput(
+                    custom_id="result",
+                    label="What were you doing?",
+                    placeholder="e.g. The mount didn't come out",
+                    style=discord.TextInputStyle.short,
+                    min_length=30,
+                    max_length=80,
+                    value=self.view.data["result"]
+                ),
+                TextInput(
                     custom_id="description",
-                    label="Short description of bug",
+                    label="Short description of the bug",
                     placeholder="e.g. My Charatacter doesn't mount in the Hub",
                     style=discord.TextInputStyle.short,
                     min_length=0,
                     max_length=190,
                     value=self.view.data["description"]
-                ),
-                TextInput(
-                    custom_id="result",
-                    label="What were you doing?",
-                    placeholder="e.g. Standing around in hub",
-                    style=discord.TextInputStyle.long,
-                    min_length=30,
-                    value=self.view.data["result"]
                 ),
                 TextInput(
                     custom_id="expected",
@@ -193,22 +194,20 @@ class BugReportView(BaseView):
         media_links = self.data["media_links"] or ["Empty"]
         e = CEmbed(color=discord.Color.random(), timestamp=datetime.utcnow())
         e.set_author(name=f"Bug report by {self.ctx.author}", icon_url=self.ctx.author.avatar)
-        e.description = "**Context**\n" + (description if len(description) <= 1024 else description[:1024-45] + "...\n**[Text visually redacted due to size]**")
-        e.add_field(name="Trove IGN", value=self.data["trove_name"] or "Empty")
-        e.add_field(name="Platform", value=self.data["platform"] or "Empty")
+        e.description = "**What were you doing?**\n" + result
+        e.description += "\n**Short description of the bug**\n" + (description if len(description) <= 1024 else description[:1024-45] + "...\n**[Text visually redacted due to size]**")
         e.add_field(
-            name="Expected",
+            name="What did you expect to happen?",
             value=expected if len(expected) <= 1024 else expected[:1024-45] + "...\n**[Text visually redacted due to size]**",
             inline=False)
         e.add_field(
-            name="Observed",
-            value=result if len(result) <= 1024 else result[:1024-45] + "...\n**[Text visually redacted due to size]**",
-            inline=False)
-        e.add_field(
-            name="Reproduction Steps",
+            name="How can we reproduce this bug?",
             value=repro if len(repro) <= 1024 else repro[:1024-45] + "...\n**[Text visually redacted due to size]**",
             inline=False)
-        e.add_field(name="Media", value="\n".join(media_links), inline=False)
+        e.add_field(name="Do you have any media?", value="\n".join(media_links), inline=False)
+        e.add_field(name="Trove IGN", value=self.data["trove_name"] or "Empty")
+        e.add_field(name="Platform", value=self.data["platform"] or "Empty")
+        e.add_field(name="\u200b", value="\u200b")
         e.set_footer(text="Reported via Bot")
         return e
 

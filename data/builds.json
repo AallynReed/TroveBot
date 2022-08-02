@@ -61,7 +61,7 @@
         },
         "farm": {
             "enabled": true,
-            "tier": 3,
+            "tier": 4,
             "hat": [
                 "Maximum Health",
                 "Light",
@@ -245,7 +245,7 @@
     "Pirate Captain": {
         "light": {
             "enabled": true,
-            "tier": 3,
+            "tier": 1,
             "hat": [
                 "Maximum Health",
                 "Light",
@@ -546,7 +546,7 @@
         },
         "farm": {
             "enabled": true,
-            "tier": 2,
+            "tier": 3,
             "hat": [
                 "Maximum Health",
                 "Light",
@@ -667,7 +667,7 @@
         },
         "farm": {
             "enabled": true,
-            "tier": 1,
+            "tier": 2,
             "hat": [
                 "Maximum Health",
                 "Light",
@@ -788,7 +788,7 @@
         },
         "farm": {
             "enabled": true,
-            "tier": 2,
+            "tier": 3,
             "hat": [
                 "Maximum Health",
                 "Light",
@@ -1030,7 +1030,7 @@
         },
         "farm": {
             "enabled": true,
-            "tier": 1,
+            "tier": 2,
             "hat": [
                 "Maximum Health",
                 "Light",
@@ -1151,7 +1151,7 @@
         },
         "farm": {
             "enabled": true,
-            "tier": 3,
+            "tier": 1,
             "hat": [
                 "Maximum Health",
                 "Light",
@@ -1272,7 +1272,7 @@
         },
         "farm": {
             "enabled": true,
-            "tier": 3,
+            "tier": 4,
             "hat": [
                 "Maximum Health",
                 "Light",
@@ -1689,7 +1689,7 @@
         },
         "farm": {
             "enabled": true,
-            "tier": 1,
+            "tier": 3,
             "hat": [
                 "Maximum Health",
                 "Light",
@@ -1930,7 +1930,7 @@
         },
         "farm": {
             "enabled": true,
-            "tier": 2,
+            "tier": 1,
             "hat": [
                 "Maximum Health",
                 "Light",
@@ -2102,6 +2102,129 @@
             "gems": [
                 "Pyrodisc",
                 "Cubic Curtain/Explosive Epilogue",
+                "Vampirian Vanquisher (Cosmic)"
+            ]
+        },
+        "tank": {
+            "enabled": false
+        }
+    },
+    "Solarion": {
+        "light": {
+            "enabled": true,
+            "tier": 1,
+            "hat": [
+                "Maximum Health",
+                "Light",
+                "Critical Damage",
+                "Preference",
+                "Attack Speed"
+            ],
+            "weapon": [
+                "Physical Damage",
+                "Light",
+                "Critical Damage",
+                "Preference",
+                "Attack Speed"
+            ],
+            "face": [
+                "Maximum Health",
+                "Light",
+                "Critical Damage",
+                "Physical Damage",
+                "Attack Speed"
+            ],
+            "ring": [
+                "Physical Damage",
+                "Light",
+                "Preference"
+            ],
+            "ally": [
+                "Earnie"
+            ],
+            "banner": [
+                "Physical Damage",
+                "Flask",
+                "Attack Speed"
+            ],
+            "subclass": [
+                "Knight"
+            ],
+            "flask": [
+                "Elysian Bandolier",
+                "Death-Defying Vial"
+            ],
+            "emblem": [
+                "Martial",
+                "Zealous"
+            ],
+            "food": [
+                "Freerange Electrolytic Crystals"
+            ],
+            "gems": [
+                "Class Gem",
+                "Pyrodisc",
+                "Cubic Curtain",
+                "Explosive Epilogue",
+                "Berserk Battler (Cosmic)"
+            ]
+        },
+        "farm": {
+            "enabled": true,
+            "tier": 2,
+            "hat": [
+                "Maximum Health",
+                "Light",
+                "Movement Speed",
+                "Preference",
+                "Attack Speed"
+            ],
+            "weapon": [
+                "Physical Damage",
+                "Light",
+                "Movement Speed",
+                "Preference",
+                "Attack Speed"
+            ],
+            "face": [
+                "Maximum Health",
+                "Light",
+                "Movement Speed",
+                "Preference",
+                "Attack Speed"
+            ],
+            "ring": [
+                "Physical Damage",
+                "Light",
+                "Preference"
+            ],
+            "ally": [
+                "Animated Jug"
+            ],
+            "banner": [
+                "Physical Damage",
+                "Flask",
+                "Movement Speed"
+            ],
+            "subclass": [
+                "Knight"
+            ],
+            "flask": [
+                "Elysian Bandolier",
+                "Death-Defying Vial"
+            ],
+            "emblem": [
+                "Zealous",
+                "Trailblazing"
+            ],
+            "food": [
+                "Freerange Electrolytic Crystals"
+            ],
+            "gems": [
+                "Class Gem",
+                "Pyrodisc",
+                "Cubic Curtain",
+                "Explosive Epilogue",
                 "Vampirian Vanquisher (Cosmic)"
             ]
         },

@@ -12,7 +12,10 @@ class SearchAllyCommand(SlashCommand, name="search_ally", description="Search fo
     ability = Option(default=None, description="Search for an ally through ability", autocomplete=True)
     name = Option(default=None, description="Search for an ally through name", autocomplete=True)
     async def callback(self):
-        await super().callback()
+        try:
+            await super().callback()
+        except:
+            return
         ctx = await self.get_context()
         allies = list(filter(self.filter_allies, ctx.bot.Trove.values.allies))
         if self.name:

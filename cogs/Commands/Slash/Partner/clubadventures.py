@@ -9,7 +9,10 @@ class ClubAdventures(
         description="Send club adventures to trovesaurus"
     ):
     async def callback(self):
-        await super().callback()
+        try:
+            await super().callback()
+        except:
+            return
         ctx = await self.get_context(ephemeral=True)
         view = ClubAdventuresView(ctx)
         view.message = await ctx.send(view=view)

@@ -169,14 +169,14 @@ class WebSockets(commands.Cog):
         for field in reduce_size:
             if len(data[field]) > 1024:
                 data[field] = data[field][:1024-len(cap_text)] + cap_text
-        e.description = f"**Context**\n{data['Title']}"
         e.timestamp = datetime.utcfromtimestamp(int(data["Created"]))
         e.set_author(name=data["Author"])
-        e.add_field(name="Platform", value=data["Platform"])
+        e.add_field(name="What were you doing?", value=data["Title"] if data["Title"] else "Not provided", inline=False)
+        e.add_field(name="Short description of the bug", value=data["Context"] if data["Context"] else "Not provided", inline=False)
+        e.add_field(name="What did you expect to happen?", value=data["Expected"] if data["Expected"] else "Not provided", inline=False)
+        e.add_field(name="How can we reproduce this bug?", value=data["Reproduce"] if data["Reproduce"] else "Not provided", inline=False)
         e.add_field(name="Trove IGN", value=data["Author"])
-        e.add_field(name="Expected", value=data["Expected"] if data["Expected"] else "Not provided", inline=False)
-        e.add_field(name="Observed", value=data["Context"] if data["Context"] else "Not provided", inline=False)
-        e.add_field(name="Reproduction Steps", value=data["Reproduce"] if data["Reproduce"] else "Not provided", inline=False)
+        e.add_field(name="Platform", value=data["Platform"])
         e.add_field(name="\u200b", value=f"[View on Trovesaurus Issue Tracker]({data['URL']})")
         e.set_footer(text="Reported via Website")
         await channel.send(embed=e)

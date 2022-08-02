@@ -1,4 +1,4 @@
-# Priority: 1
+# Priority: 0
 import re
 from datetime import datetime
 from typing import Literal
@@ -21,7 +21,10 @@ class Open(SlashCommand, name="open", description="Open an archive channel.",par
         default="1 hour"
     )
     async def callback(self):
-        await super().callback()
+        try:
+            await super().callback()
+        except:
+            return
         ctx = await self.get_context(ephemeral=True)
         if await ctx.bot.db.db_ts_archives.count_documents({"opened_by": ctx.author.id}) >= 3:
             return await ctx.send("You already have 2 open archives, you must close one with `/archive close`.")
@@ -71,7 +74,10 @@ class Open(SlashCommand, name="open", description="Open an archive channel.",par
 class Close(SlashCommand, name="close", description="Close an archive channel.", parent=Archive):
     channel: discord.TextChannel=Option(description="The archive to close.", autocomplete=True)
     async def callback(self):
-        await super().callback()
+        try:
+            await super().callback()
+        except:
+            return
         ctx = await self.get_context(ephemeral=True)
         guild = ctx.bot.get_guild(118027756075220992)
         categories = [772434558330601542, 908664374619668510]
@@ -116,7 +122,10 @@ class Close(SlashCommand, name="close", description="Close an archive channel.",
 
 class List(SlashCommand, name="list", description="List all archive channels.",parent=Archive):
     async def callback(self):
-        await super().callback()
+        try:
+            await super().callback()
+        except:
+            return
         ctx = await self.get_context(ephemeral=True)
         guild = ctx.bot.get_guild(118027756075220992)
         categories = [772434558330601542, 908664374619668510]

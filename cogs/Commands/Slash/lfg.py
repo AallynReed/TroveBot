@@ -11,14 +11,20 @@ class LFGCommand(SlashCommand, name="lfg", description="Find groups to play with
 
 class LFGCreate(SlashCommand, parent=LFGCommand, name="create", description="Create a group."):
     async def callback(self):
-        await super().callback()
+        try:
+            await super().callback()
+        except:
+            return
         ctx = await self.get_context(ephemeral=True)
         view = LFGView(ctx)
         view.message = await ctx.send(embed=view.build_embed(), view=view)
 
 class LFGList(SlashCommand, parent=LFGCommand, name="list", description="List all groups."):
     async def callback(self):
-        await super().callback()
+        try:
+            await super().callback()
+        except:
+            return
         ctx = await self.get_context(ephemeral=True)
         lfgs = await ctx.bot.db.db_lfg.find({"expire": {"$gt": datetime.utcnow().timestamp()}, "deleted": False}).to_list(length=999999)
         if not lfgs:

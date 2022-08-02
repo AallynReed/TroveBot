@@ -11,6 +11,7 @@ from discord.ext import commands
 from utils.buttons import Paginator
 from utils.CustomObjects import CEmbed
 from utils.trove import Tooltip
+from random import choices
 
 
 class General(commands.Cog):
@@ -88,6 +89,14 @@ class General(commands.Cog):
         entries = (await self.bot.db.db_bot.find_one({"_id": "0511"}, {"giveaway": 1}))["giveaway"]
         e.set_footer(text=f"{len(entries)} people have joined the giveaway.")
         await ctx.reply(embed=e, delete_after=300)
+
+    @commands.command()
+    async def roll_winners(self, ctx, amount: int):
+        if ctx.author.id not in [565097923025567755, 464779852252446731]:
+            return
+        entries = (await self.bot.db.db_bot.find_one({"_id": "0511"}, {"giveaway": 1}))["giveaway"]
+        winners = choices(entries, k=amount)
+        await ctx.send("Winners are:\n" + "\n".join([f"{await self.bot.fetch_user(w)} [{w}]" for w in winners]))
 
     @commands.command(slash_command=True, help="Disply information about you or a user", aliases=["userinfo", "ui"])
     @commands.bot_has_permissions(embed_links=1)

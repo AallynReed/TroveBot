@@ -1,4 +1,5 @@
 import asyncio
+import json
 import re
 from copy import copy
 from datetime import datetime
@@ -7,8 +8,10 @@ from random import choices
 from string import ascii_letters, digits
 
 import discord
+import toml
 from discord import Embed
 from discord.embeds import EmptyEmbed
+from hjson import loads
 
 from utils.builds import BuildsMaker
 from utils.CustomObjects import CEmbed, Dict, Sage
@@ -813,6 +816,8 @@ class GemBuildsButton(GemBaseButton):
         elif str(self.emoji) == "📥":
             time = int(datetime.utcnow().timestamp())
             self.view.build_data["config"] = copy(self.view.build_arguments.__dict__)
+            if "custom_gem_set" in self.view.build_data["config"].keys():
+                del self.view.build_data["config"]["custom_gem_set"]
             self.view.build_data["last_updated"] = time
             await self.view.ctx.bot.db.db_users.update_one(
                 {
@@ -1024,6 +1029,67 @@ class GemBuildsInput(GemBaseButton):
             text += " + " + "/".join([str(i) for i in build][4:7]) + " " + "/".join([str(i) for i in build][7:10])
         return text.strip()
 
+class GemBuildsModal(discord.ui.Modal):
+    def __init__(self, view):
+        super().__init__("Custom Gem Set Values")
+        self.view = view
+        items = [
+            discord.ui.TextInput(
+                label="Gem Stats [Empty to reset]",
+                style=discord.TextInputStyle.long,
+                value=toml.dumps(self.view.build_arguments.custom_gem_set or loads(open("/home/gVQZjCoEIG/nucleo/data/gems/crystal.hjson").read())),
+                required=False
+            )
+        ]
+        for item in items:
+            self.add_item(item)
+
+    async def callback(self, interaction):
+        if not self.children[0].value:
+            self.view.build_arguments.custom_gem_set = None
+            return await interaction.response.send_message("Reset gem stats.", ephemeral=True)
+        try:
+            data = toml.loads(self.children[0].value)
+        except:
+            return await interaction.response.send_message("The gem stats couldn't be read. Did you break toml structure by mistake?", ephemeral=True)
+        if data == loads(open("/home/gVQZjCoEIG/nucleo/data/gems/crystal.hjson").read()):
+            return await interaction.response.send_message("No values changed.", ephemeral=True)
+        needed = [
+            'Lesser.Damage',
+            'Lesser.CriticalDamage',
+            'Lesser.Light',
+            'Lesser.HP',
+            'Lesser.HP%',
+            'Empowered.Damage',
+            'Empowered.CriticalDamage',
+            'Empowered.Light',
+            'Empowered.HP',
+            'Empowered.HP%'
+        ]
+        for key, sub in [m.split(".") for m in needed]:
+            try:
+                value = data[key][sub]
+                for n in value:
+                    if not isinstance(n, (int,float)) or n > 100000:
+                        return await interaction.response.send_message("Values must be integers or floats with max value of 100000", ephemeral=True)
+            except:
+                return await interaction.response.send_message("There's some missing toml keys, what did you do to them?", ephemeral=True)
+        self.view.build_arguments.custom_gem_set = data
+        self.view.setup_buttons()
+        return await interaction.response.send_message("New gem stats were set.", ephemeral=True)
+                
+class GemBuildsModalButton(GemBaseButton):
+    def __init__(self, view, row=0):
+        super().__init__(
+            row=row,
+            style=discord.ButtonStyle.green if view.build_arguments.custom_gem_set else discord.ButtonStyle.gray,
+            label="Custom Gem Stats"
+        )
+        
+    async def callback(self, interaction):
+        modal = GemBuildsModal(self.view)
+        await interaction.response.send_modal(modal)
+
 class GemBuildsOption(discord.ui.Select):
     async def no_concurrent(self, interaction):
         value = self.view.waiting_input
@@ -1077,7 +1143,7 @@ class GemBuildTypeOptions(GemBuildsOption):
                         self.view.build_arguments.ally = self.view.allies["Chester Eggington the Third"]
                 if self.values[0].lower() == "light":
                     if _class.dmg_type == "MD":
-                        self.view.build_arguments.ally = self.view.allies["Puck"]
+                        self.view.build_arguments.ally = self.view.allies["Orchian"]
                     elif _class.dmg_type == "PD":
                         self.view.build_arguments.ally = self.view.allies["Earnie"]
             self.view.setup_buttons()
@@ -1165,7 +1231,7 @@ class GemBuildsView(BaseView):
         if not self.build_arguments._class or not self.build_arguments.build_type:
             self.add_item(ClassOptions(self, classes, "class", "(Required)", row=0))
         if self.build_arguments._class:
-            types = ["light", "farm", "coeff", "health"]
+            types = ["light", "health"] #, "coeff", "farm"]
             build_types = []
             for bt in types:
                 t = bt
@@ -1196,6 +1262,8 @@ class GemBuildsView(BaseView):
             self.add_item(GemBuildsToggle(self, "crystal5", "Crystal 5", False, row=3))
             if not self.build_arguments.build:
                 self.add_item(GemBuildsButton(self, "Page Mode", "📑", row=3))
+            self.add_item(GemBuildsToggle(self, "crystalg", "Crystal Gems", False, disabled=bool(self.build_arguments.custom_gem_set), row=4))
+            self.add_item(GemBuildsModalButton(self, row=4))
             if not getattr(self, "build_data"):
                 self.add_item(GemBuildsButton(self, "Save Build", "📤", row=4))
             elif self.build_data and self.ctx.author.id == self.build_data["creator"]:
@@ -1248,7 +1316,9 @@ class GemBuildsView(BaseView):
             "mod": False,
             "bardcd": False,
             "food": True,
-            "filter": None
+            "filter": None,
+            "crystalg": True,
+            "custom_gem_set": None
         }
         if arguments:
             build_arguments = Dict(arguments).fix(build_arguments)

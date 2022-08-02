@@ -15,9 +15,8 @@ class Calculations(commands.Cog):
 
     @commands.command(slash_command=True, help="Show augmentation costs for a set of gems", aliases=["agm", "aug"])
     async def augment(self, ctx, *, augmentation=commands.Option(name="augmentation", description="Input your gem sets to be calculated (2:46 1:25 0:65)")):
-        converter = AugmentationStats()
         try:
-            augmentation = await converter.convert(ctx, augmentation)
+            augmentation = await AugmentationStats().convert(ctx, augmentation)
         except Exception as e:
             return await ctx.send(str(e))
         if len(augmentation["gems"]) > 6:

@@ -14,7 +14,10 @@ class ClubCommand(SlashCommand, name="club", guilds=[118027756075220992]):
 
 class ClubAdvertiseCommand(SlashCommand, name="advert", description="Advertise your club at Trovesaurus.", parent=ClubCommand):
     async def callback(self):
-        await super().callback()
+        try:
+            await super().callback()
+        except:
+            return
         ctx = await self.get_context(ephemeral=True)
         advertise_panel = ctx.bot.get_channel(432281532091072513)
         messages = await advertise_panel.history(limit=None, after=datetime.utcnow()-timedelta(days=90)).flatten() # 90
@@ -35,7 +38,10 @@ class ClubAdvertiseCommand(SlashCommand, name="advert", description="Advertise y
 class ClubAdvertiseListCommand(SlashCommand, name="list", description="List club advertisements.", parent=ClubCommand):
     platform: Literal["PC", "PS4-NA", "PS4-EU", "Xbox", "Switch"] = Option(description="Pick platform to find clubs for.")
     async def callback(self):
-        await super().callback()
+        try:
+            await super().callback()
+        except:
+            return
         ctx = await self.get_context(ephemeral=True)
         advertise_panel = ctx.bot.get_channel(432281532091072513)
         invites = []

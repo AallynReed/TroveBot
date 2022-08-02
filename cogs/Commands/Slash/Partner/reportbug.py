@@ -9,7 +9,10 @@ class ReportBug(
         guilds=[118027756075220992]
     ):
     async def callback(self):
-        await super().callback()
+        try:
+            await super().callback()
+        except:
+            return
         ctx = await self.get_context(ephemeral=True)
         view = BugReportView(ctx)
         view.message = await ctx.send(embed=view.build_embed(), view=view)

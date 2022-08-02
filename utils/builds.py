@@ -6,6 +6,7 @@ from tabulate import tabulate
 
 from utils.CustomObjects import CEmbed, Colorize
 from utils.objects import GameClass
+from hjson import loads
 
 
 class Dummy():
@@ -39,7 +40,7 @@ class BuildsMaker():
     def _get_builds(self):
         if self.arguments.build_type == "health":
             light = 0
-            base_damage = self.get_value("base_health")
+            base_damage = self.get_value("base_health", self.arguments.crystalg)
             critical_damage = self.get_value("base_healthper")
             base_damage += self.arguments._class.health
             critical_damage += self.arguments._class.healthper
@@ -55,6 +56,10 @@ class BuildsMaker():
             bonus_damage = self.get_value("bonus_dmg")
             base_damage += self.arguments._class.dmg
             critical_damage += self.arguments._class.cd
+            if self.arguments.subclass and self.arguments.subclass.short in ["SL"]:
+                light += 140
+            if self.arguments._class.short == "SL":
+                light += 140
             if self.arguments._class.dmg_type == "PD":
                 base_damage += self.pd_dragons
                 if self.arguments.subclass and self.arguments.subclass.short in ["LL"]:
@@ -94,15 +99,16 @@ class BuildsMaker():
             build = list(buildi)
             if filt and filt not in build:
                 continue
-            gem_damage, gem_critical_damage, gem_light = self._get_gem_build_stats(build, prim=self.arguments.primordial, health=self.arguments.build_type=="health")
+            gem_damage, gem_critical_damage, gem_light = self._get_gem_build_stats(build, prim=self.arguments.primordial, health=self.arguments.build_type=="health", gem_stats=self.arguments.custom_gem_set or self.arguments.crystalg)
             build_damage = base_damage + gem_damage
             build_critical = critical_damage + gem_critical_damage
             build_light = light + gem_light
             if self.arguments.build_type != "health":
-                if self.arguments._class.short in ["LL", "CB"]:
-                    build_damage *= 1.3
-                if self.arguments._class.short in ["BR"]:
-                    build_damage *= 1.1
+                build_damage *= 1+(self.arguments._class.class_bonus/100)
+                # if self.arguments._class.short in ["LL", "CB"]:
+                #     build_damage *= 1.3
+                # if self.arguments._class.short in ["BR", "SL"]:
+                #     build_damage *= 1.1
                 final_damage = build_damage * (1 + bonus_damage / 100)
             else:
                 final_damage = build_damage
@@ -244,10 +250,12 @@ class BuildsMaker():
 
   # Values
 
-    def get_value(self, attr: str):
-        return sum(getattr(self, attr).values())
+    def get_value(self, attr: str, extra=None):
+        attribute = getattr(self, attr)
+        if callable(attribute):
+            attribute = attribute(extra)
+        return sum(attribute.values())
 
-    @property
     def base_light(self):
         return {
             "Hat": 845,
@@ -255,7 +263,7 @@ class BuildsMaker():
             "Weapon": 1690,
             "Banner": 900,
             "Mastery": 1000,
-            "Dragon": 50,
+            "Dragon": 75,
             "Ring": 325
         }
 
@@ -295,14 +303,13 @@ class BuildsMaker():
             "club": 15
         }
 
-    @property
-    def base_health(self):
+    def base_health(self, crystal=True):
         return {
             "Weapon": 18876,
             "Face": 28600,
             "Hat": 28600,
             "Ring": 14475,
-            "Dragons": 40000,
+            "Dragons": 44000 if crystal else 40000,
             "Torch": 10000
         }
 
@@ -378,14 +385,23 @@ class BuildsMaker():
                         continue
                     cless.append([x, y, z])
         return itertools.product(eemp, eless, cemp, cless)
-    
-    def _get_gem_build_stats(self, build, prim=False, health=False):
-        lesser_base_light = self.values.lesser_base_light
-        lesser_base_dmg = self.values.lesser_base_dmg if not health else self.values.lesser_base_health
-        lesser_base_cd = self.values.lesser_base_cd if not health else self.values.lesser_base_healthper
-        emp_base_light = self.values.emp_base_light
-        emp_base_dmg = self.values.emp_base_dmg if not health else self.values.emp_base_health
-        emp_base_cd = self.values.emp_base_cd if not health else self.values.emp_base_healthper
+
+    def _get_gem_build_stats(self, build, prim=False, health=False, gem_stats=0):
+        if not isinstance(gem_stats, dict):
+            if gem_stats:
+                gem_stats = loads(open("/home/gVQZjCoEIG/nucleo/data/gems/crystal.hjson").read())
+            elif not gem_stats:
+                gem_stats = loads(open("/home/gVQZjCoEIG/nucleo/data/gems/stellar.hjson").read())
+            else:
+                raise Exception("Didn't expect that build")
+        lesser = gem_stats["Lesser"]
+        emp = gem_stats["Empowered"]
+        lesser_base_light = lesser["Light"]
+        lesser_base_dmg = lesser["Damage"] if not health else lesser["HP"]
+        lesser_base_cd = lesser["CriticalDamage"] if not health else lesser["HP%"]
+        emp_base_light = emp["Light"]
+        emp_base_dmg = emp["Damage"] if not health else emp["HP"]
+        emp_base_cd = emp["CriticalDamage"] if not health else emp["HP%"]
         gem_light = 2 * lesser_base_light[0] + emp_base_light[0]
         cosmic_gem_dmg = 2 * lesser_base_dmg[0] + emp_base_dmg[0]
         cosmic_gem_cd = 2 * lesser_base_cd[0] + emp_base_cd[0]

@@ -12,7 +12,10 @@ class SearchCommand(SlashCommand, name="search", description="What to search on 
     query = Option(description="What to search on Trovesaurus?", autocomplete=True)
     filtering: Literal["Collections", "Items", "Deco", "Styles"] = Option(default=None, description="Filter results by type")
     async def callback(self):
-        await super().callback()
+        try:
+            await super().callback()
+        except:
+            return
         categories = ["collections", "items", "deco", "styles"]
         ctx = await self.get_context()
         if len(self.query) < 3:

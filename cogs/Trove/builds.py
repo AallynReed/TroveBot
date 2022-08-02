@@ -17,7 +17,7 @@ class Builds(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.values = Values()
-        self.bot.Trove.last_updated = 1647025641
+        self.bot.Trove.last_updated = 1659465145
 
     @commands.command(slash_command=True, help="Show gear for a class")
     @commands.cooldown(1, 120, commands.BucketType.user)

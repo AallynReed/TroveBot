@@ -107,6 +107,12 @@ class Trove(commands.AutoShardedBot):
         print("Serving " + str(len(self.users)) + " users in " + str(len(self.guilds)) + " guilds!")
         print("===================================================")
 
+    def shard_guilds(self):
+        return {
+            shard: [g for g in self.guilds if g.shard_id == shard]
+            for shard in self.shards.keys()
+        }
+
     async def setup(self):
         self.remove_command('help')
        # Database
